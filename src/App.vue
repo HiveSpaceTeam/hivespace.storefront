@@ -1,26 +1,22 @@
-<script setup lang="ts">
-</script>
-
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-    </a>
-  </div>
+  <StorefrontLayout>
+    <RouterView @navigate="handleNavigate" />
+  </StorefrontLayout>
+  <!-- Global modal outlet -->
+  <ModalManager />
+  <!-- Global toast notifications -->
+  <ToastContainer :toasts="appStore.notifications" @removeToast="appStore.removeNotification" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { ToastContainer, ModalManager, useAppStore } from '@hivespace/shared'
+import StorefrontLayout from '@/components/layout/StorefrontLayout.vue'
+
+const appStore = useAppStore()
+const router = useRouter()
+
+const handleNavigate = (path: string) => {
+  router.push(path)
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+</script>
