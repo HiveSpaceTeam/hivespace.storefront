@@ -10,7 +10,7 @@
           <div class="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-2 group-hover:-translate-y-1 transition-transform">
             <component :is="category.icon" class="w-8 h-8 text-primary" />
           </div>
-          <span class="text-xs text-center text-gray-700 dark:text-gray-300 leading-tight px-1">{{ category.name }}</span>
+          <span class="text-xs text-center text-gray-700 dark:text-gray-300 leading-tight px-1">{{ $t(category.nameKey) }}</span>
         </a>
       </div>
     </div>
@@ -32,25 +32,25 @@ import {
 } from 'lucide-vue-next'
 
 const categories = [
-  { name: 'Men Clothes', icon: Shirt },
-  { name: 'Mobile & Gadgets', icon: Smartphone },
-  { name: 'Computers', icon: Monitor },
-  { name: 'Cameras', icon: Camera },
-  { name: 'Watches', icon: Watch },
-  { name: 'Bags', icon: Briefcase },
-  { name: 'Sports', icon: Bike },
-  { name: 'Groceries', icon: Coffee },
-  { name: 'Health', icon: Heart },
-  { name: 'Home & Living', icon: Home },
-  { name: 'Women Clothes', icon: Shirt },
-  { name: 'Gaming', icon: Monitor },
-  { name: 'Accessories', icon: Watch },
-  { name: 'Toys', icon: Heart },
-  { name: 'Stationery', icon: Briefcase },
-  { name: 'Pets', icon: Home },
-  { name: 'Automotive', icon: Bike },
-  { name: 'Books', icon: Coffee },
-  { name: 'Tickets', icon: Smartphone },
-  { name: 'Services', icon: Camera },
+  { nameKey: 'storefront.categoriesList.menClothes', icon: Shirt },
+  { nameKey: 'storefront.categoriesList.mobileGadgets', icon: Smartphone },
+  { nameKey: 'storefront.categoriesList.computers', icon: Monitor },
+  { nameKey: 'storefront.categoriesList.cameras', icon: Camera },
+  { nameKey: 'storefront.categoriesList.watches', icon: Watch },
+  { nameKey: 'storefront.categoriesList.bags', icon: Briefcase },
+  { nameKey: 'storefront.categoriesList.sports', icon: Bike },
+  { nameKey: 'storefront.categoriesList.groceries', icon: Coffee },
+  { nameKey: 'storefront.categoriesList.health', icon: Heart },
+  { nameKey: 'storefront.categoriesList.homeLiving', icon: Home },
+  { nameKey: 'storefront.categoriesList.womenClothes', icon: Shirt },
+  { nameKey: 'storefront.categoriesList.gaming', icon: Monitor },
+  { nameKey: 'storefront.categoriesList.accessories', icon: Watch },
+  { nameKey: 'storefront.categoriesList.toys', icon: Heart },
+  { nameKey: 'storefront.categoriesList.stationery', icon: Briefcase },
+  { nameKey: 'storefront.categoriesList.pets', icon: Home },
+  { nameKey: 'storefront.categoriesList.automotive', icon: Bike },
+  { nameKey: 'storefront.categoriesList.books', icon: Coffee },
+  { nameKey: 'storefront.categoriesList.tickets', icon: Smartphone },
+  { nameKey: 'storefront.footer.customerService', icon: Camera },
 ]
 </script>

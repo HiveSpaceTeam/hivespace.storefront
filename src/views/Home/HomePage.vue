@@ -10,7 +10,7 @@
       <!-- Sticky Tabs for Product Sections -->
       <div class="mt-8 mb-4 sticky top-[130px] z-40 bg-white dark:bg-card-dark shadow-sm h-14 border-b-2 border-primary container mx-auto flex items-center justify-center">
         <h2 class="text-primary font-bold text-lg uppercase tracking-wider relative px-8 py-4 h-full flex items-center justify-center bg-white dark:bg-card-dark">
-          Gợi Ý Hôm Nay
+          {{ $t('storefront.todaysSuggestions') }}
           <div class="absolute bottom-0 left-0 w-full h-[3px] bg-primary"></div>
         </h2>
       </div>
@@ -20,7 +20,7 @@
       
       <div class="mt-8 flex justify-center">
         <Button variant="outline" class="px-32 py-2.5 uppercase text-sm font-medium w-full sm:w-auto">
-          Xem Thêm
+          {{ $t('storefront.seeMore') }}
         </Button>
       </div>
     </div>

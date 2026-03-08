@@ -6,7 +6,7 @@
           <!-- Flash Sale Logo (SVG or Text) -->
           <div class="flex items-center space-x-2 text-primary">
             <Zap class="w-6 h-6 fill-primary" />
-            <h2 class="text-xl font-extrabold italic uppercase tracking-wider">Flash Sale</h2>
+            <h2 class="text-xl font-extrabold italic uppercase tracking-wider">{{ $t('storefront.flashSale') }}</h2>
           </div>
           
           <!-- Countdown -->
@@ -27,7 +27,7 @@
               <img :src="product.image" :alt="product.name" class="w-full h-full object-cover">
               <div v-if="product.discountPercentage" class="absolute top-0 right-0 bg-[#ffd839] text-[#ee4d2d] px-1 py-0.5 flex flex-col items-center justify-center opacity-90 rounded-bl-sm">
                 <span class="text-[10px] font-bold leading-none">{{ product.discountPercentage }}%</span>
-                <span class="text-[10px] font-bold leading-none uppercase">Giảm</span>
+                <span class="text-[10px] font-bold leading-none uppercase">{{ $t('storefront.discount') }}</span>
               </div>
               
               <!-- Special Flash Sale overlay styling if needed -->
@@ -45,7 +45,7 @@
                 :style="`width: ${product.soldPercentage}%`"
               ></div>
               <span class="relative z-10 text-[9px] text-white font-bold uppercase drop-shadow-md shadow-black">
-                {{ product.soldPercentage >= 100 ? 'Đã Bán Hết' : `Đã Bán ${product.soldCount}` }}
+                {{ product.soldPercentage >= 100 ? $t('storefront.soldOut') : $t('storefront.soldCount', { count: product.soldCount }) }}
               </span>
             </div>
           </div>
