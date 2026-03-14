@@ -63,6 +63,7 @@ const formatPrice = (price: number) => {
   return price?.toLocaleString('vi-VN')
 }
 
+
 const formatNumber = (num: number) => {
   if (!num) return '0'
   if (num >= 1000) {

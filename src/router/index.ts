@@ -9,7 +9,7 @@ const routes = [
         meta: { title: 'HiveSpace - Mua sắm trực tuyến' },
     },
     {
-        path: '/product/:id',
+        path: '/product',
         name: 'Product',
         component: () => import('@/views/Product/ProductDetail.vue'),
         meta: { title: 'HiveSpace - Mua sắm trực tuyến' },

@@ -8,9 +8,9 @@
                         <div class="image-container">
                             <div class="image-wrapper">
                                 <picture>
-                                    <source type="image/webp"
-                                        :srcset="`${currentImage}.webp 1x, ${currentImage}.webp 2x`">
-                                    <img :srcset="`${currentImage} 1x, ${currentImage} 2x`" width="368" height="368"
+                                    <!-- <source type="image/webp"
+                                        :srcset="`${currentImage}.webp 1x, ${currentImage}.webp 2x`"> -->
+                                    <img :src="currentImage?.fileId" width="368" height="368"
                                         :alt="product.name" loading="eager">
                                 </picture>
                             </div>
@@ -29,11 +29,11 @@
                             </button>
                             <div class="thumbnails">
                                 <div class="thumbnail-track">
-                                    <a v-for="(image, index) in product.images" :key="index"
+                                    <a v-for="(image, index) in displayedProductImages" :key="index"
                                         :class="{ active: index === activeImageIndex }" @click="setActiveImage(index)">
                                         <picture>
                                             <source type="image/webp" :srcset="`${image}.webp 1x, ${image}.webp 2x`">
-                                            <img width="47" height="47" :alt="`product-img-${index}`" :src="image"
+                                            <img width="47" height="47" :alt="`product-img-${index}`" :src="image.fileId"
                                                 :srcset="`${image} 1x, ${image} 2x`">
                                         </picture>
                                     </a>
@@ -89,7 +89,7 @@
                                 </picture>
                                 <span class="brand">Thương hiệu: <a href="#">{{ product.brand }}</a></span>
                             </div>
-                            <h1 class="product-title">{{ product.name }}</h1>
+                            <h1 class="product-title">{{ productDetail.name }}</h1>
                             <div class="rating">
                                 <!-- Rating stars would go here -->
                             </div>
@@ -102,23 +102,23 @@
                     </div>
 
                     <!-- Variants Section -->
-                    <div class="variants">
+                    <div v-if="productDetail.variants.length > 0" class="variants">
                         <!-- Color Selection -->
                         <div class="variant-group">
-                            <p class="variant-label">Màu</p>
+                            <p class="variant-label">{{ productDetail.variants[0]?.name }}</p>
                             <div class="variant-options">
-                                <div v-for="(color, index) in product.colors" :key="index"
-                                    :class="{ active: selectedColor === color.name }" @click="selectColor(color)">
+                                <div v-for="(option, index) in productDetail.variants[0]?.options" :key="index"
+                                    :class="{ active: selectedColor === option.name }" @click="selectColor(option)">
                                     <div class="color-option">
                                         <picture>
                                             <source type="image/webp"
-                                                :srcset="`${color.image}.webp 1x, ${color.image}.webp 2x`">
-                                            <img alt="thumbnail" :src="color.image" width="42" height="42"
-                                                :srcset="`${color.image} 1x, ${color.image} 2x`">
+                                                :srcset="`${option.image}.webp 1x, ${option.image}.webp 2x`">
+                                            <img alt="thumbnail" :src="option.image" width="42" height="42"
+                                                :srcset="`${option.image} 1x, ${option.image} 2x`">
                                         </picture>
-                                        <span>{{ color.name }}</span>
+                                        <span>{{ option.value }}</span>
                                     </div>
-                                    <img v-if="selectedColor === color.name" class="selected-indicator"
+                                    <img v-if="selectedColor === option.value" class="selected-indicator"
                                         src="https://salt.tikicdn.com/ts/upload/6d/62/b9/ac9f3bebb724a308d710c0a605fe057d.png"
                                         alt="Selected" width="13" height="13">
                                 </div>
@@ -127,7 +127,7 @@
 
                         <!-- Size Selection -->
                         <div class="variant-group">
-                            <p class="variant-label">Kích cỡ</p>
+                            <p class="variant-label">{{ productDetail.variants[1]?.name }}</p>
                             <div class="variant-options">
                                 <div v-for="(size, index) in product.sizes" :key="index"
                                     :class="{ active: selectedSize === size.name }" @click="selectSize(size)">
@@ -326,8 +326,8 @@
                 <!-- Product Description -->
                 <div class="section">
                     <h3>Mô tả sản phẩm</h3>
-                    <div class="description" v-html="product.description"></div>
-                    <button class="toggle-btn" @click="toggleDescription">Thu gọn</button>
+                    <div class="description " :class="{ 'collapsed': !descriptionExpanded }" v-html="productDetail.description"></div>
+                    <button class="toggle-btn" @click="toggleDescription">{{ descriptionExpanded ? 'Rút gọn' : 'Xem thêm' }}</button>
                 </div>
             </div>
 
@@ -364,7 +364,7 @@
                     <div class="selected-variant">
                         <picture>
                             <source type="image/webp" :srcset="`${currentImage}.webp`">
-                            <img class="variant-image" :src="currentImage" width="40" height="40" alt="variant">
+                            <img class="variant-image" :src="currentImage?.fileId" width="40" height="40" alt="variant">
                         </picture>
                         <span>{{ selectedColor }}, {{ selectedSize }}</span>
                     </div>
@@ -395,16 +395,19 @@
 
 
 
-                
+
 
 
             </div>
         </div>
-        
+
     </div>
 </template>
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { productService } from '@/services/product.service'
+import { useRoute } from 'vue-router'
+import type { Product } from '@/types'
 
 // Reactive data
 const activeImageIndex = ref(0)
@@ -412,6 +415,7 @@ const selectedColor = ref('Hồng')
 const selectedSize = ref('XL(60KG-70KG)')
 const quantity = ref(1)
 const descriptionExpanded = ref(false)
+const route = useRoute()
 
 // Mock product data
 const product = ref({
@@ -421,16 +425,7 @@ const product = ref({
     origin: 'Việt Nam',
     warranty: false,
     price: 249000,
-    images: [
-        'https://salt.tikicdn.com/cache/750x750/ts/product/5d/61/63/6eb91a92a3cf45b5cf2ab35b1fa73cff.jpg',
-        'https://salt.tikicdn.com/cache/750x750/ts/product/d5/74/d2/0dc89544e988472ea6cf49eb7ac4a0d6.jpg',
-        'https://salt.tikicdn.com/cache/750x750/ts/product/ea/87/0a/29417887f463008692b92b55817f73ff.jpg',
-        'https://salt.tikicdn.com/cache/750x750/ts/product/e9/05/9b/34bdcd0538e191beb2265354f48df973.jpg',
-        'https://salt.tikicdn.com/cache/750x750/ts/product/15/40/71/2fd52b67fd3d990a6e15dfdb3513b8f0.jpg',
-        'https://salt.tikicdn.com/cache/750x750/ts/product/d6/63/18/486ebe7dd9e52d27bb7c55d974dcdde0.jpg',
-        'https://salt.tikicdn.com/cache/750x750/ts/product/3f/68/0f/883abd8a37429292c8e183338917048d.jpg',
-        'https://salt.tikicdn.com/cache/750x750/ts/product/59/cd/60/8d757746529eebb966964cd2667db99e.jpg'
-    ],
+  
     colors: [
         { name: 'Hồng', image: 'https://salt.tikicdn.com/cache/100x100/ts/product/5d/61/63/6eb91a92a3cf45b5cf2ab35b1fa73cff.jpg' },
         { name: 'Kem', image: 'https://salt.tikicdn.com/cache/100x100/ts/product/5d/61/63/6eb91a92a3cf45b5cf2ab35b1fa73cff.jpg' },
@@ -444,20 +439,7 @@ const product = ref({
         { name: 'S (30KG-40KG)' },
         { name: 'XL(60KG-70KG)' }
     ],
-    description: `
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span>Áo khoác nữ chống nắng hoodie TONBORSA là một lựa chọn xuất sắc cho các cô gái yêu thích phong cách thời trang hiện đại và năng động. Với chất liệu nỉ dệt cao cấp, sản phẩm mang đến sự ấm áp và thoải mái trong mọi hoàn cảnh. Thiết kế đơn giản nhưng không kém phần thời trang, phù hợp cho nhiều dịp từ đi học, đi làm đến dạo phố. ☆ THÔNG TIN SẢN PHẨM: - Áo khoác nữ với Chất liệu Nỉ Ngoại tốt, dày dặn, thoáng mát giúp bạn có thể chống nắng, chống bụi, chống gió, chống tia UV cực tốt, rất tiện lợi nhé!!! (Thích hợp: Đi chơi, dạo phố, du lịch, phượt ...) + Đường may tinh tế, sắc xảo. + Nam Nữ Couple đều dùng được. + Hàng lấy tận xưởng, không trung gian, nên giá rất sinh viên. + Giao hàng tận nơi. Nhận hàng thanh toán. + Cam kết: Chất lượng và Mẫu mã Sản phẩm giống với hình ảnh. ️ CAM KẾT TỪ SHOP: - Hàng thật 100% như hình. - Giao hàng đúng mẫu mã, size màu khách đặt. - Tất cả sản phẩm giao hang COD toàn quốc ️ HƯỚNG DẪN BẢO QUẢN: - Giặt những sản phẩm cùng gam màu với nhau lần giặt đầu tiên - Giặt ở nhiệt độ bình thường, đồ có màu đậm như: đen, xanh đen, đỏ, tím… nên giặt riêng 1-2 nước đầu. - Hạn chế dùng chất tẩy đậm đặc. - Ủi và sấy ở nhiệt độ thích hợp. - Khuyến khích lộn mặt trái khi phơi để giữ sản phẩm bền màu hơn. #ÁoKhoácNỉNữ #NỉNữ #ThờiTrangĐông #NỉCaoCấp #ÁoKhoácThờiTrang #NỉĐẹp #ÁoNỉDài #FashionNỉ #ÁoNỉMềmMại #ÁoKhoácNỉĐẹp #WinterFashion #NỉPhối #ÁoKhoácNỉDày #TrendyNỉ #ÁoNỉWarm #MixAndMatchNỉ #ÁoKhoácNỉMềm #ÁoNỉHànQuốc #StyleNỉ #ÁoKhoácNỉĐông</span></p>
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span></span></p>
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span></span><img src="https://salt.tikicdn.com/ts/product/5d/61/63/125f536394bc3689220162f922dcdfe2.jpg" style="width: 1024px; height: 1024px; display: inline; vertical-align: middle;"><span></span></p>
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span></span><img src="https://salt.tikicdn.com/ts/product/d5/74/d2/cd9feda7b143ee9609ff75c59422a69e.jpg" style="width: 1024px; height: 1024px; display: inline; vertical-align: middle;"><span></span></p>
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span></span><img src="https://salt.tikicdn.com/ts/product/ea/87/0a/871fe4990947f8db54ddafcd16cbbae8.jpg" style="width: 1024px; height: 1024px; display: inline; vertical-align: middle;"><span></span></p>
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span></span><img src="https://salt.tikicdn.com/ts/product/e9/05/9b/665fcb11f7110369a4ffd2366e2cd1ab.jpg" style="width: 1024px; height: 1024px; display: inline; vertical-align: middle;"><span></span></p>
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span></span><img src="https://salt.tikicdn.com/ts/product/15/40/71/0162fc20da03b0adb9c22d2fbf4435f3.jpg" style="width: 1024px; height: 1024px; display: inline; vertical-align: middle;"><span></span></p>
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span></span><img src="https://salt.tikicdn.com/ts/product/d6/63/18/77dbd8a143e6e3acf5078c8bd19453dd.jpg" style="width: 1024px; height: 1024px; display: inline; vertical-align: middle;"><span></span></p>
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span></span><img src="https://salt.tikicdn.com/ts/product/3f/68/0f/ed2b03682ffc423096fbcde172fc82de.jpg" style="width: 1024px; height: 1024px; display: inline; vertical-align: middle;"><span></span></p>
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span></span><img src="https://salt.tikicdn.com/ts/product/59/cd/60/2f939cdca22f83bd8cd2d172a221c168.jpg" style="width: 1024px; height: 1024px; display: inline; vertical-align: middle;"><span></span></p>
-    <p style="line-height: 1.7; text-align: left; text-indent: 0px; margin-left: 0px; margin-top: 0px; margin-bottom: 0px;"><span></span></p>
-    <p>Giá sản phẩm trên Tiki đã bao gồm thuế theo luật hiện hành. Bên cạnh đó, tuỳ vào loại sản phẩm, hình thức và địa chỉ giao hàng mà có thể phát sinh thêm chi phí khác như phí vận chuyển, phụ phí hàng cồng kềnh, thuế nhập khẩu (đối với đơn hàng giao từ nước ngoài có giá trị trên 1 triệu đồng).....</p>
-  `
+    
 })
 
 const store = ref({
@@ -495,7 +477,10 @@ const similarProducts = ref([
 ])
 
 // Computed properties
-const currentImage = computed(() => product.value.images[activeImageIndex.value])
+const currentImage = computed(() => {
+    debugger
+    return displayedProductImages.value[activeImageIndex.value]
+})
 
 // Methods
 const setActiveImage = (index: number) => {
@@ -538,9 +523,27 @@ const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN').format(price) + '₫'
 }
 
+const productDetail = ref<Product>({
+    id: '',
+    name: '',
+    category: '',
+    description: '',
+    variants: [],
+    skus: [],
+})
+
+const displayedProductImages = computed(() => {
+    if (productDetail.value.skus.length > 0) {
+        return productDetail.value.skus[0]?.images || []
+    }
+    return []
+})
+
 // Lifecycle
-onMounted(() => {
-    // Initialize component
+onMounted(async () => {
+    const id = route.query.pid as string
+    productDetail.value = await productService.getProductById(id)
+    debugger
 })
 </script>
 
@@ -1051,7 +1054,7 @@ onMounted(() => {
     padding: 16px;
     margin-bottom: 16px;
     position: sticky;
-    top:0
+    top: 0
 }
 
 .store-header {
@@ -1221,9 +1224,12 @@ onMounted(() => {
 
 /* Description */
 .description {
-    max-height: 200px;
     overflow: hidden;
     line-height: 1.7;
+    max-width: 460px;
+}
+.description.collapsed {
+    max-height: 400px;
 }
 
 .toggle-btn {

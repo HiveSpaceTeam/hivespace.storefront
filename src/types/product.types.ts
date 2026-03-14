@@ -59,6 +59,20 @@ export interface PagedResponse<T> {
   total: number
 }
 
+export interface Product {
+  id?: string
+  name: string
+  category: string
+  description?: string
+  variants: ProductVariant[]
+  skus: ProductSku[]
+  images?: ProductImage[]
+  // Add more fields as needed
+}
+
+
+
+
 export interface ProductSummary {
   id: string
   name: string

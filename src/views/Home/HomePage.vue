@@ -19,7 +19,7 @@
       <ProductGrid :products="products" />
       
       <div class="mt-8 flex justify-center">
-        <Button variant="outline" class="px-32 py-2.5 uppercase text-sm font-medium w-full sm:w-auto">
+        <Button @click="handleSeeMore" variant="outline" class="px-32 py-2.5 uppercase text-sm font-medium w-full sm:w-auto">
           {{ $t('storefront.seeMore') }}
         </Button>
       </div>
@@ -60,6 +60,12 @@ onMounted(async () => {
   await fetchProducts()
 })
 
+
+const handleSeeMore = () => {
+  pageIndex.value += 1
+  fetchProducts()
+}
+
 const fetchProducts = async () => {
   try {
     const params: PagingRequest = {
@@ -67,7 +73,7 @@ const fetchProducts = async () => {
       pageSize: pageSize.value,
     }
     const result: PagedResponse<ProductSummary> = await productService.getProducts(params)
-    products.value = result.data ?? []
+    products.value = [...products.value, ...result.data]
     totalCount.value = result.total ?? 0
   } catch (err) {
     // Errors are centrally handled in api service; keep console for dev context
