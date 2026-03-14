@@ -9,8 +9,8 @@
 </template>
 
 <script setup lang="ts">
-import ProductCard, { type ProductSummary } from './ProductCard.vue'
-
+import type { ProductSummary } from '@/types';
+import ProductCard from '@/components/home/ProductCard.vue'
 defineProps<{
   products: ProductSummary[]
 }>()
