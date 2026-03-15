@@ -3,9 +3,15 @@
     <!-- Bottom Search Bar Area -->
     <template #bottom>
       <div class="bg-surface dark:bg-surface-dark py-4 border-b border-gray-200 dark:border-gray-800 shadow-sm">
-        <div class="container mx-auto flex items-center justify-center gap-8 flex-wrap lg:flex-nowrap">
+        <div class="container mx-auto flex items-center justify-center gap-8 flex-wrap lg:flex-nowrap px-4">
+          <!-- Logo -->
+          <router-link to="/" class="flex items-center shrink-0">
+            <img class="dark:hidden h-8" :src="LogoLight" alt="HiveSpace" />
+            <img class="hidden dark:block h-8" :src="LogoDark" alt="HiveSpace" />
+          </router-link>
+
           <!-- Search Bar -->
-          <div class="flex-grow max-w-3xl flex flex-col w-full">
+          <div class="flex-grow flex flex-col min-w-0 mx-4">
             <div class="flex bg-white dark:bg-gray-800 rounded-sm p-1 shadow-sm focus-within:ring-2 focus-within:ring-primary-light transition-shadow border border-gray-300 dark:border-gray-700">
               <input 
                 type="text" 
@@ -41,5 +47,7 @@
 
 <script setup lang="ts">
 import AppHeader from './AppHeader.vue'
+import LogoLight from '@/assets/logo/logo-light.svg'
+import LogoDark from '@/assets/logo/logo-dark.svg'
 import { Search, ShoppingCart } from 'lucide-vue-next'
 </script>

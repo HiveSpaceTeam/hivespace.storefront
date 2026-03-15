@@ -23,3 +23,8 @@
   --color-card-dark: #16213e;
   --font-sans: 'Inter', 'Montserrat', system-ui, sans-serif;
 }
+
+/* Override container max-width for storefront */
+.container {
+  max-width: 1440px;
+}
