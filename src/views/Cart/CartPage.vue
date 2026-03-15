@@ -9,7 +9,7 @@
         <!-- Free shipping banner -->
         <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-sm p-3 mb-4 flex items-center gap-2 text-sm text-green-700 dark:text-green-400">
           <Truck class="w-5 h-5 shrink-0" />
-          <span>Bạn đã được <strong>Miễn phí vận chuyển</strong> cho đơn hàng từ 300.000₫</span>
+          <span v-html="t('storefront.cart.freeShippingBanner')"></span>
         </div>
 
         <div class="flex flex-col lg:flex-row gap-4">
@@ -20,12 +20,12 @@
               <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" class="w-4 h-4 accent-primary rounded" />
-                  <span>Chọn Tất Cả ({{ totalItems }} sản phẩm)</span>
+                  <span>{{ t('storefront.cart.selectAll', { count: totalItems }) }}</span>
                 </label>
                 <div class="hidden md:flex items-center ml-auto gap-0 text-gray-500 dark:text-gray-400 text-xs">
-                  <span class="w-28 text-center">Đơn Giá</span>
-                  <span class="w-32 text-center">Số Lượng</span>
-                  <span class="w-28 text-center">Thành Tiền</span>
+                  <span class="w-28 text-center">{{ t('storefront.cart.unitPrice') }}</span>
+                  <span class="w-32 text-center">{{ t('storefront.cart.quantity') }}</span>
+                  <span class="w-28 text-center">{{ t('storefront.cart.subTotal') }}</span>
                   <span class="w-16 text-center">
                     <button @click="removeSelected" class="text-gray-400 hover:text-red-500 transition-colors">
                       <Trash2 class="w-4 h-4" />
@@ -42,7 +42,7 @@
                 <input type="checkbox" v-model="group.selected" @change="toggleGroupSelect(groupIndex)" class="w-4 h-4 accent-primary rounded" />
                 <Store class="w-4 h-4 text-primary" />
                 <span class="font-medium text-sm text-gray-800 dark:text-gray-200">{{ group.sellerName }}</span>
-                <span v-if="group.isMall" class="bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">Mall</span>
+                <span v-if="group.isMall" class="bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">{{ t('storefront.cart.mall') }}</span>
               </div>
 
               <!-- Items -->
@@ -62,8 +62,8 @@
                     <span class="text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 px-2 py-0.5 rounded">{{ item.variant }}</span>
                   </div>
                   <div class="flex items-center gap-1 mt-1">
-                    <span v-if="item.isFreeShipping" class="text-[10px] text-primary border border-primary px-1 py-0.5 rounded-sm">Freeship</span>
-                    <span v-if="item.isReturn" class="text-[10px] text-green-600 border border-green-500 px-1 py-0.5 rounded-sm">Đổi trả miễn phí</span>
+                    <span v-if="item.isFreeShipping" class="text-[10px] text-primary border border-primary px-1 py-0.5 rounded-sm">{{ t('storefront.cart.freeship') }}</span>
+                    <span v-if="item.isReturn" class="text-[10px] text-green-600 border border-green-500 px-1 py-0.5 rounded-sm">{{ t('storefront.cart.freeReturn') }}</span>
                   </div>
                 </div>
 
@@ -110,40 +110,40 @@
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
                     <Ticket class="w-4 h-4 text-primary" />
-                    HiveSpace Voucher
+                    {{ t('storefront.cart.couponTitle') }}
                   </span>
                 </div>
                 <div class="flex gap-2">
-                  <input type="text" v-model="voucherCode" placeholder="Nhập mã voucher" class="flex-grow px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-400" />
-                  <button class="bg-primary hover:bg-primary-dark text-white px-4 py-2 text-sm rounded-sm transition-colors whitespace-nowrap">Áp Dụng</button>
+                  <input type="text" v-model="couponCode" :placeholder="t('storefront.cart.enterCoupon')" class="flex-grow px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-400" />
+                  <button class="bg-primary hover:bg-primary-dark text-white px-4 py-2 text-sm rounded-sm transition-colors whitespace-nowrap">{{ t('storefront.cart.applyCoupon') }}</button>
                 </div>
               </div>
 
               <div class="border-t border-gray-100 dark:border-gray-700 pt-4 space-y-3">
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Tạm tính</span>
+                  <span class="text-gray-500 dark:text-gray-400">{{ t('storefront.cart.provisional') }}</span>
                   <span class="text-gray-800 dark:text-gray-200">{{ formatPrice(subtotal) }}</span>
                 </div>
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Giảm giá</span>
+                  <span class="text-gray-500 dark:text-gray-400">{{ t('storefront.cart.discountAmount') }}</span>
                   <span class="text-green-600">-{{ formatPrice(discount) }}</span>
                 </div>
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">Phí vận chuyển</span>
-                  <span class="text-gray-800 dark:text-gray-200">{{ shippingFee === 0 ? 'Miễn phí' : formatPrice(shippingFee) }}</span>
+                  <span class="text-gray-500 dark:text-gray-400">{{ t('storefront.cart.shippingFee') }}</span>
+                  <span class="text-gray-800 dark:text-gray-200">{{ shippingFee === 0 ? t('storefront.cart.free') : formatPrice(shippingFee) }}</span>
                 </div>
               </div>
 
               <div class="border-t border-gray-100 dark:border-gray-700 mt-4 pt-4">
                 <div class="flex items-center justify-between mb-4">
-                  <span class="text-sm text-gray-600 dark:text-gray-400">Tổng tiền</span>
+                  <span class="text-sm text-gray-600 dark:text-gray-400">{{ t('storefront.cart.totalAmount') }}</span>
                   <div class="text-right">
                     <span class="text-xl font-bold text-primary">{{ formatPrice(total) }}</span>
-                    <div class="text-xs text-gray-400">(Đã bao gồm VAT)</div>
+                    <div class="text-xs text-gray-400">{{ t('storefront.cart.vatIncluded') }}</div>
                   </div>
                 </div>
                 <button class="w-full bg-primary hover:bg-primary-dark text-white py-3 rounded-sm font-medium text-sm transition-colors shadow-sm hover:shadow-md">
-                  Mua Hàng ({{ selectedCount }})
+                  {{ t('storefront.cart.checkout') }} ({{ selectedCount }})
                 </button>
               </div>
             </div>
@@ -153,7 +153,7 @@
         <!-- Recommendations -->
         <div class="mt-8">
           <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm p-4">
-            <h2 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Sản phẩm bạn có thể thích</h2>
+            <h2 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">{{ t('storefront.cart.recommended') }}</h2>
             <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
               <div v-for="product in recommendedProducts" :key="product.id"
                 class="shrink-0 w-[160px] border border-gray-100 dark:border-gray-700 rounded-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
@@ -166,7 +166,7 @@
                     <span class="text-sm font-medium text-primary">{{ formatPrice(product.price) }}</span>
                     <span v-if="product.discount" class="text-[10px] text-white bg-primary px-1 rounded">-{{ product.discount }}%</span>
                   </div>
-                  <div class="text-[10px] text-gray-400 mt-0.5">Đã bán {{ product.sold }}</div>
+                  <div class="text-[10px] text-gray-400 mt-0.5">{{ t('storefront.soldCount', { count: product.sold }) }}</div>
                 </div>
               </div>
             </div>
@@ -186,6 +186,9 @@ import { Truck, Trash2, Store, Ticket } from 'lucide-vue-next'
 import { QuantityControl } from '@hivespace/shared'
 import CartHeader from '@/components/layout/CartHeader.vue'
 import StorefrontFooter from '@/components/layout/StorefrontFooter.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Types
 interface CartItem {
@@ -305,7 +308,7 @@ const cartGroups = ref<CartGroup[]>([
   },
 ])
 
-const voucherCode = ref('')
+const couponCode = ref('')
 const selectAll = ref(false)
 
 // Computed

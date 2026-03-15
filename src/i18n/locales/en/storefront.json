@@ -41,6 +41,27 @@
         "shippingPartners": "Shipping Partners",
         "copyright": "© 2026 HiveSpace. All rights reserved."
     },
+    "cart": {
+        "freeShippingBanner": "You got <strong>Free Shipping</strong> for orders over 300,000₫",
+        "selectAll": "Select All ({count} items)",
+        "unitPrice": "Unit Price",
+        "quantity": "Quantity",
+        "subTotal": "SubTotal",
+        "mall": "Mall",
+        "freeship": "Freeship",
+        "freeReturn": "Free Return",
+        "couponTitle": "HiveSpace Coupon",
+        "enterCoupon": "Enter coupon code",
+        "applyCoupon": "Apply",
+        "provisional": "Provisional",
+        "discountAmount": "Discount",
+        "shippingFee": "Shipping Fee",
+        "free": "Free",
+        "totalAmount": "Total",
+        "vatIncluded": "(VAT Included)",
+        "checkout": "Checkout",
+        "recommended": "Products You May Like"
+    },
     "categoriesList": {
         "menClothes": "Men Clothes",
         "mobileGadgets": "Mobile & Gadgets",
