@@ -1,7 +1,9 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-surface text-secondary dark:bg-surface-dark dark:text-gray-100">
+  <div
+    class="min-h-screen flex flex-col bg-surface text-secondary dark:bg-surface-dark dark:text-gray-100"
+  >
     <StorefrontHeader />
-    <main class="flex-grow pt-32 pb-8">
+    <main class="flex-grow">
       <!-- Added pt-32 to account for fixed header -->
       <slot />
     </main>
@@ -10,6 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import StorefrontHeader from './StorefrontHeader.vue'
-import StorefrontFooter from './StorefrontFooter.vue'
+import StorefrontHeader from "./StorefrontHeader.vue";
+import StorefrontFooter from "./StorefrontFooter.vue";
 </script>
