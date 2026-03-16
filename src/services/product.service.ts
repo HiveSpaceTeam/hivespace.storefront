@@ -9,7 +9,7 @@ import { buildApiUrl } from '@/config'
 
 const PRODUCT_ENDPOINTS = {
   SUMMARIES: '/products/summaries',
-  PRODUCTS: '/products',
+  PRODUCTS: '/products/detail',
 } as const
 
 class ProductService {

@@ -10,8 +10,7 @@
                                 <picture>
                                     <!-- <source type="image/webp"
                                         :srcset="`${currentImage}.webp 1x, ${currentImage}.webp 2x`"> -->
-                                    <img :src="currentImage?.fileId" width="368" height="368"
-                                        :alt="product.name" loading="eager">
+                                    <img :src="currentImage?.fileId" width="368" height="368" loading="eager">
                                 </picture>
                             </div>
                         </div>
@@ -33,8 +32,8 @@
                                         :class="{ active: index === activeImageIndex }" @click="setActiveImage(index)">
                                         <picture>
                                             <source type="image/webp" :srcset="`${image}.webp 1x, ${image}.webp 2x`">
-                                            <img width="47" height="47" :alt="`product-img-${index}`" :src="image.fileId"
-                                                :srcset="`${image} 1x, ${image} 2x`">
+                                            <img width="47" height="47" :alt="`product-img-${index}`"
+                                                :src="image.fileId" :srcset="`${image} 1x, ${image} 2x`">
                                         </picture>
                                     </a>
                                 </div>
@@ -87,7 +86,7 @@
                                     <img srcset="https://salt.tikicdn.com/ts/ta/b1/3f/4e/cc3d0a2dd751a7b06dd97d868d6afa56.png"
                                         width="114" height="20" alt="return_policy">
                                 </picture>
-                                <span class="brand">Thương hiệu: <a href="#">{{ product.brand }}</a></span>
+                                <span class="brand">Thương hiệu: <a href="#">{{ 'fsd' }}</a></span>
                             </div>
                             <h1 class="product-title">{{ productDetail.name }}</h1>
                             <div class="rating">
@@ -97,7 +96,7 @@
 
                         <!-- Price Section -->
                         <div class="price-section">
-                            <div class="price">{{ formatPrice(product.price) }}</div>
+                            <div class="price">{{ formatPrice(getCurrentPrice()) }}</div>
                         </div>
                     </div>
 
@@ -108,17 +107,17 @@
                             <p class="variant-label">{{ productDetail.variants[0]?.name }}</p>
                             <div class="variant-options">
                                 <div v-for="(option, index) in productDetail.variants[0]?.options" :key="index"
-                                    :class="{ active: selectedColor === option.name }" @click="selectColor(option)">
+                                    :class="{ active: selectedOptions.option1 === option.optionId }"
+                                    @click="selectOption1(option)">
                                     <div class="color-option">
                                         <picture>
-                                            <source type="image/webp"
-                                                :srcset="`${option.image}.webp 1x, ${option.image}.webp 2x`">
-                                            <img alt="thumbnail" :src="option.image" width="42" height="42"
-                                                :srcset="`${option.image} 1x, ${option.image} 2x`">
+                                            <!-- <source type="image/webp"
+                                                :srcset="`${option.image}.webp 1x, ${option.image}.webp 2x`"> -->
+                                            <img alt="thumbnail" :src="getOptionImage(option)" width="42" height="42">
                                         </picture>
                                         <span>{{ option.value }}</span>
                                     </div>
-                                    <img v-if="selectedColor === option.value" class="selected-indicator"
+                                    <img v-if="selectedOptions.option1 === option.optionId" class="selected-indicator"
                                         src="https://salt.tikicdn.com/ts/upload/6d/62/b9/ac9f3bebb724a308d710c0a605fe057d.png"
                                         alt="Selected" width="13" height="13">
                                 </div>
@@ -129,10 +128,11 @@
                         <div class="variant-group">
                             <p class="variant-label">{{ productDetail.variants[1]?.name }}</p>
                             <div class="variant-options">
-                                <div v-for="(size, index) in product.sizes" :key="index"
-                                    :class="{ active: selectedSize === size.name }" @click="selectSize(size)">
-                                    <span>{{ size.name }}</span>
-                                    <img v-if="selectedSize === size.name" class="selected-indicator"
+                                <div v-for="(option, index) in productDetail.variants[1]?.options" :key="index"
+                                    :class="{ active: selectedOptions.option2 === option.optionId }"
+                                    @click="selectSize(option)">
+                                    <span>{{ option.value }}</span>
+                                    <img v-if="selectedOptions.option2 === option.optionId" class="selected-indicator"
                                         src="https://salt.tikicdn.com/ts/upload/6d/62/b9/ac9f3bebb724a308d710c0a605fe057d.png"
                                         alt="Selected" width="13" height="13">
                                 </div>
@@ -239,15 +239,13 @@
                                         <a href="#" @click.prevent>
                                             <div class="product-image">
                                                 <picture>
-                                                    <source type="image/webp"
-                                                        :srcset="`${similarProduct.image}.webp 1x, ${similarProduct.image}.webp 2x`">
-                                                    <img :srcset="`${similarProduct.image} 1x, ${similarProduct.image} 2x`"
-                                                        :alt="similarProduct.name">
+
+                                                    <img :src="similarProduct.imageURL" :alt="similarProduct.name">
                                                 </picture>
                                             </div>
                                             <div class="product-info">
                                                 <h4>{{ similarProduct.name }}</h4>
-                                                <div class="price">{{ formatPrice(similarProduct.price) }}</div>
+                                                <div class="price">{{ (similarProduct.price) }}</div>
                                             </div>
                                         </a>
                                     </div>
@@ -306,28 +304,23 @@
                 </div>
 
                 <!-- Product Details Info -->
-                <div class="section">
+               <div class="section">
                     <h3>Thông tin chi tiết</h3>
                     <div class="product-specs">
-                        <div class="spec-row">
-                            <span class="spec-label">Thương hiệu</span>
-                            <span class="spec-value">{{ product.brand }}</span>
+                        <div class="spec-row" v-for="(item, index) in productDetail.attributes" :key="index">
+                            <span class="spec-label">{{ item.attributeName }}</span>
+                            <span class="spec-value">{{ item.nameValue.join(',') }}</span>
                         </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Xuất xứ (Made in)</span>
-                            <span class="spec-value">{{ product.origin }}</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Sản phẩm có được bảo hành không?</span>
-                            <span class="spec-value">{{ product.warranty ? 'Có' : 'Không' }}</span>
-                        </div>
+                       
                     </div>
-                </div>
+                </div> 
                 <!-- Product Description -->
                 <div class="section">
                     <h3>Mô tả sản phẩm</h3>
-                    <div class="description " :class="{ 'collapsed': !descriptionExpanded }" v-html="productDetail.description"></div>
-                    <button class="toggle-btn" @click="toggleDescription">{{ descriptionExpanded ? 'Rút gọn' : 'Xem thêm' }}</button>
+                    <div class="description " :class="{ 'collapsed': !descriptionExpanded }"
+                        v-html="productDetail.description"></div>
+                    <button class="toggle-btn" @click="toggleDescription">
+                        {{ descriptionExpanded ? 'Rút gọn' : "Xem thêm" }}</button>
                 </div>
             </div>
 
@@ -366,7 +359,7 @@
                             <source type="image/webp" :srcset="`${currentImage}.webp`">
                             <img class="variant-image" :src="currentImage?.fileId" width="40" height="40" alt="variant">
                         </picture>
-                        <span>{{ selectedColor }}, {{ selectedSize }}</span>
+                        <span>{{ getSelectedOption1Value() }}, {{ getSelectedOption2Value() }}</span>
                     </div>
 
                     <!-- Quantity and Price -->
@@ -381,7 +374,7 @@
                         </div>
                         <div class="total-price">
                             <span>Tạm tính</span>
-                            <span>{{ formatPrice(product.price * quantity) }}</span>
+                            <span>{{ formatPrice(getCurrentPrice() * quantity) }}</span>
                         </div>
                     </div>
 
@@ -407,40 +400,17 @@
 import { ref, computed, onMounted } from 'vue'
 import { productService } from '@/services/product.service'
 import { useRoute } from 'vue-router'
-import type { Product } from '@/types'
+import type { PagedResponse, Product, ProductSummary } from '@/types'
 
 // Reactive data
 const activeImageIndex = ref(0)
-const selectedColor = ref('Hồng')
-const selectedSize = ref('XL(60KG-70KG)')
+const selectedOptions = ref<Record<string, any>>({
+    option1: null,
+    option2: null
+})
 const quantity = ref(1)
 const descriptionExpanded = ref(false)
 const route = useRoute()
-
-// Mock product data
-const product = ref({
-    id: 277740715,
-    name: 'Áo khoác hoodie TONBORSA nỉ dệt xuất khẩu from cồ hàng đẹp xitin-A2124',
-    brand: 'OEM',
-    origin: 'Việt Nam',
-    warranty: false,
-    price: 249000,
-  
-    colors: [
-        { name: 'Hồng', image: 'https://salt.tikicdn.com/cache/100x100/ts/product/5d/61/63/6eb91a92a3cf45b5cf2ab35b1fa73cff.jpg' },
-        { name: 'Kem', image: 'https://salt.tikicdn.com/cache/100x100/ts/product/5d/61/63/6eb91a92a3cf45b5cf2ab35b1fa73cff.jpg' },
-        { name: 'Nâu', image: 'https://salt.tikicdn.com/cache/100x100/ts/product/5d/61/63/6eb91a92a3cf45b5cf2ab35b1fa73cff.jpg' },
-        { name: 'Xanh', image: 'https://salt.tikicdn.com/cache/100x100/ts/product/5d/61/63/6eb91a92a3cf45b5cf2ab35b1fa73cff.jpg' },
-        { name: 'Đen', image: 'https://salt.tikicdn.com/cache/100x100/ts/product/5d/61/63/6eb91a92a3cf45b5cf2ab35b1fa73cff.jpg' }
-    ],
-    sizes: [
-        { name: 'L (50KG-60KG)' },
-        { name: 'M (40KG-50KG)' },
-        { name: 'S (30KG-40KG)' },
-        { name: 'XL(60KG-70KG)' }
-    ],
-    
-})
 
 const store = ref({
     name: 'TD2000 store',
@@ -449,36 +419,9 @@ const store = ref({
     reviewCount: 165
 })
 
-const similarProducts = ref([
-    {
-        id: 277740635,
-        name: 'Áo khoác nữ chống nắng Hoodie Oversize Nỉ Dệt Logo Gấu Thêu 1849 đẹp cá tính hàng rất đẹp-A2120 - Nâu Gấu 1849',
-        image: 'https://salt.tikicdn.com/cache/280x280/ts/product/fc/5d/9a/35fc2f92e69d499686056b82e6bcfff3.jpg',
-        price: 199200
-    },
-    {
-        id: 277965460,
-        name: '[LZ] Áo khoát nỉ hoodie ENCARE bao đẹp cực chuẩn-A2180 - Áo thun ngẫu nhiên',
-        image: 'https://salt.tikicdn.com/cache/280x280/ts/product/6f/2f/1d/e77058c998c6be316cf697d4191585a1.jpg',
-        price: 135200
-    },
-    {
-        id: 277741648,
-        name: 'Áo khoác nữ nỉ dệt xuất khẩu cổ cao 4 túi phong cách phong cách-A2091 - Đen',
-        image: 'https://salt.tikicdn.com/cache/280x280/ts/product/08/88/d4/71e7e41b742ec0e30aca3b2a47af9101.jpg',
-        price: 199200
-    },
-    {
-        id: 277728606,
-        name: 'Áo khoác nỉ dây kéo ICONSLAB bao đẹp ngộ nghĩnh-A2099 - Xám',
-        image: 'https://salt.tikicdn.com/cache/280x280/ts/product/bc/03/ca/1adfcba9f065853377e690d2709860d7.jpg',
-        price: 191200
-    }
-])
-
+const similarProducts = ref<ProductSummary[]>([])
 // Computed properties
 const currentImage = computed(() => {
-    debugger
     return displayedProductImages.value[activeImageIndex.value]
 })
 
@@ -487,14 +430,32 @@ const setActiveImage = (index: number) => {
     activeImageIndex.value = index
 }
 
-const selectColor = (color: any) => {
-    selectedColor.value = color.name
+const selectOption1 = (color: any) => {
+    selectedOptions.value.option1 = color.optionId
 }
 
 const selectSize = (size: any) => {
-    selectedSize.value = size.name
+    selectedOptions.value.option2 = size.optionId
 }
-
+const getSelectedOption1Value = () => {
+    const variant = productDetail.value.variants[0]
+    const option = variant?.options.find((opt: any) => opt.optionId === selectedOptions.value.option1)
+    return option ? option.value : ''
+}
+const getSelectedOption2Value = () => {
+    const variant = productDetail.value.variants[1]
+    const option = variant?.options.find((opt: any) => opt.optionId === selectedOptions.value.option2)
+    return option ? option.value : ''
+}
+const getCurrentPrice = () => {
+    const sku = productDetail.value.skus.find(sku => sku.skuVariants.some(variant => variant.optionId === selectedOptions.value.option1)
+        && sku.skuVariants.some(variant => variant.optionId === selectedOptions.value.option2)
+    )
+    if(sku){
+        return sku.price.amount
+    }
+    return productDetail.value.skus[0]?.price.amount 
+}
 const increaseQuantity = () => {
     quantity.value++
 }
@@ -506,13 +467,7 @@ const decreaseQuantity = () => {
 }
 
 const addToCart = () => {
-    // Add to cart logic here
-    console.log('Added to cart:', {
-        product: product.value,
-        selectedColor: selectedColor.value,
-        selectedSize: selectedSize.value,
-        quantity: quantity.value
-    })
+
 }
 
 const toggleDescription = () => {
@@ -533,17 +488,41 @@ const productDetail = ref<Product>({
 })
 
 const displayedProductImages = computed(() => {
-    if (productDetail.value.skus.length > 0) {
-        return productDetail.value.skus[0]?.images || []
-    }
-    return []
-})
+    const skuImages = productDetail.value.skus.find(sku => sku.skuVariants.some(variant => variant.optionId === selectedOptions.value.option1)
+        && sku.skuVariants.some(variant => variant.optionId === selectedOptions.value.option2)
 
+    )?.images;
+
+    if (skuImages && skuImages.length > 0) {
+        return skuImages;
+    }
+
+    return productDetail.value.skus[0]?.images || []
+})
+const getOptionImage = (option: any) => {
+    const sku = productDetail.value.skus.find(x => x.skuVariants.some(s => s.variantId === option.productVariantId));
+    if (!sku) {
+        return ''
+    }
+
+    const image = sku.images?.[0];
+    if (!image) {
+        return ''
+    }
+    return image.fileId;
+}
 // Lifecycle
 onMounted(async () => {
     const id = route.query.pid as string
     productDetail.value = await productService.getProductById(id)
-    debugger
+    selectedOptions.value.option1 = productDetail.value.variants[0]?.options[0]?.optionId || null
+    selectedOptions.value.option2 = productDetail.value.variants[1]?.options[0]?.optionId || null
+    const result: PagedResponse<ProductSummary> = await productService.getProducts({
+        pageIndex: 1,
+        pageSize: 8,
+    })
+
+    similarProducts.value = result.data
 })
 </script>
 
@@ -685,6 +664,7 @@ onMounted(async () => {
     padding: 12px;
     background: #f8f9fa;
     border-radius: 8px;
+    flex-direction: column;
 }
 
 .product-info .text {
@@ -973,7 +953,7 @@ onMounted(async () => {
     grid-template-rows: repeat(2, 1fr);
     grid-auto-flow: row;
     gap: 8px;
-    width: 392px;
+    width: 460px;
 }
 
 .product-card {
@@ -1025,6 +1005,7 @@ onMounted(async () => {
 .product-info .price {
     font-weight: 600;
     color: #27272a;
+    font-size: 12px;
 }
 
 .pagination {
@@ -1228,6 +1209,7 @@ onMounted(async () => {
     line-height: 1.7;
     max-width: 460px;
 }
+
 .description.collapsed {
     max-height: 400px;
 }
