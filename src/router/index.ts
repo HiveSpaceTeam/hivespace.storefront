@@ -15,6 +15,12 @@ const routes = [
         meta: { title: 'Giỏ Hàng - HiveSpace', layout: 'none' },
     },
     {
+        path: '/product',
+        name: 'Product',
+        component: () => import('@/views/Product/ProductDetail.vue'),
+        meta: { title: 'HiveSpace - Mua sắm trực tuyến' },
+    },
+    {
         path: '/server-error',
         name: 'ServerError',
         component: ServerError,
