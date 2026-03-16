@@ -9,6 +9,12 @@ const routes = [
         meta: { title: 'HiveSpace - Mua sắm trực tuyến' },
     },
     {
+        path: '/cart',
+        name: 'Cart',
+        component: () => import('@/views/Cart/CartPage.vue'),
+        meta: { title: 'Giỏ Hàng - HiveSpace', layout: 'none' },
+    },
+    {
         path: '/product',
         name: 'Product',
         component: () => import('@/views/Product/ProductDetail.vue'),
