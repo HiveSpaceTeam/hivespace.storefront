@@ -36,7 +36,12 @@
             </div>
 
             <!-- Cart items grouped by seller -->
-            <div v-for="(group, groupIndex) in cartGroups" :key="groupIndex" class="bg-white dark:bg-card-dark rounded-sm shadow-sm mb-3 overflow-hidden">
+            <div
+              v-for="(group, groupIndex) in cartGroups"
+              :key="groupIndex"
+              class="bg-white dark:bg-card-dark rounded-sm shadow-sm mb-3 transition-all relative"
+              :class="{ 'z-40': shopCouponOpenMap[groupIndex], 'z-10': !shopCouponOpenMap[groupIndex] }"
+            >
               <!-- Seller header -->
               <div class="flex items-center gap-2 p-4 border-b border-gray-100 dark:border-gray-700">
                 <input type="checkbox" v-model="group.selected" @change="toggleGroupSelect(groupIndex)" class="w-4 h-4 accent-primary rounded" />
@@ -99,10 +104,38 @@
                   <QuantityControl v-model="item.quantity" :min="1" size="sm" />
                 </div>
               </div>
+
+              <!-- Shop Coupon Section -->
+              <div class="relative border-t border-gray-100 dark:border-gray-800">
+                <!-- Shop Coupon Link -->
+                <div class="flex items-center gap-2 px-4 py-3">
+                  <Ticket class="w-4 h-4 text-primary" />
+                  <button
+                    @click="toggleShopCouponDropdown(groupIndex)"
+                    class="flex items-center gap-1 text-sm text-primary hover:text-primary-dark transition-colors"
+                  >
+                    <span>{{ t('storefront.cart.addShopCoupon') }}</span>
+                    <ChevronRight class="w-4 h-4 transition-transform" :class="{ 'rotate-90': shopCouponOpenMap[groupIndex] }" />
+                  </button>
+                  <span
+                    v-if="appliedShopCoupons[groupIndex]"
+                    class="ml-auto text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded"
+                  >
+                    {{ t('storefront.cart.couponApplied', { code: appliedShopCoupons[groupIndex] }) }}
+                  </span>
+                </div>
+
+                <!-- Inline Coupon Dropdown (Popover) -->
+                <ShopCouponModal
+                  :model-value="!!shopCouponOpenMap[groupIndex]"
+                  @update:model-value="(val: boolean) => shopCouponOpenMap[groupIndex] = val"
+                  :shop-name="group.sellerName"
+                  :coupons="getShopCoupons(group.sellerName)"
+                  @apply-coupon="(code: string) => handleApplyShopCoupon(groupIndex, code)"
+                />
+              </div>
             </div>
           </div>
-
-          <!-- RIGHT: Order Summary -->
           <div class="lg:w-[320px] shrink-0">
             <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm p-4 sticky top-20">
               <!-- Voucher section -->
@@ -175,17 +208,18 @@
       </div>
     </main>
 
-    <!-- Footer -->
     <StorefrontFooter />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Truck, Trash2, Store, Ticket } from 'lucide-vue-next'
+import { Truck, Trash2, Store, Ticket, ChevronRight } from 'lucide-vue-next'
 import { QuantityControl } from '@hivespace/shared'
 import CartHeader from '@/components/layout/CartHeader.vue'
 import StorefrontFooter from '@/components/layout/StorefrontFooter.vue'
+import ShopCouponModal from '@/components/common/ShopCouponModal.vue'
+import type { ShopCoupon } from '@/components/common/ShopCouponModal.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -310,6 +344,40 @@ const cartGroups = ref<CartGroup[]>([
 
 const couponCode = ref('')
 const selectAll = ref(false)
+
+// Shop coupon dropdown state (per-group)
+const shopCouponOpenMap = ref<Record<number, boolean>>({})
+const appliedShopCoupons = ref<Record<number, string>>({})
+
+// Mock shop coupons per seller (including expired ones)
+const shopCouponsMap: Record<string, ShopCoupon[]> = {
+  'HiveSpace Official Store': [
+    { code: 'HIVE10', discountPercent: 10, minOrder: 200000, expiresAt: '31/03/2026' },
+    { code: 'HIVE20', discountPercent: 20, minOrder: 500000, expiresAt: '15/04/2026' },
+    { code: 'FREESHIP', discountPercent: 5, minOrder: 100000, expiresAt: '01/01/2026', isExpired: true },
+  ],
+  'TechWorld Việt Nam': [
+    { code: 'TECH15', discountPercent: 15, minOrder: 300000, expiresAt: '20/03/2026' },
+    { code: 'TECH30', discountPercent: 30, minOrder: 1000000, expiresAt: '01/02/2026', isExpired: true },
+  ],
+  'Mỹ Phẩm Authentic': [],
+  'Thời Trang Plus': [
+    { code: 'FASHION25', discountPercent: 25, minOrder: 400000, expiresAt: '01/04/2026' },
+    { code: 'STYLE10', discountPercent: 10, minOrder: 150000 },
+  ],
+}
+
+const getShopCoupons = (sellerName: string): ShopCoupon[] => {
+  return shopCouponsMap[sellerName] || []
+}
+
+const toggleShopCouponDropdown = (groupIndex: number) => {
+  shopCouponOpenMap.value[groupIndex] = !shopCouponOpenMap.value[groupIndex]
+}
+
+const handleApplyShopCoupon = (groupIndex: number, code: string) => {
+  appliedShopCoupons.value[groupIndex] = code
+}
 
 // Computed
 const totalItems = computed(() =>

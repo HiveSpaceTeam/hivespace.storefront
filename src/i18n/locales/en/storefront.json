@@ -60,7 +60,20 @@
         "totalAmount": "Total",
         "vatIncluded": "(VAT Included)",
         "checkout": "Checkout",
-        "recommended": "Products You May Like"
+        "recommended": "Products You May Like",
+        "addShopCoupon": "Add shop coupon",
+        "shopCouponTitle": "{name} Promotions",
+        "enterPromoCode": "Enter promo code",
+        "apply": "Apply",
+        "noCoupons": "No coupons available",
+        "noCouponsHint": "If you have a shop coupon, enter it above",
+        "couponApplied": "Applied: {code}",
+        "discountLabel": "{percent}% off",
+        "minOrder": "Min. order {amount}",
+        "expires": "Exp: {date}",
+        "limitedQuantity": "Limited quantity",
+        "expired": "Expired",
+        "notEligible": "NOT\nELIGIBLE"
     },
     "categoriesList": {
         "menClothes": "Men Clothes",
