@@ -60,7 +60,20 @@
         "totalAmount": "Tổng tiền",
         "vatIncluded": "(Đã bao gồm VAT)",
         "checkout": "Mua Hàng",
-        "recommended": "Sản phẩm bạn có thể thích"
+        "recommended": "Sản phẩm bạn có thể thích",
+        "addShopCoupon": "Thêm mã khuyến mãi của Shop",
+        "shopCouponTitle": "{name} Khuyến Mãi",
+        "enterPromoCode": "Nhập Mã Khuyến Mãi",
+        "apply": "Áp Dụng",
+        "noCoupons": "Chưa có mã khuyến mãi nào",
+        "noCouponsHint": "Nếu bạn có mã khuyến mãi của shop, hãy nhập vào thanh bên trên",
+        "couponApplied": "Đã áp dụng: {code}",
+        "discountLabel": "Giảm {percent}%",
+        "minOrder": "Đơn tối thiểu {amount}",
+        "expires": "HSD: {date}",
+        "limitedQuantity": "Số lượng có hạn",
+        "expired": "Hết hạn",
+        "notEligible": "CHƯ A THỎA\nĐIỀU KIỆN"
     },
     "categoriesList": {
         "menClothes": "Thời trang nam",
