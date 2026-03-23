@@ -16,7 +16,9 @@
 
         <!-- Loading state -->
         <div v-if="isLoading" class="flex justify-center py-16">
-          <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <div
+            class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"
+          ></div>
         </div>
 
         <div v-else class="flex flex-col lg:flex-row gap-4">
@@ -168,7 +170,9 @@
                   <div class="w-32 flex items-center justify-center">
                     <QuantityControl
                       :model-value="item.quantity"
-                      @update:model-value="(val: number) => handleQuantityChange(item, val)"
+                      @update:model-value="
+                        (val: number) => handleQuantityChange(item, val)
+                      "
                       :min="1"
                       size="md"
                     />
@@ -199,7 +203,9 @@
                   }}</span>
                   <QuantityControl
                     :model-value="item.quantity"
-                    @update:model-value="(val: number) => handleQuantityChange(item, val)"
+                    @update:model-value="
+                      (val: number) => handleQuantityChange(item, val)
+                    "
                     :min="1"
                     size="sm"
                   />
@@ -469,14 +475,17 @@ const mapApiItemsToGroups = (items: CartItemResponse[]): CartGroup[] => {
       image: item.skuImageUrl || item.productThumbnailUrl,
       price: item.price,
       quantity: item.quantity,
-      variant: item.skuAttributes ? parseSkuAttributes(item.skuAttributes) : undefined,
+      variant: item.skuAttributes
+        ? parseSkuAttributes(item.skuAttributes)
+        : undefined,
       selected: item.isSelected,
     });
   }
 
   // Sync group.selected based on items
   for (const group of groupMap.values()) {
-    group.selected = group.items.length > 0 && group.items.every((i) => i.selected);
+    group.selected =
+      group.items.length > 0 && group.items.every((i) => i.selected);
   }
 
   return Array.from(groupMap.values());
@@ -588,7 +597,8 @@ const formatPrice = (price: number) => {
 };
 
 const updateSelectAll = () => {
-  selectAll.value = cartGroups.value.length > 0 && cartGroups.value.every((g) => g.selected);
+  selectAll.value =
+    cartGroups.value.length > 0 && cartGroups.value.every((g) => g.selected);
 };
 
 const updateGroupSelect = (groupIndex: number) => {
