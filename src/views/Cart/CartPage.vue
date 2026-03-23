@@ -14,7 +14,14 @@
           <span v-html="t('storefront.cart.freeShippingBanner')"></span>
         </div>
 
-        <div class="flex flex-col lg:flex-row gap-4">
+        <!-- Loading state -->
+        <div v-if="isLoading" class="flex justify-center py-16">
+          <div
+            class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"
+          ></div>
+        </div>
+
+        <div v-else class="flex flex-col lg:flex-row gap-4">
           <!-- LEFT: Cart Items -->
           <div class="flex-grow">
             <!-- Select all header -->
@@ -28,7 +35,7 @@
                   <input
                     type="checkbox"
                     v-model="selectAll"
-                    @change="toggleSelectAll"
+                    @change="handleSelectAllChange"
                     class="w-4 h-4 accent-primary rounded"
                   />
                   <span>{{
@@ -76,7 +83,7 @@
                 <input
                   type="checkbox"
                   v-model="group.selected"
-                  @change="toggleGroupSelect(groupIndex)"
+                  @change="handleGroupSelectChange(groupIndex)"
                   class="w-4 h-4 accent-primary rounded"
                 />
                 <Store class="w-4 h-4 text-primary" />
@@ -100,7 +107,7 @@
                 <input
                   type="checkbox"
                   v-model="item.selected"
-                  @change="updateGroupSelect(groupIndex)"
+                  @change="handleItemSelectChange(groupIndex, item)"
                   class="w-4 h-4 accent-primary rounded mt-4 shrink-0"
                 />
 
@@ -162,7 +169,10 @@
                   <!-- Quantity control -->
                   <div class="w-32 flex items-center justify-center">
                     <QuantityControl
-                      v-model="item.quantity"
+                      :model-value="item.quantity"
+                      @update:model-value="
+                        (val: number) => handleQuantityChange(item, val)
+                      "
                       :min="1"
                       size="md"
                     />
@@ -191,7 +201,14 @@
                   <span class="text-sm font-medium text-primary">{{
                     formatPrice(item.price)
                   }}</span>
-                  <QuantityControl v-model="item.quantity" :min="1" size="sm" />
+                  <QuantityControl
+                    :model-value="item.quantity"
+                    @update:model-value="
+                      (val: number) => handleQuantityChange(item, val)
+                    "
+                    :min="1"
+                    size="sm"
+                  />
                 </div>
               </div>
 
@@ -378,7 +395,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { Truck, Trash2, Store, Ticket, ChevronRight } from "lucide-vue-next";
 import { QuantityControl } from "@hivespace/shared";
 import CartHeader from "@/components/layout/CartHeader.vue";
@@ -386,12 +403,16 @@ import StorefrontFooter from "@/components/layout/StorefrontFooter.vue";
 import ShopCouponModal from "@/components/common/ShopCouponModal.vue";
 import type { ShopCoupon } from "@/components/common/ShopCouponModal.vue";
 import { useI18n } from "vue-i18n";
+import { cartService } from "@/services/cart.service";
+import type { CartItemResponse } from "@/types";
 
 const { t } = useI18n();
 
 // Types
 interface CartItem {
   id: string;
+  cartItemId: string;
+  skuId: number;
   name: string;
   image: string;
   price: number;
@@ -410,109 +431,81 @@ interface CartGroup {
   items: CartItem[];
 }
 
-// Mock data
-const cartGroups = ref<CartGroup[]>([
-  {
-    sellerName: "HiveSpace Official Store",
-    isMall: true,
-    selected: true,
-    items: [
-      {
-        id: "1",
-        name: "[CHÍNH HÃNG] Tai nghe Bluetooth không dây TWS Pro 5.0 - Âm thanh Hi-Fi, chống ồn chủ động ANC",
-        image: "https://picsum.photos/200?random=1",
-        price: 589000,
-        originalPrice: 1200000,
-        quantity: 1,
-        variant: "Màu Đen",
-        selected: true,
-        isFreeShipping: true,
-        isReturn: true,
-      },
-      {
-        id: "2",
-        name: "Ốp lưng iPhone 15 Pro Max silicon cao cấp chống sốc, chống bẩn - Bảo vệ camera",
-        image: "https://picsum.photos/200?random=2",
-        price: 159000,
-        originalPrice: 350000,
-        quantity: 2,
-        variant: "Trong suốt",
-        selected: true,
-        isFreeShipping: true,
-      },
-    ],
-  },
-  {
-    sellerName: "TechWorld Việt Nam",
-    isMall: false,
-    selected: true,
-    items: [
-      {
-        id: "3",
-        name: "Cáp sạc nhanh USB-C to Lightning 20W cho iPhone - Dây dù chống đứt, dài 1.5m",
-        image: "https://picsum.photos/200?random=3",
-        price: 89000,
-        quantity: 1,
-        selected: true,
-        isFreeShipping: true,
-        isReturn: true,
-      },
-    ],
-  },
-  {
-    sellerName: "Mỹ Phẩm Authentic",
-    isMall: true,
-    selected: false,
-    items: [
-      {
-        id: "4",
-        name: "Kem chống nắng La Roche-Posay Anthelios UVMune 400 SPF50+ 50ml - Bảo vệ da tối ưu",
-        image: "https://picsum.photos/200?random=4",
-        price: 425000,
-        originalPrice: 530000,
-        quantity: 1,
-        variant: "Fluide 50ml",
-        selected: false,
-        isFreeShipping: true,
-      },
-      {
-        id: "5",
-        name: "Nước tẩy trang Bioderma Sensibio H2O 500ml - Dành cho da nhạy cảm",
-        image: "https://picsum.photos/200?random=5",
-        price: 369000,
-        originalPrice: 485000,
-        quantity: 1,
-        selected: false,
-        isReturn: true,
-      },
-    ],
-  },
-  {
-    sellerName: "Thời Trang Plus",
-    isMall: false,
-    selected: true,
-    items: [
-      {
-        id: "6",
-        name: "Áo thun nam cotton 100% cổ tròn basic - Form Regular thoáng mát, co giãn 4 chiều",
-        image: "https://picsum.photos/200?random=6",
-        price: 129000,
-        originalPrice: 250000,
-        quantity: 3,
-        variant: "Trắng / XL",
-        selected: true,
-        isFreeShipping: true,
-      },
-    ],
-  },
-]);
-
+// State
+const isLoading = ref(false);
+const cartGroups = ref<CartGroup[]>([]);
 const couponCode = ref("");
 const selectAll = ref(false);
 
 // Shop coupon dropdown state (per-group)
 const shopCouponOpenMap = ref<Record<number, boolean>>({});
 const appliedShopCoupons = ref<Record<number, string>>({});
+
+// Helpers
+const parseSkuAttributes = (raw: string): string => {
+  try {
+    const attrs = JSON.parse(raw) as Record<string, string>;
+    return Object.entries(attrs)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(", ");
+  } catch {
+    return raw;
+  }
+};
+
+const mapApiItemsToGroups = (items: CartItemResponse[]): CartGroup[] => {
+  const groupMap = new Map<string, CartGroup>();
+
+  for (const item of items) {
+    if (!groupMap.has(item.storeName)) {
+      groupMap.set(item.storeName, {
+        sellerName: item.storeName,
+        isMall: false,
+        selected: false,
+        items: [],
+      });
+    }
+
+    const group = groupMap.get(item.storeName)!;
+    group.items.push({
+      id: item.cartItemId,
+      cartItemId: item.cartItemId,
+      skuId: item.skuId,
+      name: item.productName,
+      image: item.skuImageUrl || item.productThumbnailUrl,
+      price: item.price,
+      quantity: item.quantity,
+      variant: item.skuAttributes
+        ? parseSkuAttributes(item.skuAttributes)
+        : undefined,
+      selected: item.isSelected,
+    });
+  }
+
+  // Sync group.selected based on items
+  for (const group of groupMap.values()) {
+    group.selected =
+      group.items.length > 0 && group.items.every((i) => i.selected);
+  }
+
+  return Array.from(groupMap.values());
+};
+
+// Load cart from API
+const loadCart = async () => {
+  isLoading.value = true;
+  try {
+    const response = await cartService.getCartItems();
+    cartGroups.value = mapApiItemsToGroups(response.items);
+    updateSelectAll();
+  } catch (err) {
+    console.error("Failed to load cart", err);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(loadCart);
 
 // Mock shop coupons per seller (including expired ones)
 const shopCouponsMap: Record<string, ShopCoupon[]> = {
@@ -552,16 +545,6 @@ const shopCouponsMap: Record<string, ShopCoupon[]> = {
       isExpired: true,
     },
   ],
-  "Mỹ Phẩm Authentic": [],
-  "Thời Trang Plus": [
-    {
-      code: "FASHION25",
-      discountPercent: 25,
-      minOrder: 400000,
-      expiresAt: "01/04/2026",
-    },
-    { code: "STYLE10", discountPercent: 10, minOrder: 150000 },
-  ],
 };
 
 const getShopCoupons = (sellerName: string): ShopCoupon[] => {
@@ -599,7 +582,7 @@ const subtotal = computed(() =>
   ),
 );
 
-const discount = computed(() => Math.floor(subtotal.value * 0.05)); // Mock 5% discount
+const discount = computed(() => Math.floor(subtotal.value * 0.05));
 const shippingFee = computed(() => (subtotal.value >= 300000 ? 0 : 30000));
 const total = computed(
   () => subtotal.value - discount.value + shippingFee.value,
@@ -613,18 +596,9 @@ const formatPrice = (price: number) => {
   }).format(price);
 };
 
-const toggleSelectAll = () => {
-  cartGroups.value.forEach((g) => {
-    g.selected = selectAll.value;
-    g.items.forEach((i) => (i.selected = selectAll.value));
-  });
-};
-
-const toggleGroupSelect = (groupIndex: number) => {
-  const group = cartGroups.value[groupIndex];
-  if (!group) return;
-  group.items?.forEach((i) => (i.selected = group.selected));
-  updateSelectAll();
+const updateSelectAll = () => {
+  selectAll.value =
+    cartGroups.value.length > 0 && cartGroups.value.every((g) => g.selected);
 };
 
 const updateGroupSelect = (groupIndex: number) => {
@@ -634,32 +608,123 @@ const updateGroupSelect = (groupIndex: number) => {
   updateSelectAll();
 };
 
-const updateSelectAll = () => {
-  selectAll.value = cartGroups.value.every((g) => g.selected);
+// API: update a single item's quantity or selection (not a selectAll action → null)
+const syncItemUpdate = async (item: CartItem) => {
+  try {
+    await cartService.updateCartItems({
+      selectAll: null,
+      items: [
+        {
+          cartItemId: item.cartItemId,
+          skuId: item.skuId,
+          quantity: item.quantity,
+          isSelected: item.selected,
+        },
+      ],
+    });
+  } catch (err) {
+    console.error("Failed to update cart item", err);
+  }
 };
 
-// QuantityControl handles increment/decrement/input via v-model
+// API: update multiple items at once (not a selectAll action → null)
+const syncItemsUpdate = async (items: CartItem[]) => {
+  if (items.length === 0) return;
+  try {
+    await cartService.updateCartItems({
+      selectAll: null,
+      items: items.map((i) => ({
+        cartItemId: i.cartItemId,
+        skuId: i.skuId,
+        quantity: i.quantity,
+        isSelected: i.selected,
+      })),
+    });
+  } catch (err) {
+    console.error("Failed to update cart items", err);
+  }
+};
 
-const removeItem = (gIdx: number, iIdx: number) => {
+const handleQuantityChange = (item: CartItem, val: number) => {
+  item.quantity = val;
+  syncItemUpdate(item);
+};
+
+const handleItemSelectChange = (groupIndex: number, item: CartItem) => {
+  updateGroupSelect(groupIndex);
+  syncItemUpdate(item);
+};
+
+const handleGroupSelectChange = (groupIndex: number) => {
+  const group = cartGroups.value[groupIndex];
+  if (!group) return;
+  group.items.forEach((i) => (i.selected = group.selected));
+  updateSelectAll();
+  syncItemsUpdate(group.items);
+};
+
+const handleSelectAllChange = async () => {
+  cartGroups.value.forEach((g) => {
+    g.selected = selectAll.value;
+    g.items.forEach((i) => (i.selected = selectAll.value));
+  });
+  const allItems = cartGroups.value.flatMap((g) => g.items);
+  try {
+    await cartService.updateCartItems({
+      selectAll: selectAll.value,
+      items: allItems.map((i) => ({
+        cartItemId: i.cartItemId,
+        skuId: i.skuId,
+        quantity: i.quantity,
+        isSelected: i.selected,
+      })),
+    });
+  } catch (err) {
+    console.error("Failed to update cart items", err);
+  }
+};
+
+const removeItem = async (gIdx: number, iIdx: number) => {
   const group = cartGroups.value[gIdx];
   if (!group || !group.items) return;
 
-  group.items.splice(iIdx, 1);
-  if (group.items.length === 0) {
-    cartGroups.value.splice(gIdx, 1);
+  const item = group.items[iIdx];
+  if (!item) return;
+
+  try {
+    await cartService.removeCartItem(item.cartItemId);
+    group.items.splice(iIdx, 1);
+    if (group.items.length === 0) {
+      cartGroups.value.splice(gIdx, 1);
+    }
+    updateSelectAll();
+  } catch (err) {
+    console.error("Failed to remove cart item", err);
   }
-  updateSelectAll();
 };
 
-const removeSelected = () => {
-  cartGroups.value.forEach((g) => {
-    g.items = g.items.filter((i) => !i.selected);
-  });
-  cartGroups.value = cartGroups.value.filter((g) => g.items.length > 0);
-  updateSelectAll();
+const removeSelected = async () => {
+  const selectedItems = cartGroups.value
+    .flatMap((g) => g.items)
+    .filter((i) => i.selected);
+
+  if (selectedItems.length === 0) return;
+
+  try {
+    await Promise.all(
+      selectedItems.map((i) => cartService.removeCartItem(i.cartItemId)),
+    );
+    cartGroups.value.forEach((g) => {
+      g.items = g.items.filter((i) => !i.selected);
+    });
+    cartGroups.value = cartGroups.value.filter((g) => g.items.length > 0);
+    updateSelectAll();
+  } catch (err) {
+    console.error("Failed to remove selected items", err);
+  }
 };
 
-// Recommended products
+// Recommended products (mock)
 const recommendedProducts = Array.from({ length: 10 }).map((_, i) => ({
   id: `rec-${i}`,
   name: `Sản phẩm gợi ý ${i + 1} - Chất lượng cao, giá tốt nhất thị trường`,
