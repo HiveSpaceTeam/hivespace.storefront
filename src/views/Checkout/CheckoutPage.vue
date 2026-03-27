@@ -10,7 +10,7 @@
 
             <!-- ==================== SHIPPING METHOD ==================== -->
             <h2 class="text-base font-medium text-gray-800 dark:text-gray-200 mb-3">
-              {{ t('storefront.checkout.shippingMethodTitle') }}
+              {{ t('checkout.shippingMethodTitle') }}
             </h2>
 
             <div
@@ -21,8 +21,8 @@
               <!-- Package header -->
               <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-gray-100 dark:border-gray-700">
                 <span class="text-sm font-medium text-yellow-600 dark:text-yellow-400">
-                  {{ t('storefront.checkout.deliveryGroup', { index: pkgIdx + 1 }) }}:
-                  {{ t('storefront.checkout.deliveryDate', { date: pkg.deliveryDate }) }}
+                  {{ t('checkout.deliveryGroup', { index: pkgIdx + 1 }) }}:
+                  {{ t('checkout.deliveryDate', { date: pkg.deliveryDate }) }}
                 </span>
                 <span class="text-xs font-semibold uppercase px-2 py-0.5 rounded-sm"
                   :class="pkg.shippingType === 'economy'
@@ -30,8 +30,8 @@
                     : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'"
                 >
                   {{ pkg.shippingType === 'economy'
-                    ? t('storefront.checkout.economyShipping')
-                    : t('storefront.checkout.fastShipping')
+                    ? t('checkout.economyShipping')
+                    : t('checkout.fastShipping')
                   }}
                 </span>
                 <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
@@ -39,12 +39,12 @@
                   <span class="font-semibold"
                     :class="pkg.shippingFee === 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-700 dark:text-gray-300'"
                   >
-                    {{ pkg.shippingFee === 0 ? t('storefront.checkout.shippingFree') : formatPrice(pkg.shippingFee) }}
+                    {{ pkg.shippingFee === 0 ? t('checkout.shippingFree') : formatPrice(pkg.shippingFee) }}
                   </span>
                 </div>
                 <span v-if="pkg.deliveryPartner" class="ml-auto text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
                   <Truck class="w-3.5 h-3.5" />
-                  {{ t('storefront.checkout.deliveredBy', { partner: pkg.deliveryPartner }) }}
+                  {{ t('checkout.deliveredBy', { partner: pkg.deliveryPartner }) }}
                 </span>
               </div>
 
@@ -63,7 +63,7 @@
                 </div>
                 <div class="text-right shrink-0">
                   <p class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ formatPrice(item.price) }}</p>
-                  <p class="text-xs text-gray-400">{{ t('storefront.checkout.qty', { qty: item.quantity }) }}</p>
+                  <p class="text-xs text-gray-400">{{ t('checkout.qty', { qty: item.quantity }) }}</p>
                 </div>
               </div>
             </div>
@@ -72,13 +72,13 @@
             <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm mb-6 px-4 py-3">
               <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
                 <input type="checkbox" v-model="joinEcoShipping" class="w-4 h-4 accent-primary rounded" />
-                {{ t('storefront.checkout.joinEcoShipping') }}
+                {{ t('checkout.joinEcoShipping') }}
               </label>
             </div>
 
             <!-- ==================== PAYMENT METHOD ==================== -->
             <h2 class="text-base font-medium text-gray-800 dark:text-gray-200 mb-3">
-              {{ t('storefront.checkout.paymentMethodTitle') }}
+              {{ t('checkout.paymentMethodTitle') }}
             </h2>
 
             <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm mb-6">
@@ -112,7 +112,7 @@
               <div class="flex items-center gap-2 mb-3">
                 <Ticket class="w-4 h-4 text-primary" />
                 <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
-                  {{ t('storefront.checkout.vouchersTitle') }}
+                  {{ t('checkout.vouchersTitle') }}
                 </span>
               </div>
               <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -131,14 +131,14 @@
                     <div class="flex items-start justify-between gap-1 mb-1">
                       <span class="text-sm font-bold text-primary leading-tight">{{ voucher.title }}</span>
                       <span class="text-[10px] text-primary border border-primary px-1 py-0.5 rounded-sm whitespace-nowrap shrink-0">
-                        {{ t('storefront.checkout.voucherHiveSpace') }}
+                        {{ t('checkout.voucherHiveSpace') }}
                       </span>
                     </div>
                     <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-tight">
-                      {{ t('storefront.checkout.voucherMinOrder', { amount: formatPriceShort(voucher.minOrder) }) }}
+                      {{ t('checkout.voucherMinOrder', { amount: formatPriceShort(voucher.minOrder) }) }}
                     </p>
                     <div class="flex items-center justify-between mt-1.5">
-                      <span class="text-[10px] text-gray-400">{{ t('storefront.checkout.voucherExpiry', { date: voucher.expiresAt }) }}</span>
+                      <span class="text-[10px] text-gray-400">{{ t('checkout.voucherExpiry', { date: voucher.expiresAt }) }}</span>
                       <input
                         type="radio"
                         name="voucher"
@@ -153,7 +153,7 @@
               </div>
               <p class="text-xs text-gray-400 dark:text-gray-500 mt-3 flex items-center gap-1">
                 <Ticket class="w-3 h-3" />
-                {{ t('storefront.checkout.voucherUsageNote') }}
+                {{ t('checkout.voucherUsageNote') }}
               </p>
             </div>
           </div>
@@ -166,10 +166,10 @@
               <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {{ t('storefront.checkout.deliveryAddress') }}
+                    {{ t('checkout.deliveryAddress') }}
                   </span>
                   <button class="text-sm text-primary hover:text-primary-dark transition-colors">
-                    {{ t('storefront.checkout.changeAddress') }}
+                    {{ t('checkout.changeAddress') }}
                   </button>
                 </div>
                 <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -190,15 +190,15 @@
                 <div class="flex items-center justify-between">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
                     <Ticket class="w-4 h-4 text-primary" />
-                    {{ t('storefront.checkout.promotionTitle') }}
+                    {{ t('checkout.promotionTitle') }}
                   </span>
                   <button class="text-sm text-primary hover:underline flex items-center gap-0.5">
-                    {{ t('storefront.checkout.selectOrEnterCode') }}
+                    {{ t('checkout.selectOrEnterCode') }}
                     <ChevronRight class="w-4 h-4" />
                   </button>
                 </div>
                 <div v-if="appliedPromotion" class="mt-2 text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1.5 rounded">
-                  {{ t('storefront.checkout.canApply') }}: <strong>{{ appliedPromotion }}</strong>
+                  {{ t('checkout.canApply') }}: <strong>{{ appliedPromotion }}</strong>
                 </div>
               </div>
 
@@ -206,25 +206,25 @@
               <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm p-4">
                 <div class="flex items-center justify-between mb-3">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {{ t('storefront.checkout.orderSummary') }}
+                    {{ t('checkout.orderSummary') }}
                   </span>
                   <button class="text-sm text-primary hover:underline flex items-center gap-0.5">
-                    {{ t('storefront.checkout.itemsCount', { count: totalItems }) }}
+                    {{ t('checkout.itemsCount', { count: totalItems }) }}
                     <ChevronDown class="w-4 h-4" />
                   </button>
                 </div>
 
                 <div class="space-y-2 text-sm">
                   <div class="flex justify-between">
-                    <span class="text-gray-500 dark:text-gray-400">{{ t('storefront.checkout.itemsSubtotal') }}</span>
+                    <span class="text-gray-500 dark:text-gray-400">{{ t('checkout.itemsSubtotal') }}</span>
                     <span class="text-gray-800 dark:text-gray-200">{{ formatPrice(subtotal) }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-500 dark:text-gray-400">{{ t('storefront.checkout.shippingFeeTotal') }}</span>
+                    <span class="text-gray-500 dark:text-gray-400">{{ t('checkout.shippingFeeTotal') }}</span>
                     <span class="text-gray-800 dark:text-gray-200">{{ formatPrice(totalShippingFee) }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-500 dark:text-gray-400">{{ t('storefront.checkout.shippingDiscount') }}</span>
+                    <span class="text-gray-500 dark:text-gray-400">{{ t('checkout.shippingDiscount') }}</span>
                     <span class="text-green-600">-{{ formatPrice(shippingDiscount) }}</span>
                   </div>
                 </div>
@@ -232,24 +232,24 @@
                 <div class="border-t border-gray-100 dark:border-gray-700 mt-3 pt-3">
                   <div class="flex items-center justify-between mb-1">
                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {{ t('storefront.checkout.totalPayment') }}
+                      {{ t('checkout.totalPayment') }}
                     </span>
                     <span class="text-xl font-bold text-primary">{{ formatPrice(totalPayment) }}</span>
                   </div>
                   <div class="text-right">
                     <span class="text-xs text-green-600 dark:text-green-400">
-                      ({{ t('storefront.checkout.savedAmount') }} {{ formatPrice(totalSaved) }})
+                      ({{ t('checkout.savedAmount') }} {{ formatPrice(totalSaved) }})
                     </span>
                   </div>
                   <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-2 leading-relaxed">
-                    {{ t('storefront.checkout.vatNote') }}
+                    {{ t('checkout.vatNote') }}
                   </p>
                 </div>
 
                 <button
                   class="w-full mt-4 bg-primary hover:bg-primary-dark text-white py-3 rounded-sm font-medium text-sm transition-colors shadow-sm hover:shadow-md"
                 >
-                  {{ t('storefront.checkout.placeOrder') }}
+                  {{ t('checkout.placeOrder') }}
                 </button>
               </div>
 
@@ -422,13 +422,13 @@ const deliveryPackages = ref<DeliveryPackage[]>([
 ])
 
 const paymentMethods = computed(() => [
-  { id: 'momo', icon: '💜', label: t('storefront.checkout.momo'), tag: 'Giảm 50k', tagClass: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400' },
-  { id: 'credit', icon: '💳', label: t('storefront.checkout.creditCard'), sublabel: t('storefront.checkout.addNewCard') },
-  { id: 'bank', icon: '🏦', label: t('storefront.checkout.bankTransfer') },
-  { id: 'kredivo', icon: '🟢', label: t('storefront.checkout.kredivo') },
-  { id: 'zalopay', icon: '💙', label: t('storefront.checkout.zaloPay') },
-  { id: 'vnpay', icon: '🔵', label: t('storefront.checkout.vnPay'), sublabel: t('storefront.checkout.scanToPay') },
-  { id: 'cod', icon: '📦', label: t('storefront.checkout.cod') },
+  { id: 'momo', icon: '💜', label: t('checkout.momo'), tag: 'Giảm 50k', tagClass: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400' },
+  { id: 'credit', icon: '💳', label: t('checkout.creditCard'), sublabel: t('checkout.addNewCard') },
+  { id: 'bank', icon: '🏦', label: t('checkout.bankTransfer') },
+  { id: 'kredivo', icon: '🟢', label: t('checkout.kredivo') },
+  { id: 'zalopay', icon: '💙', label: t('checkout.zaloPay') },
+  { id: 'vnpay', icon: '🔵', label: t('checkout.vnPay'), sublabel: t('checkout.scanToPay') },
+  { id: 'cod', icon: '📦', label: t('checkout.cod') },
 ])
 
 const selectedPaymentMethod = ref('momo')

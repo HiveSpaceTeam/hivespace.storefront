@@ -3,6 +3,18 @@ import { ServerError, Maintenance, NotFound } from '@hivespace/shared'
 
 const routes = [
     {
+        path: '/callback/logout',
+        name: 'LogoutCallback',
+        component: () => import('@/views/Callback/LogoutCallback.vue'),
+        meta: { allowAnonymous: true },
+    },
+    {
+        path: '/callback/login',
+        name: 'Callback',
+        component: () => import('@/views/Callback/LoginCallback.vue'),
+        meta: { allowAnonymous: true },
+    },
+    {
         path: '/',
         name: 'Home',
         component: () => import('@/views/Home/HomePage.vue'),

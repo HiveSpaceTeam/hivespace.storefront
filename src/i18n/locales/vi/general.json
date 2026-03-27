@@ -1,0 +1,26 @@
+{
+    "home": "Trang chủ",
+    "search": "Tìm kiếm sản phẩm...",
+    "categories": "Danh mục",
+    "flashSale": "Flash Sale",
+    "viewAll": "Xem tất cả",
+    "addToCart": "Thêm vào giỏ",
+    "buyNow": "Mua ngay",
+    "sold": "Đã bán",
+    "topProducts": "Sản phẩm nổi bật",
+    "newArrivals": "Hàng mới về",
+    "bestSellers": "Bán chạy nhất",
+    "seeMore": "Xem thêm",
+    "freeShipping": "Miễn phí vận chuyển",
+    "guarantee": "Hàng chính hãng 100%",
+    "freeReturns": "Đổi trả miễn phí",
+    "customerService": "Hỗ trợ 24/7",
+    "todaysSuggestions": "Gợi Ý Hôm Nay",
+    "discount": "Giảm",
+    "soldOut": "Đã bán hết",
+    "soldCount": "Đã bán {count}",
+    "auth": {
+        "signIn": "Đăng nhập",
+        "signUp": "Đăng ký"
+    }
+}

@@ -71,11 +71,11 @@ const createConfig = (): AppConfig => {
             oidc: {
                 clientId: getEnvVar('VITE_APP_CLIENT_ID'),
                 redirectUri: validateUrl(
-                    getEnvVar('VITE_APP_REDIRECT_URI', 'http://localhost:5174/callback/login'),
+                    getEnvVar('VITE_APP_REDIRECT_URI', 'http://localhost:5175/callback/login'),
                     'Redirect URI',
                 ),
                 postLogoutRedirectUri: validateUrl(
-                    getEnvVar('VITE_APP_POST_LOGOUT_REDIRECT_URI', 'http://localhost:5174/callback/logout'),
+                    getEnvVar('VITE_APP_POST_LOGOUT_REDIRECT_URI', 'http://localhost:5175/callback/logout'),
                     'Post Logout Redirect URI',
                 ),
                 responseType: getEnvVar('VITE_APP_RESPONSE_TYPE', 'code'),
@@ -90,9 +90,10 @@ const createConfig = (): AppConfig => {
                     `${apiBaseUrl}/identity`,
                     'Authority URL',
                 ),
+                storageType: 'local' as const,
             },
             callbackUrl: validateUrl(
-                getEnvVar('VITE_AUTH_CALLBACK_URL', 'http://localhost:5174/auth/callback'),
+                getEnvVar('VITE_AUTH_CALLBACK_URL', 'http://localhost:5175/auth/callback'),
                 'Auth Callback URL',
             ),
         },
@@ -122,6 +123,7 @@ export const config: AppConfig = configCache || (configCache = createConfig())
 
 export const isDevelopment = (): boolean => config.app.environment === 'development'
 export const isProduction = (): boolean => config.app.environment === 'production'
+export const isStaging = (): boolean => config.app.environment === 'staging'
 
 export const buildApiUrl = (path: string, version?: string): string => {
     const apiVersion = version || config.api.version

@@ -1,0 +1,26 @@
+{
+    "home": "Home",
+    "search": "Search products...",
+    "categories": "Categories",
+    "flashSale": "Flash Sale",
+    "viewAll": "View All",
+    "addToCart": "Add to Cart",
+    "buyNow": "Buy Now",
+    "sold": "Sold",
+    "topProducts": "Top Products",
+    "newArrivals": "New Arrivals",
+    "bestSellers": "Best Sellers",
+    "seeMore": "See More",
+    "freeShipping": "Free Shipping",
+    "guarantee": "100% Genuine",
+    "freeReturns": "Free Returns",
+    "customerService": "24/7 Support",
+    "todaysSuggestions": "Today's Suggestions",
+    "discount": "Off",
+    "soldOut": "Sold Out",
+    "soldCount": "{count} Sold",
+    "auth": {
+        "signIn": "Sign In",
+        "signUp": "Sign Up"
+    }
+}
