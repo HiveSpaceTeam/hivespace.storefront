@@ -13,6 +13,7 @@
     "joinEcoShipping": "Tham gia chuyển Tiết kiệm Hàng",
     "paymentMethodTitle": "Chọn hình thức thanh toán",
     "momo": "Ví Momo",
+    "momoPromo": "Giảm 50k",
     "creditCard": "Thẻ tín dụng / ghi nợ",
     "bankTransfer": "Thanh toán tiền mặt",
     "kredivo": "Kredivo",
@@ -43,5 +44,16 @@
     "voucherMinOrder": "Đơn tối thiểu {amount}",
     "voucherExpiry": "HSD: {date}",
     "voucherHiveSpace": "HiveSpace",
-    "voucherUsageNote": "Áp dụng tối đa 1 Mã Giảm Giá"
+    "voucherUsageNote": "Áp dụng tối đa 1 Mã Giảm Giá",
+    "storeCoupon": "Mã giảm giá shop",
+    "selectCoupon": "Chọn mã ▸",
+    "colUnitPrice": "Đơn giá",
+    "colQuantity": "Số lượng",
+    "colLineTotal": "Thành tiền",
+    "orderSuccessTitle": "Đặt hàng thành công",
+    "orderSuccessMessage": "Đơn hàng của bạn đã được đặt thành công.",
+    "orderFailedTitle": "Đặt hàng thất bại",
+    "orderFailedMessage": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "placingOrder": "Đang đặt hàng...",
+    "defaultAddress": "Mặc định"
 }

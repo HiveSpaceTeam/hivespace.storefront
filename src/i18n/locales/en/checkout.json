@@ -13,6 +13,7 @@
     "joinEcoShipping": "Join eco-friendly shipping",
     "paymentMethodTitle": "Choose payment method",
     "momo": "Momo Wallet",
+    "momoPromo": "50k Off",
     "creditCard": "Credit / Debit Card",
     "bankTransfer": "Cash Payment",
     "kredivo": "Kredivo",
@@ -43,5 +44,16 @@
     "voucherMinOrder": "Min. order {amount}",
     "voucherExpiry": "Exp: {date}",
     "voucherHiveSpace": "HiveSpace",
-    "voucherUsageNote": "Maximum 1 discount code applicable"
+    "voucherUsageNote": "Maximum 1 discount code applicable",
+    "storeCoupon": "Store coupon",
+    "selectCoupon": "Select coupon ▸",
+    "colUnitPrice": "Unit price",
+    "colQuantity": "Quantity",
+    "colLineTotal": "Total",
+    "orderSuccessTitle": "Order Placed",
+    "orderSuccessMessage": "Your order has been placed successfully.",
+    "orderFailedTitle": "Order Failed",
+    "orderFailedMessage": "Something went wrong. Please try again.",
+    "placingOrder": "Placing order...",
+    "defaultAddress": "Default"
 }
