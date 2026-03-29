@@ -4,11 +4,9 @@ layer(base);
 @import 'tailwindcss';
 
 @import '@hivespace/shared/theme.css';
-@source "../../node_modules/@hivespace/shared/dist";
-
 @import '@hivespace/shared/base.css';
-
 @import '@hivespace/shared/utilities.css';
+@source "../../node_modules/@hivespace/shared/dist";
 /* Storefront custom theme overrides */
 @theme {
   --color-primary: var(--color-blue-600);
@@ -19,11 +17,6 @@ layer(base);
   --color-surface-dark: #1a1a2e;
   --color-card: #fff;
   --color-card-dark: #16213e;
-}
-
-/* Override container max-width for storefront */
-.container {
-  max-width: 1440px;
 }
 
 /* Override container max-width for storefront */

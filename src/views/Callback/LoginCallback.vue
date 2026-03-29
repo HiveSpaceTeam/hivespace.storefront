@@ -16,7 +16,9 @@ onMounted(async () => {
   try {
     const result = await handleLoginCallback()
     if (result.state !== undefined) {
-      returnToUrl = (result.state as string) || returnToUrl
+      const candidate = (result.state as string) || '/'
+      // Only allow relative paths to prevent open redirect attacks
+      returnToUrl = /^\/(?!\/)/.test(candidate) ? candidate : '/'
     }
   } catch (error) {
     console.error('Callback error:', error)

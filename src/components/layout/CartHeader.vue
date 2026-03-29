@@ -21,10 +21,7 @@
                 <input type="text"
                   class="w-full px-3 py-1.5 text-sm text-gray-800 dark:text-gray-100 bg-transparent focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   :placeholder="$t('storefront.search')" />
-                <!-- <button class="bg-primary hover:bg-primary-dark text-white px-5 py-1.5 transition-colors">
-                  <Search class="w-4 h-4" />
-                </button> -->
-                <Button variant="primary" class="px-5 py-1.5 rounded-none rounded-r-sm">
+                <Button variant="primary" :aria-label="$t('storefront.search')" class="px-5 py-1.5 rounded-none rounded-r-sm">
                   <Search class="w-4 h-4" />
                 </Button>
               </div>

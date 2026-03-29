@@ -87,7 +87,11 @@ export async function refreshToken(
     // If we got a new id_token, decode it to get the new profile
     if (data.id_token) {
       try {
-        const payload = JSON.parse(atob(data.id_token.split('.')[1]!))
+        const raw = data.id_token.split('.')[1]
+        if (!raw) throw new Error('Invalid JWT structure')
+        const b64 = raw.replace(/-/g, '+').replace(/_/g, '/')
+        const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4)
+        const payload = JSON.parse(atob(padded))
         newProfile = payload
       } catch (err) {
         console.error('Failed to decode new id_token', err)

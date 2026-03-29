@@ -1,6 +1,5 @@
 <template>
   <svg
-    role="button"
     width="14"
     height="14"
     viewBox="0 0 14 14"
