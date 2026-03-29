@@ -19,8 +19,20 @@
     "discount": "Giảm",
     "soldOut": "Đã bán hết",
     "soldCount": "Đã bán {count}",
+    "default": "Mặc định",
     "auth": {
         "signIn": "Đăng nhập",
-        "signUp": "Đăng ký"
+        "signUp": "Đăng ký",
+        "signingOut": "Đang đăng xuất..."
+    },
+    "mockProductName": "[CHÍNH HÃNG] Mẫu Sản phẩm Demo {index} - Thiết kế mới nhất năm nay, chất lượng cao, bảo hành 12 tháng",
+    "pageTitle": {
+        "home": "HiveSpace - Mua sắm trực tuyến",
+        "cart": "Giỏ Hàng - HiveSpace",
+        "checkout": "Thanh Toán - HiveSpace",
+        "product": "HiveSpace - Mua sắm trực tuyến",
+        "serverError": "Lỗi máy chủ",
+        "maintenance": "Bảo trì",
+        "notFound": "Không tìm thấy trang"
     }
 }

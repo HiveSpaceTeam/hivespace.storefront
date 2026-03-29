@@ -16,15 +16,17 @@
 
             <!-- Right: Search Bar -->
             <div class="flex-grow max-w-xl hidden sm:block">
-              <div class="flex bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-sm overflow-hidden focus-within:ring-2 focus-within:ring-primary-light transition-shadow">
-                <input 
-                  type="text" 
-                  class="w-full px-3 py-1.5 text-sm text-gray-800 dark:text-gray-100 bg-transparent focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500" 
-                  :placeholder="$t('storefront.search')" 
-                />
-                <button class="bg-primary hover:bg-primary-dark text-white px-5 py-1.5 transition-colors">
+              <div
+                class="flex bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-sm overflow-hidden focus-within:ring-2 focus-within:ring-primary-light transition-shadow">
+                <input type="text"
+                  class="w-full px-3 py-1.5 text-sm text-gray-800 dark:text-gray-100 bg-transparent focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                  :placeholder="$t('storefront.search')" />
+                <!-- <button class="bg-primary hover:bg-primary-dark text-white px-5 py-1.5 transition-colors">
                   <Search class="w-4 h-4" />
-                </button>
+                </button> -->
+                <Button variant="primary" class="px-5 py-1.5 rounded-none rounded-r-sm">
+                  <Search class="w-4 h-4" />
+                </Button>
               </div>
             </div>
           </div>
@@ -41,4 +43,5 @@ import AppHeader from './AppHeader.vue'
 import LogoLight from '@/assets/logo/logo-light.svg'
 import LogoDark from '@/assets/logo/logo-dark.svg'
 import { Search } from 'lucide-vue-next'
+import { Button } from '@hivespace/shared';
 </script>

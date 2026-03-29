@@ -113,11 +113,12 @@
                     <span class="text-2xl shrink-0" v-if="option.icon">{{ option.icon }}</span>
                     <div class="flex-grow min-w-0 truncate">
                       <span class="text-base text-gray-800 dark:text-gray-200">{{ option.label }}</span>
-                      <span v-if="option.sublabel" class="block text-sm text-gray-400 dark:text-gray-500 truncate">{{
-                        option.sublabel }}</span>
+                      <span v-if="option.subLabel" class="block text-sm text-gray-400 dark:text-gray-500 truncate">{{
+                        option.subLabel }}</span>
                     </div>
-                    <span v-if="option.tag" class="text-xs font-bold px-1.5 py-0.5 rounded-sm shrink-0"
-                      :class="option.tagClass">{{ option.tag }}</span>
+                    <Badge v-if="option.tag" size="sm" color="error" variant="light"
+                      class="text-xs px-1.5 py-0.5 rounded-sm" :class="option.tagClass">{{ option.tag
+                      }}</Badge>
                   </div>
                 </template>
               </RadioGroup>
@@ -145,10 +146,9 @@
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{{ address.detail }}</p>
                 <div v-if="address.isDefault" class="mt-2">
-                  <span
-                    class="text-xs border border-green-500 text-green-600 dark:text-green-400 px-1.5 py-0.5 rounded-sm">
+                  <Badge class="rounded-sm" variant="light" size="sm" color="success">
                     {{ t('checkout.defaultAddress') }}
-                  </span>
+                  </Badge>
                 </div>
               </div>
 
@@ -220,10 +220,10 @@
                   </p>
                 </div>
 
-                <button @click="handlePlaceOrder" :disabled="submitting"
-                  class="w-full mt-4 bg-primary hover:bg-primary-dark disabled:opacity-60 disabled:cursor-not-allowed text-white py-3 rounded-sm font-medium text-base transition-colors shadow-sm hover:shadow-md">
+                <Button @click="handlePlaceOrder" :disabled="submitting" variant="primary" size="md"
+                  class="w-full mt-4 rounded-sm">
                   {{ t('checkout.placeOrder') }}
-                </button>
+                </Button>
               </div>
 
             </div>
@@ -245,7 +245,7 @@ import ShopCouponModal from '@/components/common/ShopCouponModal.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useCheckout } from '@/composables/useCheckout'
-import { RadioGroup, useAppStore, FullscreenLoader } from '@hivespace/shared'
+import { RadioGroup, useAppStore, FullscreenLoader, Button, Badge } from '@hivespace/shared'
 import { PaymentMethod } from '@/types'
 
 const { t } = useI18n()
@@ -287,11 +287,11 @@ const selectedPaymentMethod = ref('momo')
 
 const paymentMethodOptions = computed(() => [
   { value: 'momo', icon: '💜', label: t('checkout.momo'), tag: t('checkout.momoPromo'), tagClass: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400' },
-  { value: 'credit', icon: '💳', label: t('checkout.creditCard'), sublabel: t('checkout.addNewCard') },
+  { value: 'credit', icon: '💳', label: t('checkout.creditCard'), subLabel: t('checkout.addNewCard') },
   { value: 'bank', icon: '🏦', label: t('checkout.bankTransfer') },
   { value: 'kredivo', icon: '🟢', label: t('checkout.kredivo') },
   { value: 'zalopay', icon: '💙', label: t('checkout.zaloPay') },
-  { value: 'vnpay', icon: '🔵', label: t('checkout.vnPay'), sublabel: t('checkout.scanToPay') },
+  { value: 'vnpay', icon: '🔵', label: t('checkout.vnPay'), subLabel: t('checkout.scanToPay') },
   { value: 'cod', icon: '📦', label: t('checkout.cod') },
 ])
 

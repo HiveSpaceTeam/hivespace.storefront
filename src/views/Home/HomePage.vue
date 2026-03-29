@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import HeroBanner from '@/components/home/HeroBanner.vue'
 import CategoryBar from '@/components/home/CategoryBar.vue'
 import FlashSale from '@/components/home/FlashSale.vue'
@@ -42,19 +42,6 @@ const pageIndex = ref(1)
 const pageSize = ref(12)
 const totalCount = ref(0)
 
-// Mock Product Data
-const mockProducts: ProductSummary[] = Array.from({ length: 30 }).map((_, i) => ({
-  id: `${i}`,
-  name: `[CHÍNH HÃNG] Mẫu Sản phẩm Demo ${i + 1} - Thiết kế mới nhất năm nay, chất lượng cao, bền đẹp bảo hành 12 tháng`,
-  price: Math.floor(Math.random() * 500000) + 50000,
-  soldCount: Math.floor(Math.random() * 5000),
-  image: `https://picsum.photos/400?random=${i + 100}`,
-  discountPercentage: Math.random() > 0.5 ? Math.floor(Math.random() * 50) + 5 : undefined,
-  rating: 4.5,
-  isMall: Math.random() > 0.8,
-  isPreferred: Math.random() > 0.6 && Math.random() <= 0.8,
-  isFreeShipping: Math.random() > 0.5
-}))
 
 onMounted(async () => {
   await fetchProducts()

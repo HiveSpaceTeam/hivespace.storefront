@@ -1,5 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { ServerError, Maintenance, NotFound } from '@hivespace/shared'
+import { ServerError, Maintenance, NotFound, useAuth } from '@hivespace/shared'
+import i18n from '@/i18n'
+
+declare module 'vue-router' {
+    interface RouteMeta {
+        titleKey?: string
+        allowAnonymous?: boolean
+        layout?: string
+    }
+}
 
 const routes = [
     {
@@ -18,43 +27,43 @@ const routes = [
         path: '/',
         name: 'Home',
         component: () => import('@/views/Home/HomePage.vue'),
-        meta: { title: 'HiveSpace - Mua sắm trực tuyến' },
+        meta: { titleKey: 'storefront.pageTitle.home', allowAnonymous: true },
     },
     {
         path: '/cart',
         name: 'Cart',
         component: () => import('@/views/Cart/CartPage.vue'),
-        meta: { title: 'Giỏ Hàng - HiveSpace', layout: 'none' },
+        meta: { titleKey: 'storefront.pageTitle.cart', layout: 'none' },
     },
     {
         path: '/checkout',
         name: 'Checkout',
         component: () => import('@/views/Checkout/CheckoutPage.vue'),
-        meta: { title: 'Thanh Toán - HiveSpace', layout: 'none' },
+        meta: { titleKey: 'storefront.pageTitle.checkout', layout: 'none' },
     },
     {
         path: '/product',
         name: 'Product',
         component: () => import('@/views/Product/ProductDetail.vue'),
-        meta: { title: 'HiveSpace - Mua sắm trực tuyến' },
+        meta: { titleKey: 'storefront.pageTitle.product', allowAnonymous: true },
     },
     {
         path: '/server-error',
         name: 'ServerError',
         component: ServerError,
-        meta: { title: 'Server Error' },
+        meta: { titleKey: 'storefront.pageTitle.serverError', allowAnonymous: true },
     },
     {
         path: '/maintenance',
         name: 'Maintenance',
         component: Maintenance,
-        meta: { title: 'Maintenance' },
+        meta: { titleKey: 'storefront.pageTitle.maintenance', allowAnonymous: true },
     },
     {
         path: '/:pathMatch(.*)*',
         name: 'NotFound',
         component: NotFound,
-        meta: { title: 'Not Found' },
+        meta: { titleKey: 'storefront.pageTitle.notFound', allowAnonymous: true },
     },
 ]
 
@@ -66,8 +75,21 @@ const router = createRouter({
     routes,
 })
 
-router.beforeEach((to, _from, next) => {
-    document.title = `${to.meta.title || 'HiveSpace'}`
+router.beforeEach(async (to, _from, next) => {
+    document.title = to.meta.titleKey ? i18n.global.t(to.meta.titleKey) : 'HiveSpace'
+    // Let callback/error routes through without auth checks
+    if (to.meta.allowAnonymous) {
+        next()
+        return
+    }
+    // For other routes, enforce presence of a local user; if missing, route to '/'
+    const { getCurrentUser, login } = useAuth()
+    const user = await getCurrentUser()
+    if (!user) {
+        next(false)
+        await login()
+        return
+    }
     next()
 })
 

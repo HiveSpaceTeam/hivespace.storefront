@@ -87,7 +87,7 @@ export async function refreshToken(
     // If we got a new id_token, decode it to get the new profile
     if (data.id_token) {
       try {
-        const payload = JSON.parse(atob(data.id_token.split('.')[1]))
+        const payload = JSON.parse(atob(data.id_token.split('.')[1]!))
         newProfile = payload
       } catch (err) {
         console.error('Failed to decode new id_token', err)

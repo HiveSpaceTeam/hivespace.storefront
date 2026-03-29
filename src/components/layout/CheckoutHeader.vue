@@ -11,7 +11,7 @@
                 <img class="hidden dark:block h-8" :src="LogoDark" alt="HiveSpace" />
               </router-link>
               <div class="h-6 w-px bg-primary"></div>
-              <span class="text-xl text-primary font-medium">{{ $t('storefront.checkout.title') }}</span>
+              <span class="text-xl text-primary font-medium">{{ $t('checkout.title') }}</span>
             </div>
           </div>
         </div>

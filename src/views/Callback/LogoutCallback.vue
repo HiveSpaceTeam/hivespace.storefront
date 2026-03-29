@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 text-center">Signing out...</div>
+  <div class="p-6 text-center">{{ $t('storefront.auth.signingOut') }}</div>
 </template>
 
 <script setup lang="ts">
