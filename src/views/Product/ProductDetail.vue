@@ -107,7 +107,7 @@
                             <p class="variant-label">{{ productDetail.variants[0]?.name }}</p>
                             <div class="variant-options">
                                 <div v-for="(option, index) in productDetail.variants[0]?.options" :key="index"
-                                    :class="{ active: selectedOptions.option1 === option.optionId }"
+                                    :class="{ active: selectedOptions.option1 === option.value }"
                                     @click="selectOption1(option)">
                                     <div class="color-option">
                                         <picture>
@@ -117,7 +117,7 @@
                                         </picture>
                                         <span>{{ option.value }}</span>
                                     </div>
-                                    <img v-if="selectedOptions.option1 === option.optionId" class="selected-indicator"
+                                    <img v-if="selectedOptions.option1 === option.value" class="selected-indicator"
                                         src="https://salt.tikicdn.com/ts/upload/6d/62/b9/ac9f3bebb724a308d710c0a605fe057d.png"
                                         alt="Selected" width="13" height="13">
                                 </div>
@@ -129,10 +129,10 @@
                             <p class="variant-label">{{ productDetail.variants[1]?.name }}</p>
                             <div class="variant-options">
                                 <div v-for="(option, index) in productDetail.variants[1]?.options" :key="index"
-                                    :class="{ active: selectedOptions.option2 === option.optionId }"
+                                    :class="{ active: selectedOptions.option2 === option.value }"
                                     @click="selectSize(option)">
                                     <span>{{ option.value }}</span>
-                                    <img v-if="selectedOptions.option2 === option.optionId" class="selected-indicator"
+                                    <img v-if="selectedOptions.option2 === option.value" class="selected-indicator"
                                         src="https://salt.tikicdn.com/ts/upload/6d/62/b9/ac9f3bebb724a308d710c0a605fe057d.png"
                                         alt="Selected" width="13" height="13">
                                 </div>
@@ -304,16 +304,16 @@
                 </div>
 
                 <!-- Product Details Info -->
-               <div class="section">
+                <div class="section">
                     <h3>Thông tin chi tiết</h3>
                     <div class="product-specs">
                         <div class="spec-row" v-for="(item, index) in productDetail.attributes" :key="index">
                             <span class="spec-label">{{ item.attributeName }}</span>
                             <span class="spec-value">{{ item.nameValue.join(',') }}</span>
                         </div>
-                       
+
                     </div>
-                </div> 
+                </div>
                 <!-- Product Description -->
                 <div class="section">
                     <h3>Mô tả sản phẩm</h3>
@@ -331,8 +331,7 @@
                     <div class="store-header">
                         <a href="#" @click.prevent>
                             <picture>
-                                <source type="image/webp" :srcset="`${store.logo}.webp 1x, ${store.logo}.webp 2x`">
-                                <img :srcset="`${store.logo} 1x, ${store.logo} 2x`" class="store-logo" width="40"
+                                <img :src="store.logo" class="store-logo" width="40"
                                     height="40" :alt="store.name">
                             </picture>
                         </a>
@@ -400,7 +399,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { productService } from '@/services/product.service'
 import { useRoute } from 'vue-router'
-import type { PagedResponse, Product, ProductSummary } from '@/types'
+import type { PagedResponse, ProductDetail, ProductSummary } from '@/types'
 
 // Reactive data
 const activeImageIndex = ref(0)
@@ -413,8 +412,8 @@ const descriptionExpanded = ref(false)
 const route = useRoute()
 
 const store = ref({
-    name: 'TD2000 store',
-    logo: 'https://vcdn.tikicdn.com/cache/w100/ts/seller/4b/54/1a/f385a79a716cb3505f152e7af8c769aa.png',
+    name: '',
+    logo: '',
     rating: '4.0',
     reviewCount: 165
 })
@@ -431,11 +430,11 @@ const setActiveImage = (index: number) => {
 }
 
 const selectOption1 = (color: any) => {
-    selectedOptions.value.option1 = color.optionId
+    selectedOptions.value.option1 = color.value
 }
 
 const selectSize = (size: any) => {
-    selectedOptions.value.option2 = size.optionId
+    selectedOptions.value.option2 = size.value
 }
 const getSelectedOption1Value = () => {
     const variant = productDetail.value.variants[0]
@@ -451,10 +450,10 @@ const getCurrentPrice = () => {
     const sku = productDetail.value.skus.find(sku => sku.skuVariants.some(variant => variant.optionId === selectedOptions.value.option1)
         && sku.skuVariants.some(variant => variant.optionId === selectedOptions.value.option2)
     )
-    if(sku){
+    if (sku) {
         return sku.price.amount
     }
-    return productDetail.value.skus[0]?.price.amount 
+    return productDetail.value.skus[0]?.price.amount
 }
 const increaseQuantity = () => {
     quantity.value++
@@ -478,13 +477,18 @@ const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN').format(price) + '₫'
 }
 
-const productDetail = ref<Product>({
+const productDetail = ref<ProductDetail>({
     id: '',
     name: '',
     category: '',
     description: '',
     variants: [],
     skus: [],
+    currentSeller: {
+        id: '',
+        storeName: '',
+        logoUrl: ''
+    }
 })
 
 const displayedProductImages = computed(() => {
@@ -517,6 +521,8 @@ onMounted(async () => {
     productDetail.value = await productService.getProductById(id)
     selectedOptions.value.option1 = productDetail.value.variants[0]?.options[0]?.optionId || null
     selectedOptions.value.option2 = productDetail.value.variants[1]?.options[0]?.optionId || null
+    store.value.name = productDetail.value.currentSeller.storeName;
+    store.value.logo = productDetail.value.currentSeller.logoUrl;
     const result: PagedResponse<ProductSummary> = await productService.getProducts({
         pageIndex: 1,
         pageSize: 8,
