@@ -42,12 +42,6 @@ const routes = [
         meta: { titleKey: 'storefront.pageTitle.checkout', layout: 'none' },
     },
     {
-        path: '/checkout',
-        name: 'Checkout',
-        component: () => import('@/views/Checkout/CheckoutPage.vue'),
-        meta: { title: 'Thanh Toán - HiveSpace', layout: 'none' },
-    },
-    {
         path: '/product',
         name: 'Product',
         component: () => import('@/views/Product/ProductDetail.vue'),
