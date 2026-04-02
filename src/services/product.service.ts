@@ -2,7 +2,8 @@ import type {
   ProductSummary,
   PagingRequest,
   PagedResponse,
-  Product
+  Product,
+  ProductDetail
 } from '@/types/index.ts'
 import { apiService } from './api.ts'
 import { buildApiUrl } from '@/config'
@@ -25,9 +26,9 @@ class ProductService {
   /**
    * Retrieve a single product by id
    */
-  async getProductById(id: string): Promise<Product> {
+  async getProductById(id: string): Promise<ProductDetail> {
     const url = buildApiUrl(`${PRODUCT_ENDPOINTS.PRODUCTS}/${id}`)
-    return await apiService.get<Product>(url)
+    return await apiService.get<ProductDetail>(url)
   }
 
 }

@@ -70,6 +70,22 @@ export interface Product {
   // Add more fields as needed
 }
 
+export interface ProductDetail {
+  id?: string
+  name: string
+  category: string
+  description?: string
+  variants: ProductVariant[]
+  skus: ProductSku[]
+  images?: ProductImage[]
+  currentSeller: CurrentSeller
+}
+
+export interface CurrentSeller {
+  id: string
+  storeName: string  ,
+  logoUrl: string
+}
 
 
 

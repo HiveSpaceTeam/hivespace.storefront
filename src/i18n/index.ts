@@ -1,18 +1,40 @@
 import { createI18n } from 'vue-i18n'
 import { CULTURE_TEXT, en as enShared, vi as viShared } from '@hivespace/shared'
 
-// Import storefront translation files
-import enStorefront from './locales/en/storefront.json'
-import viStorefront from './locales/vi/storefront.json'
+// Import English storefront files
+import enGeneral from './locales/en/general.json'
+import enCart from './locales/en/cart.json'
+import enCheckout from './locales/en/checkout.json'
+import enFooter from './locales/en/footer.json'
+import enCategories from './locales/en/categories.json'
+
+// Import Vietnamese storefront files
+import viGeneral from './locales/vi/general.json'
+import viCart from './locales/vi/cart.json'
+import viCheckout from './locales/vi/checkout.json'
+import viFooter from './locales/vi/footer.json'
+import viCategories from './locales/vi/categories.json'
 
 const en = {
     ...enShared,
-    storefront: enStorefront,
+    checkout: enCheckout,
+    storefront: {
+        ...enGeneral,
+        cart: enCart,
+        footer: enFooter,
+        categoriesList: enCategories
+    }
 }
 
 const vi = {
     ...viShared,
-    storefront: viStorefront,
+    checkout: viCheckout,
+    storefront: {
+        ...viGeneral,
+        cart: viCart,
+        footer: viFooter,
+        categoriesList: viCategories
+    }
 }
 
 const i18n = createI18n({
