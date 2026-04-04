@@ -1,22 +1,14 @@
 <template>
     <div class="product-detail-page">
         <div class="container">
+            <!-- Left: Image Gallery -->
             <div class="image-gallery">
-                <!-- Main Image -->
                 <div class="main-image">
                     <div class="image-frame">
                         <div class="image-container">
-                            <div class="image-wrapper">
-                                <picture>
-                                    <!-- <source type="image/webp"
-                                        :srcset="`${currentImage}.webp 1x, ${currentImage}.webp 2x`"> -->
-                                    <img :src="currentImage?.fileId" width="368" height="368" loading="eager">
-                                </picture>
-                            </div>
+                            <img :src="currentImage?.fileId" width="368" height="368" loading="eager" alt="product">
                         </div>
                     </div>
-
-                    <!-- Thumbnail List -->
                     <div class="thumbnail-list">
                         <div class="thumbnail-slider">
                             <button class="nav-btn prev disabled">
@@ -29,12 +21,9 @@
                             <div class="thumbnails">
                                 <div class="thumbnail-track">
                                     <a v-for="(image, index) in displayedProductImages" :key="index"
-                                        :class="{ active: index === activeImageIndex }" @click="setActiveImage(index)">
-                                        <picture>
-                                            <source type="image/webp" :srcset="`${image}.webp 1x, ${image}.webp 2x`">
-                                            <img width="47" height="47" :alt="`product-img-${index}`"
-                                                :src="image.fileId" :srcset="`${image} 1x, ${image} 2x`">
-                                        </picture>
+                                        :class="{ active: index === activeImageIndex }"
+                                        @click="setActiveImage(index)">
+                                        <img width="47" height="47" :alt="`product-img-${index}`" :src="image.fileId">
                                     </a>
                                 </div>
                             </div>
@@ -48,61 +37,30 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Product Info Section -->
-                <!-- <div class="product-info">
-                    <div class="info-item">
-                        <img src="https://salt.tikicdn.com/ts/ta/d3/d4/1c/1d4ee6bf8bc9c5795529ac50a6b439dd.png"
-                            alt="icon-left" width="24" height="24">
-                        <div class="text">
-                            <span>Xem thêm</span> Ưu điểm & lưu ý của sản phẩm
-                        </div>
-                    </div>
-                    <img src="https://salt.tikicdn.com/ts/ta/5c/76/e2/25aa7773e0480b23252d8f1c95a03d05.png"
-                        alt="icon-right" width="24" height="24">
-                </div> -->
             </div>
 
-            <!-- Main Content -->
+            <!-- Center: Main Content -->
             <div class="main-content">
-                <!-- Image Gallery Section -->
-
-
-                <!-- Product Details -->
+                <!-- Product Header -->
                 <div class="product-details">
-                    <div class="product-header">
-                        <!-- Product Header -->
-                        <div class="header-content">
-                            <div class="badges">
-                                <picture>
-                                    <source type="image/webp"
-                                        srcset="https://salt.tikicdn.com/ts/upload/be/67/48/04a82ab8df178e1a13bde38316081865.png">
-                                    <img srcset="https://salt.tikicdn.com/ts/upload/be/67/48/04a82ab8df178e1a13bde38316081865.png"
-                                        width="91" height="20" alt="freeship_xtra">
-                                </picture>
-                                <picture>
-                                    <source type="image/webp"
-                                        srcset="https://salt.tikicdn.com/ts/ta/b1/3f/4e/cc3d0a2dd751a7b06dd97d868d6afa56.png">
-                                    <img srcset="https://salt.tikicdn.com/ts/ta/b1/3f/4e/cc3d0a2dd751a7b06dd97d868d6afa56.png"
-                                        width="114" height="20" alt="return_policy">
-                                </picture>
-                                <span class="brand">Thương hiệu: <a href="#">{{ 'fsd' }}</a></span>
-                            </div>
-                            <h1 class="product-title">{{ productDetail.name }}</h1>
-                            <div class="rating">
-                                <!-- Rating stars would go here -->
-                            </div>
-                        </div>
-
-                        <!-- Price Section -->
-                        <div class="price-section">
-                            <div class="price">{{ formatPrice(getCurrentPrice()) }}</div>
-                        </div>
+                    <div class="badges">
+                        <picture>
+                            <img src="https://salt.tikicdn.com/ts/upload/be/67/48/04a82ab8df178e1a13bde38316081865.png"
+                                width="91" height="20" alt="freeship_xtra">
+                        </picture>
+                        <picture>
+                            <img src="https://salt.tikicdn.com/ts/ta/b1/3f/4e/cc3d0a2dd751a7b06dd97d868d6afa56.png"
+                                width="114" height="20" alt="return_policy">
+                        </picture>
+                        <span class="brand">Thương hiệu: <a href="#">{{ store.name || 'HiveSpace' }}</a></span>
+                    </div>
+                    <h1 class="product-title">{{ productDetail.name }}</h1>
+                    <div class="price-section">
+                        <span class="price">{{ formatPrice(getCurrentPrice()) }}</span>
                     </div>
 
-                    <!-- Variants Section -->
+                    <!-- Variants -->
                     <div v-if="productDetail.variants.length > 0" class="variants">
-                        <!-- Color Selection -->
                         <div class="variant-group">
                             <p class="variant-label">{{ productDetail.variants[0]?.name }}</p>
                             <div class="variant-options">
@@ -110,29 +68,25 @@
                                     :class="{ active: selectedOptions.option1 === option.value }"
                                     @click="selectOption1(option)">
                                     <div class="color-option">
-                                        <picture>
-                                            <!-- <source type="image/webp"
-                                                :srcset="`${option.image}.webp 1x, ${option.image}.webp 2x`"> -->
-                                            <img alt="thumbnail" :src="getOptionImage(option)" width="42" height="42">
-                                        </picture>
+                                        <img :src="getOptionImage(option)" width="42" height="42" alt="option">
                                         <span>{{ option.value }}</span>
                                     </div>
-                                    <img v-if="selectedOptions.option1 === option.value" class="selected-indicator"
+                                    <img v-if="selectedOptions.option1 === option.value"
+                                        class="selected-indicator"
                                         src="https://salt.tikicdn.com/ts/upload/6d/62/b9/ac9f3bebb724a308d710c0a605fe057d.png"
                                         alt="Selected" width="13" height="13">
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Size Selection -->
-                        <div class="variant-group">
+                        <div v-if="productDetail.variants[1]" class="variant-group">
                             <p class="variant-label">{{ productDetail.variants[1]?.name }}</p>
                             <div class="variant-options">
                                 <div v-for="(option, index) in productDetail.variants[1]?.options" :key="index"
                                     :class="{ active: selectedOptions.option2 === option.value }"
                                     @click="selectSize(option)">
                                     <span>{{ option.value }}</span>
-                                    <img v-if="selectedOptions.option2 === option.value" class="selected-indicator"
+                                    <img v-if="selectedOptions.option2 === option.value"
+                                        class="selected-indicator"
                                         src="https://salt.tikicdn.com/ts/upload/6d/62/b9/ac9f3bebb724a308d710c0a605fe057d.png"
                                         alt="Selected" width="13" height="13">
                                 </div>
@@ -161,17 +115,9 @@
                         </div>
                     </div>
                     <div class="freeship-info">
-                        <picture>
-                            <source type="image/webp"
-                                srcset="https://salt.tikicdn.com/ts/upload/f7/85/80/51da5722c3cfa1d6d93644188d07c51a.png">
-                            <img srcset="https://salt.tikicdn.com/ts/upload/f7/85/80/51da5722c3cfa1d6d93644188d07c51a.png"
-                                width="79" height="16" alt="freeship-icon">
-                        </picture>
+                        <img src="https://salt.tikicdn.com/ts/upload/f7/85/80/51da5722c3cfa1d6d93644188d07c51a.png"
+                            width="79" height="16" alt="freeship-icon">
                         <span>Freeship 15k đơn từ 45k, Freeship 30k đơn từ 100k</span>
-                        <button class="info-btn">
-                            <img src="https://salt.tikicdn.com/ts/ta/c1/c0/8f/1c42c78c42d4355130fa4a4ef9036892.png"
-                                alt="info-icon" width="16" height="16">
-                        </button>
                     </div>
                 </div>
 
@@ -195,24 +141,16 @@
                 <div class="section">
                     <h3>Dịch vụ bổ sung</h3>
                     <div class="service-item">
-                        <picture>
-                            <source type="image/webp"
-                                srcset="https://salt.tikicdn.com/ts/upload/73/4d/f7/f86e767bffc14aa3d6abed348630100b.png">
-                            <img srcset="https://salt.tikicdn.com/ts/upload/73/4d/f7/f86e767bffc14aa3d6abed348630100b.png"
-                                alt="compensation-icon" height="40" width="40">
-                        </picture>
+                        <img src="https://salt.tikicdn.com/ts/upload/73/4d/f7/f86e767bffc14aa3d6abed348630100b.png"
+                            alt="tikicard-icon" height="40" width="40">
                         <div class="service-content">
                             <div>Ưu đãi đến 600k với thẻ TikiCard</div>
                             <div class="link">Đăng ký</div>
                         </div>
                     </div>
                     <div class="service-item">
-                        <picture>
-                            <source type="image/webp"
-                                srcset="https://salt.tikicdn.com/ts/upload/2a/27/6a/7bbba1f6c93a1a42a3c314e7b5825f4c.png">
-                            <img srcset="https://salt.tikicdn.com/ts/upload/2a/27/6a/7bbba1f6c93a1a42a3c314e7b5825f4c.png"
-                                alt="compensation-icon" height="40" width="40">
-                        </picture>
+                        <img src="https://salt.tikicdn.com/ts/upload/2a/27/6a/7bbba1f6c93a1a42a3c314e7b5825f4c.png"
+                            alt="installment-icon" height="40" width="40">
                         <div class="service-content">
                             <div>Mua trước trả sau</div>
                             <div class="link">Đăng ký</div>
@@ -234,27 +172,20 @@
                         <div class="products-grid">
                             <div class="products-container">
                                 <div class="product-grid">
-                                    <div v-for="(similarProduct, index) in similarProducts" :key="index"
-                                        class="product-card">
-                                        <a href="#" @click.prevent>
+                                    <div v-for="(sp, index) in similarProducts" :key="index" class="product-card">
+                                        <a :href="`/product/detail?pid=${sp.id}`">
                                             <div class="product-image">
-                                                <picture>
-
-                                                    <img :src="similarProduct.imageURL" :alt="similarProduct.name">
-                                                </picture>
+                                                <img :src="sp.thumbnailUrl" :alt="sp.name">
                                             </div>
-                                            <div class="product-info">
-                                                <h4>{{ similarProduct.name }}</h4>
-                                                <div class="price">{{ (similarProduct.price) }}</div>
+                                            <div class="product-card-info">
+                                                <h4>{{ sp.name }}</h4>
+                                                <div class="card-price">{{ formatPrice(sp.price) }}</div>
                                             </div>
                                         </a>
                                     </div>
                                 </div>
                                 <div class="pagination">
                                     <div class="dot active"></div>
-                                    <div class="dot"></div>
-                                    <div class="dot"></div>
-                                    <div class="dot"></div>
                                     <div class="dot"></div>
                                 </div>
                             </div>
@@ -268,33 +199,36 @@
                         </button>
                     </div>
                 </div>
-                <!-- Warranty -->
-                <div class="section">
+
+                <!-- Warranty Info (dynamic from attributes grouped by groupName="Bảo hành") -->
+                <div v-if="warrantyAttributes.length > 0" class="section">
                     <h3>Thông tin bảo hành</h3>
-                    <div class="warranty-info">
-                        <span>Hướng dẫn bảo hành:</span>
-                        <span class="link">Xem chi tiết</span>
+                    <div class="product-specs">
+                        <div class="spec-row" v-for="(item, index) in warrantyAttributes" :key="index">
+                            <span class="spec-label">{{ item.attributeName }}</span>
+                            <span class="spec-value">{{ item.freeTextValue || item.nameValue.join(', ') }}</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Benefits -->
                 <div class="section">
-                    <h3 class="benefits-title">An tâm mua sắm</h3>
+                    <h3>An tâm mua sắm</h3>
                     <div class="benefits-list">
                         <div class="benefit-item">
-                            <img alt="compensation-icon"
+                            <img alt="check-icon"
                                 src="https://salt.tikicdn.com/ts/upload/c5/37/ee/76c708d43e377343e82baee8a0340297.png"
                                 height="20" width="20">
                             <span>Được đồng kiểm khi nhận hàng</span>
                         </div>
                         <div class="benefit-item">
-                            <img alt="compensation-icon"
+                            <img alt="refund-icon"
                                 src="https://salt.tikicdn.com/ts/upload/ea/02/b4/b024e431ec433e6c85d4734aaf35bd65.png"
                                 height="20" width="20">
                             <span><strong>Được hoàn tiền 200%</strong> nếu là hàng giả.</span>
                         </div>
                         <div class="benefit-item">
-                            <img alt="compensation-icon"
+                            <img alt="return-icon"
                                 src="https://salt.tikicdn.com/ts/upload/d8/c7/a5/1cd5bd2f27f9bd74b2c340b8e27c4d82.png"
                                 height="20" width="20">
                             <span>Đổi trả miễn phí trong 30 ngày. Được đổi ý.</span>
@@ -303,40 +237,45 @@
                     </div>
                 </div>
 
-                <!-- Product Details Info -->
-                <div class="section">
+                <!-- Product Specs (dynamic from attributes grouped by groupName="Thông tin chi tiết") -->
+                <div v-if="specAttributes.length > 0" class="section">
                     <h3>Thông tin chi tiết</h3>
                     <div class="product-specs">
-                        <div class="spec-row" v-for="(item, index) in productDetail.attributes" :key="index">
+                        <div class="spec-row" v-for="(item, index) in specAttributes" :key="index">
                             <span class="spec-label">{{ item.attributeName }}</span>
-                            <span class="spec-value">{{ item.nameValue.join(',') }}</span>
+                            <span class="spec-value">{{ item.freeTextValue || item.nameValue.join(', ') }}</span>
                         </div>
-
                     </div>
                 </div>
-                <!-- Product Description -->
+
+                <!-- Description -->
                 <div class="section">
                     <h3>Mô tả sản phẩm</h3>
-                    <div class="description " :class="{ 'collapsed': !descriptionExpanded }"
+                    <div class="description" :class="{ 'collapsed': !descriptionExpanded }"
                         v-html="productDetail.description"></div>
                     <button class="toggle-btn" @click="toggleDescription">
-                        {{ descriptionExpanded ? 'Rút gọn' : "Xem thêm" }}</button>
+                        {{ descriptionExpanded ? 'Rút gọn' : 'Xem thêm' }}
+                    </button>
                 </div>
             </div>
 
-            <!-- Sidebar -->
+            <!-- Right: Sidebar -->
             <div class="sidebar">
-                <!-- Store Info -->
                 <div class="store-info">
+                    <!-- Store Header -->
                     <div class="store-header">
                         <a href="#" @click.prevent>
-                            <picture>
-                                <img :src="store.logo" class="store-logo" width="40"
-                                    height="40" :alt="store.name">
-                            </picture>
+                            <img v-if="store.logo" :src="store.logo" class="store-logo" width="40" height="40"
+                                :alt="store.name">
+                            <div v-else class="store-logo-placeholder">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+                                        fill="#ccc" />
+                                </svg>
+                            </div>
                         </a>
                         <div class="store-details">
-                            <a href="#" @click.prevent class="store-name">{{ store.name }}</a>
+                            <a href="#" @click.prevent class="store-name">{{ store.name || 'HiveSpace Store' }}</a>
                             <div class="store-rating">
                                 <span>{{ store.rating }}</span>
                                 <img alt="star-icon"
@@ -352,13 +291,13 @@
                         </button>
                     </div>
 
-                    <!-- Selected Variant Info -->
+                    <!-- Selected Variant / Current Image -->
                     <div class="selected-variant">
-                        <picture>
-                            <source type="image/webp" :srcset="`${currentImage}.webp`">
-                            <img class="variant-image" :src="currentImage?.fileId" width="40" height="40" alt="variant">
-                        </picture>
-                        <span>{{ getSelectedOption1Value() }}, {{ getSelectedOption2Value() }}</span>
+                        <img class="variant-image" :src="currentImage?.fileId" width="40" height="40" alt="variant">
+                        <span v-if="hasVariants">
+                            {{ getSelectedOption1Value() }}<span v-if="getSelectedOption2Value()">, {{ getSelectedOption2Value() }}</span>
+                        </span>
+                        <span v-else class="variant-name-short">{{ productDetail.name }}</span>
                     </div>
 
                     <!-- Quantity and Price -->
@@ -373,7 +312,7 @@
                         </div>
                         <div class="total-price">
                             <span>Tạm tính</span>
-                            <span>{{ formatPrice(getCurrentPrice() * quantity) }}</span>
+                            <span class="total-amount">{{ formatPrice(getCurrentPrice() * quantity) }}</span>
                         </div>
                     </div>
 
@@ -384,29 +323,19 @@
                         <button class="installment">Mua trước trả sau</button>
                     </div>
                 </div>
-
-
-
-
-
-
             </div>
         </div>
-
     </div>
 </template>
+
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { productService } from '@/services/product.service'
 import { useRoute } from 'vue-router'
 import type { PagedResponse, ProductDetail, ProductSummary } from '@/types'
 
-// Reactive data
 const activeImageIndex = ref(0)
-const selectedOptions = ref<Record<string, any>>({
-    option1: null,
-    option2: null
-})
+const selectedOptions = ref<Record<string, any>>({ option1: null, option2: null })
 const quantity = ref(1)
 const descriptionExpanded = ref(false)
 const route = useRoute()
@@ -419,63 +348,6 @@ const store = ref({
 })
 
 const similarProducts = ref<ProductSummary[]>([])
-// Computed properties
-const currentImage = computed(() => {
-    return displayedProductImages.value[activeImageIndex.value]
-})
-
-// Methods
-const setActiveImage = (index: number) => {
-    activeImageIndex.value = index
-}
-
-const selectOption1 = (color: any) => {
-    selectedOptions.value.option1 = color.value
-}
-
-const selectSize = (size: any) => {
-    selectedOptions.value.option2 = size.value
-}
-const getSelectedOption1Value = () => {
-    const variant = productDetail.value.variants[0]
-    const option = variant?.options.find((opt: any) => opt.optionId === selectedOptions.value.option1)
-    return option ? option.value : ''
-}
-const getSelectedOption2Value = () => {
-    const variant = productDetail.value.variants[1]
-    const option = variant?.options.find((opt: any) => opt.optionId === selectedOptions.value.option2)
-    return option ? option.value : ''
-}
-const getCurrentPrice = () => {
-    const sku = productDetail.value.skus.find(sku => sku.skuVariants.some(variant => variant.optionId === selectedOptions.value.option1)
-        && sku.skuVariants.some(variant => variant.optionId === selectedOptions.value.option2)
-    )
-    if (sku) {
-        return sku.price.amount
-    }
-    return productDetail.value.skus[0]?.price.amount
-}
-const increaseQuantity = () => {
-    quantity.value++
-}
-
-const decreaseQuantity = () => {
-    if (quantity.value > 1) {
-        quantity.value--
-    }
-}
-
-const addToCart = () => {
-
-}
-
-const toggleDescription = () => {
-    descriptionExpanded.value = !descriptionExpanded.value
-}
-
-const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN').format(price) + '₫'
-}
 
 const productDetail = ref<ProductDetail>({
     id: '',
@@ -484,50 +356,83 @@ const productDetail = ref<ProductDetail>({
     description: '',
     variants: [],
     skus: [],
-    currentSeller: {
-        id: '',
-        storeName: '',
-        logoUrl: ''
-    }
+    attributes: [],
+    currentSeller: null
 })
+
+const hasVariants = computed(() => productDetail.value.variants.length > 0)
 
 const displayedProductImages = computed(() => {
-    const skuImages = productDetail.value.skus.find(sku => sku.skuVariants.some(variant => variant.optionId === selectedOptions.value.option1)
-        && sku.skuVariants.some(variant => variant.optionId === selectedOptions.value.option2)
+    // Match SKU by variant value strings (SkuVariant.value maps to ProductVariantOption.value)
+    const skuImages = productDetail.value.skus.find(sku =>
+        sku.skuVariants.some((v: any) => v.value === selectedOptions.value.option1) &&
+        (!selectedOptions.value.option2 || sku.skuVariants.some((v: any) => v.value === selectedOptions.value.option2))
+    )?.images
 
-    )?.images;
+    if (skuImages && skuImages.length > 0) return skuImages
 
-    if (skuImages && skuImages.length > 0) {
-        return skuImages;
-    }
+    const firstSkuImages = productDetail.value.skus[0]?.images
+    if (firstSkuImages && firstSkuImages.length > 0) return firstSkuImages
 
-    return productDetail.value.skus[0]?.images || []
+    return (productDetail.value as any).images || []
 })
-const getOptionImage = (option: any) => {
-    const sku = productDetail.value.skus.find(x => x.skuVariants.some(s => s.variantId === option.productVariantId));
-    if (!sku) {
-        return ''
-    }
 
-    const image = sku.images?.[0];
-    if (!image) {
-        return ''
+const warrantyAttributes = computed(() =>
+    productDetail.value.attributes.filter(a => a.groupName === 'Bảo hành')
+)
+
+const specAttributes = computed(() =>
+    productDetail.value.attributes.filter(a => a.groupName === 'Thông tin chi tiết')
+)
+
+const currentImage = computed(() => displayedProductImages.value[activeImageIndex.value])
+
+const setActiveImage = (index: number) => { activeImageIndex.value = index }
+
+const selectOption1 = (option: any) => { selectedOptions.value.option1 = option.value }
+const selectSize = (option: any) => { selectedOptions.value.option2 = option.value }
+
+const getSelectedOption1Value = () => selectedOptions.value.option1 ?? ''
+const getSelectedOption2Value = () => selectedOptions.value.option2 ?? ''
+
+const getCurrentPrice = () => {
+    if (hasVariants.value) {
+        const sku = productDetail.value.skus.find(sku =>
+            sku.skuVariants.some((v: any) => v.value === selectedOptions.value.option1) &&
+            (!selectedOptions.value.option2 || sku.skuVariants.some((v: any) => v.value === selectedOptions.value.option2))
+        )
+        if (sku) return sku.price.amount
     }
-    return image.fileId;
+    return productDetail.value.skus[0]?.price.amount ?? 0
 }
-// Lifecycle
+
+const getOptionImage = (option: any) => {
+    const sku = productDetail.value.skus.find(x =>
+        x.skuVariants.some((s: any) => s.value === option.value)
+    )
+    return sku?.images?.[0]?.fileId || ''
+}
+
+const increaseQuantity = () => { quantity.value++ }
+const decreaseQuantity = () => { if (quantity.value > 1) quantity.value-- }
+const addToCart = () => { }
+const toggleDescription = () => { descriptionExpanded.value = !descriptionExpanded.value }
+const formatPrice = (price: number) => new Intl.NumberFormat('vi-VN').format(price) + '₫'
+
 onMounted(async () => {
     const id = route.query.pid as string
     productDetail.value = await productService.getProductById(id)
-    selectedOptions.value.option1 = productDetail.value.variants[0]?.options[0]?.optionId || null
-    selectedOptions.value.option2 = productDetail.value.variants[1]?.options[0]?.optionId || null
-    store.value.name = productDetail.value.currentSeller.storeName;
-    store.value.logo = productDetail.value.currentSeller.logoUrl;
-    const result: PagedResponse<ProductSummary> = await productService.getProducts({
-        pageIndex: 1,
-        pageSize: 8,
-    })
 
+    selectedOptions.value.option1 = productDetail.value.variants[0]?.options[0]?.value ?? null
+    selectedOptions.value.option2 = productDetail.value.variants[1]?.options[0]?.value ?? null
+
+    // Safe null-check for currentSeller
+    if (productDetail.value.currentSeller) {
+        store.value.name = productDetail.value.currentSeller.storeName
+        store.value.logo = productDetail.value.currentSeller.logoUrl
+    }
+
+    const result: PagedResponse<ProductSummary> = await productService.getProducts({ pageIndex: 1, pageSize: 8 })
     similarProducts.value = result.data
 })
 </script>
@@ -540,37 +445,29 @@ onMounted(async () => {
 }
 
 .container {
-    max-width: 1440px;
+    max-width: 1280px;
     margin: 0 auto;
     padding: 0 16px;
     display: flex;
-    gap: 24px;
+    gap: 16px;
+    align-items: flex-start;
 }
 
-.main-content {
-    flex: 1;
-}
-
-.sidebar {
+/* ─── Image Gallery ─── */
+.image-gallery {
     width: 400px;
     flex-shrink: 0;
-}
-
-/* Image Gallery */
-.image-gallery {
     background: white;
     border-radius: 8px;
     padding: 16px;
-    margin-bottom: 16px;
     position: sticky;
     top: 12px;
-    height: 500px;
 }
 
 .main-image {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 .image-frame {
@@ -582,25 +479,18 @@ onMounted(async () => {
 .image-container {
     width: 368px;
     height: 368px;
-    position: relative;
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.image-wrapper {
+.image-container img {
     width: 100%;
     height: 100%;
-    position: relative;
+    object-fit: contain;
 }
 
-.image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 2;
-    opacity: 1;
-}
-
-/* Thumbnail Slider */
 .thumbnail-slider {
     display: flex;
     align-items: center;
@@ -615,8 +505,6 @@ onMounted(async () => {
 .thumbnail-track {
     display: flex;
     gap: 8px;
-    transform: translateX(0);
-    transition: transform 0.5s ease-in-out;
 }
 
 .thumbnail-track a {
@@ -625,6 +513,7 @@ onMounted(async () => {
     overflow: hidden;
     border: 2px solid transparent;
     transition: border-color 0.2s;
+    display: block;
 }
 
 .thumbnail-track a.active {
@@ -634,12 +523,12 @@ onMounted(async () => {
 .thumbnail-track img {
     width: 47px;
     height: 47px;
+    object-fit: cover;
     display: block;
 }
 
 .nav-btn {
     cursor: pointer;
-    color: #0a68ff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -648,6 +537,7 @@ onMounted(async () => {
     border-radius: 50%;
     background: white;
     border: 1px solid #e0e0e0;
+    flex-shrink: 0;
     transition: all 0.2s;
 }
 
@@ -657,51 +547,32 @@ onMounted(async () => {
 }
 
 .nav-btn.disabled {
-    color: #ccc;
     cursor: not-allowed;
-    border-color: #f0f0f0;
+    opacity: 0.4;
 }
 
-/* Product Info */
-.product-info {
+/* ─── Main Content ─── */
+.main-content {
+    flex: 1;
+    min-width: 0;
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px;
-    background: #f8f9fa;
-    border-radius: 8px;
     flex-direction: column;
+    gap: 12px;
 }
 
-.product-info .text {
-    color: #808089;
-    font-size: 14px;
-}
-
-/* Product Details */
+/* Product Details Card */
 .product-details {
     background: white;
     border-radius: 8px;
     padding: 16px;
-    margin-bottom: 16px;
-}
-
-.product-header {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.header-content {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
 }
 
 .badges {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
 }
 
 .badges img {
@@ -710,7 +581,12 @@ onMounted(async () => {
 
 .brand {
     color: #808089;
-    font-size: 14px;
+    font-size: 13px;
+}
+
+.brand a {
+    color: #0a68ff;
+    text-decoration: none;
 }
 
 .product-title {
@@ -718,23 +594,22 @@ onMounted(async () => {
     font-weight: 600;
     line-height: 1.4;
     color: #27272a;
-    margin: 8px 0;
+    margin: 8px 0 12px;
 }
 
 .price-section {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    margin-bottom: 8px;
 }
 
 .price {
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 28px;
+    font-weight: 700;
     color: #27272a;
 }
 
 /* Variants */
 .variants {
+    margin-top: 16px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -759,8 +634,8 @@ onMounted(async () => {
     gap: 8px;
 }
 
-.variant-options>div {
-    padding: 8px 16px;
+.variant-options > div {
+    padding: 8px 12px;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     cursor: pointer;
@@ -772,26 +647,22 @@ onMounted(async () => {
     position: relative;
 }
 
-.variant-options>div.active {
+.variant-options > div.active {
     border-color: #0a68ff;
     background: #f0f8ff;
-}
-
-.variant-options>div:hover {
-    border-color: #0a68ff;
 }
 
 .color-option {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 4px 0;
 }
 
 .color-option img {
     width: 42px;
     height: 42px;
     border-radius: 4px;
+    object-fit: cover;
 }
 
 .selected-indicator {
@@ -802,18 +673,17 @@ onMounted(async () => {
     right: -4px;
 }
 
-/* Sections */
+/* ─── Sections ─── */
 .section {
     background: white;
     border-radius: 8px;
     padding: 16px;
-    margin-bottom: 16px;
 }
 
 .section h3 {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
-    margin-bottom: 12px;
+    margin: 0 0 12px;
     color: #27272a;
 }
 
@@ -822,25 +692,27 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 10px 0;
     border-bottom: 1px solid #f0f0f0;
     font-size: 14px;
+    color: #27272a;
 }
 
 .change-link {
     color: #0a68ff;
     cursor: pointer;
+    font-size: 14px;
 }
 
 .shipping-details {
-    padding: 12px 0;
+    padding: 10px 0;
     border-bottom: 1px solid #f0f0f0;
 }
 
 .shipping-item {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .shipping-header {
@@ -852,10 +724,12 @@ onMounted(async () => {
 .highlight {
     font-weight: 600;
     color: #00ab56;
+    font-size: 14px;
 }
 
 .shipping-fee {
     margin-left: auto;
+    font-size: 14px;
     color: #27272a;
 }
 
@@ -867,16 +741,9 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 0;
-}
-
-.freeship-info img {
-    height: 16px;
-}
-
-.info-btn {
-    cursor: pointer;
-    padding: 4px;
+    padding: 10px 0 0;
+    font-size: 13px;
+    color: #808089;
 }
 
 /* Discounts */
@@ -884,13 +751,14 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
 }
 
 .discount-header {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    font-size: 14px;
+    color: #27272a;
 }
 
 .discount-codes {
@@ -905,6 +773,7 @@ onMounted(async () => {
     border-radius: 4px;
     font-size: 12px;
     font-weight: 500;
+    border: 1px dashed #d0011b;
 }
 
 /* Services */
@@ -912,8 +781,14 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 0;
+    padding: 10px 0;
     cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.service-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
 .service-item img {
@@ -921,25 +796,27 @@ onMounted(async () => {
     height: 40px;
     border-radius: 50%;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
 }
 
 .service-content {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    font-size: 14px;
+    color: #27272a;
 }
 
 .service-content .link {
     color: #0a68ff;
-    font-weight: 400;
-    cursor: pointer;
+    font-size: 13px;
 }
 
 /* Similar Products */
 .similar-products {
     display: flex;
     align-items: center;
-    padding-top: 12px;
+    gap: 8px;
 }
 
 .products-grid {
@@ -955,36 +832,28 @@ onMounted(async () => {
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(calc(25% - 8px), 1fr));
-    grid-template-rows: repeat(2, 1fr);
-    grid-auto-flow: row;
+    grid-template-columns: repeat(4, 1fr);
     gap: 8px;
-    width: 460px;
-}
-
-.product-card {
-    height: 100%;
-    width: 100%;
 }
 
 .product-card a {
     text-decoration: none;
     color: inherit;
     display: block;
-    border-radius: 8px;
+    border-radius: 6px;
     overflow: hidden;
-    transition: transform 0.2s;
+    border: 1px solid #f0f0f0;
+    transition: box-shadow 0.2s;
 }
 
 .product-card a:hover {
-    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .product-image {
-    position: relative;
-    width: 100%;
     aspect-ratio: 1 / 1;
     overflow: hidden;
+    background: #f8f8f8;
 }
 
 .product-image img {
@@ -993,12 +862,12 @@ onMounted(async () => {
     object-fit: cover;
 }
 
-.product-info {
-    padding: 8px;
+.product-card-info {
+    padding: 6px;
 }
 
-.product-info h4 {
-    font-size: 12px;
+.product-card-info h4 {
+    font-size: 11px;
     line-height: 1.4;
     color: #27272a;
     display: -webkit-box;
@@ -1008,7 +877,7 @@ onMounted(async () => {
     margin-bottom: 4px;
 }
 
-.product-info .price {
+.card-price {
     font-weight: 600;
     color: #27272a;
     font-size: 12px;
@@ -1019,13 +888,12 @@ onMounted(async () => {
     justify-content: center;
     align-items: center;
     gap: 4px;
-    margin-top: 8px;
 }
 
 .dot {
     width: 16px;
     height: 2px;
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 4px;
 }
 
@@ -1034,38 +902,144 @@ onMounted(async () => {
     background: #0a68ff;
 }
 
-/* Sidebar */
+/* Warranty & Benefits */
+.warranty-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    color: #27272a;
+}
+
+.benefits-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    font-size: 14px;
+    color: #27272a;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.benefit-item:last-child {
+    border-bottom: none;
+}
+
+.benefit-item img {
+    flex-shrink: 0;
+}
+
+/* Specs */
+.product-specs {
+    display: flex;
+    flex-direction: column;
+}
+
+.spec-row {
+    display: grid;
+    grid-template-columns: 45% 55%;
+    gap: 4px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+}
+
+.spec-row:last-child {
+    border-bottom: none;
+}
+
+.spec-label {
+    color: #808089;
+}
+
+.spec-value {
+    font-weight: 500;
+    color: #27272a;
+}
+
+/* Description */
+.description {
+    overflow: hidden;
+    line-height: 1.7;
+    font-size: 14px;
+    color: #27272a;
+}
+
+.description.collapsed {
+    max-height: 200px;
+}
+
+.toggle-btn {
+    color: #0a68ff;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 8px;
+    text-decoration: underline;
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+    width: 320px;
+    flex-shrink: 0;
+}
+
 .store-info {
     background: white;
     border-radius: 8px;
     padding: 16px;
-    margin-bottom: 16px;
     position: sticky;
-    top: 0
+    top: 12px;
 }
 
 .store-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding-bottom: 16px;
+    padding-bottom: 14px;
     border-bottom: 1px solid #f0f0f0;
 }
 
 .store-logo {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    min-width: 40px;
+    object-fit: cover;
+    border: 1px solid #e0e0e0;
+}
+
+.store-logo-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .store-details {
     flex: 1;
+    min-width: 0;
 }
 
 .store-name {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: #27272a;
     text-decoration: none;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .store-rating {
@@ -1073,44 +1047,58 @@ onMounted(async () => {
     align-items: center;
     gap: 4px;
     margin-top: 2px;
-}
-
-.store-rating span {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
     color: #27272a;
 }
 
 .chat-btn {
     cursor: pointer;
-    padding: 8px;
+    padding: 6px;
     border-radius: 4px;
     background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    flex-shrink: 0;
 }
 
+/* Selected Variant */
 .selected-variant {
-    display: grid;
-    grid-template-columns: 40px 1fr;
-    gap: 8px;
+    display: flex;
     align-items: center;
+    gap: 10px;
     padding: 12px 0;
     border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+    color: #27272a;
 }
 
 .variant-image {
     width: 40px;
     height: 40px;
     border-radius: 4px;
+    object-fit: cover;
+    border: 1px solid #e0e0e0;
+    flex-shrink: 0;
 }
 
+.variant-name-short {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* Quantity & Price */
 .quantity-price {
-    padding: 12px 0;
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .quantity-selector {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 12px;
 }
 
@@ -1134,6 +1122,7 @@ onMounted(async () => {
     border: none;
     background: #f8f9fa;
     cursor: pointer;
+    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1146,16 +1135,19 @@ onMounted(async () => {
 
 .quantity-controls button:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 .quantity-controls input {
     width: 48px;
     height: 32px;
     border: none;
+    border-left: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
     text-align: center;
     font-size: 14px;
     font-weight: 500;
+    background: white;
 }
 
 .total-price {
@@ -1166,11 +1158,17 @@ onMounted(async () => {
     color: #27272a;
 }
 
+.total-amount {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+/* Action Buttons */
 .action-buttons {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: 16px;
+    margin-top: 14px;
 }
 
 .buy-now,
@@ -1179,13 +1177,14 @@ onMounted(async () => {
     border: none;
     border-radius: 4px;
     padding: 12px 16px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
+    width: 100%;
 }
 
 .buy-now {
@@ -1197,115 +1196,24 @@ onMounted(async () => {
     background: #0056cc;
 }
 
-.add-cart,
+.add-cart {
+    background: white;
+    color: #0a68ff;
+    border: 1px solid #0a68ff;
+}
+
+.add-cart:hover {
+    background: #f0f8ff;
+}
+
 .installment {
     background: white;
     color: #0a68ff;
     border: 1px solid #0a68ff;
 }
 
-.add-cart:hover,
 .installment:hover {
     background: #f0f8ff;
-}
-
-/* Description */
-.description {
-    overflow: hidden;
-    line-height: 1.7;
-    max-width: 460px;
-}
-
-.description.collapsed {
-    max-height: 400px;
-}
-
-.toggle-btn {
-    color: #0a68ff;
-    cursor: pointer;
-    font-size: 14px;
-    margin-top: 8px;
-    text-decoration: underline;
-    border: none;
-    background: none;
-    padding: 0;
-}
-
-/* Reviews */
-.reviews-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 32px 16px;
-    text-align: center;
-}
-
-.reviews-empty span {
-    color: #808089;
-    font-size: 14px;
-}
-
-/* Warranty & Benefits */
-.warranty-info {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 12px 0;
-}
-
-.benefits-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-}
-
-.benefits-list {
-    display: flex;
-    flex-direction: column;
-}
-
-.benefit-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 0;
-}
-
-.benefit-item img {
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-}
-
-/* Product Specs */
-.product-specs {
-    display: flex;
-    flex-direction: column;
-}
-
-.spec-row {
-    display: grid;
-    grid-template-columns: 55% 45%;
-    gap: 4px;
-    padding: 8px 0;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.spec-row:last-child {
-    border-bottom: none;
-}
-
-.spec-label {
-    color: #808089;
-    font-size: 14px;
-}
-
-.spec-value {
-    font-weight: 500;
-    color: #27272a;
-    text-align: right;
 }
 
 /* Links */
@@ -1313,34 +1221,38 @@ onMounted(async () => {
     color: #0a68ff;
     cursor: pointer;
     text-decoration: underline;
+    font-size: 14px;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .container {
-        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .image-gallery {
+        width: 100%;
+        position: static;
     }
 
     .sidebar {
         width: 100%;
     }
 
-    .image-gallery {
+    .store-info {
         position: static;
     }
+}
 
-    .main-image {
-        width: 100%;
+@media (max-width: 768px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .image-container {
         width: 100%;
         height: auto;
         aspect-ratio: 1 / 1;
-    }
-
-    .product-grid {
-        width: 100%;
     }
 }
 </style>
