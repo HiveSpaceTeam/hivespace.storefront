@@ -55,8 +55,15 @@ export interface ProductSearchRequest {
 }
 
 export interface PagedResponse<T> {
-  data: T[]
-  total: number
+  items: T[]
+  pagination: {
+    currentPage: number
+    pageSize: number
+    totalItems: number
+    totalPages: number
+    hasNextPage: boolean
+    hasPreviousPage: boolean
+  }
 }
 
 export interface Product {
