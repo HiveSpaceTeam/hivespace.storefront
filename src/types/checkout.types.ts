@@ -3,7 +3,7 @@ export interface CheckoutItem {
   productId: number
   skuId: number
   productName: string
-  image: string
+  imageUrl: string
   skuAttributes?: string
   originalPrice?: number
   price: number

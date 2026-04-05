@@ -49,7 +49,7 @@
                   class="flex items-center gap-3 px-4 py-3 border-b border-gray-50 dark:border-gray-800 last:border-b-0">
                   <!-- Image + name -->
                   <div class="w-12 h-12 shrink-0 rounded overflow-hidden border border-gray-100 dark:border-gray-700">
-                    <img :src="item.image" :alt="item.productName" class="w-full h-full object-cover" />
+                    <img :src="item.imageUrl" :alt="item.productName" class="w-full h-full object-cover" />
                   </div>
                   <div class="flex-grow min-w-0">
                     <p class="text-base text-gray-800 dark:text-gray-200 line-clamp-1">{{ item.productName }}</p>

@@ -1,6 +1,5 @@
 // Product-related types
 export interface ProductVariantOption {
-  optionId: string
   value: string
 }
 
@@ -21,12 +20,11 @@ export interface ProductImage {
 }
 
 export interface ProductSku {
-  id?: string // Keep for backward compatibility
-  key?: string // New composite key based on variant combinations
+  id?: string
+  key?: string
   skuVariants: {
-    variantId: string // Using UUID string to match ProductVariant.id
+    variantName: string
     value: string
-    optionId: string
   }[]
   price: { amount: number; currency: number }
   quantity?: number | string
@@ -54,16 +52,18 @@ export interface ProductSearchRequest {
   pageIndex: number
 }
 
+export interface Pagination {
+  currentPage: number
+  pageSize: number
+  totalItems: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+}
+
 export interface PagedResponse<T> {
   items: T[]
-  pagination: {
-    currentPage: number
-    pageSize: number
-    totalItems: number
-    totalPages: number
-    hasNextPage: boolean
-    hasPreviousPage: boolean
-  }
+  pagination: Pagination
 }
 
 export interface Product {
@@ -77,6 +77,16 @@ export interface Product {
   // Add more fields as needed
 }
 
+export interface ProductAttribute {
+  attributeId: number
+  attributeName: string
+  groupId?: number
+  groupName?: string
+  selectedValueIds: number[]
+  freeTextValue?: string
+  nameValue: string[]
+}
+
 export interface ProductDetail {
   id?: string
   name: string
@@ -85,7 +95,8 @@ export interface ProductDetail {
   variants: ProductVariant[]
   skus: ProductSku[]
   images?: ProductImage[]
-  currentSeller: CurrentSeller
+  attributes: ProductAttribute[]
+  currentSeller: CurrentSeller | null
 }
 
 export interface CurrentSeller {
