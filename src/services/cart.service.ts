@@ -1,6 +1,5 @@
 import { apiService } from './api'
 import { buildApiUrl } from '@/config'
-import { tempAuthHeaders } from '@/config/temp-auth'
 import type {
   GetCartItemsResponse,
   AddCartItemRequest,
@@ -16,22 +15,22 @@ const CART_ENDPOINTS = {
 class CartService {
   async getCartItems(): Promise<GetCartItemsResponse> {
     const url = buildApiUrl(CART_ENDPOINTS.ITEMS)
-    return await apiService.get<GetCartItemsResponse>(url, { headers: tempAuthHeaders() })
+    return await apiService.get<GetCartItemsResponse>(url)
   }
 
   async addCartItem(data: AddCartItemRequest): Promise<AddCartItemResponse> {
     const url = buildApiUrl(CART_ENDPOINTS.ITEMS)
-    return await apiService.post<AddCartItemResponse>(url, data, { headers: tempAuthHeaders() })
+    return await apiService.post<AddCartItemResponse>(url, data)
   }
 
   async removeCartItem(cartItemId: string): Promise<void> {
     const url = buildApiUrl(CART_ENDPOINTS.ITEM(cartItemId))
-    await apiService.delete(url, { headers: tempAuthHeaders() })
+    await apiService.delete(url)
   }
 
   async updateCartItems(data: UpdateCartItemsRequest): Promise<void> {
     const url = buildApiUrl(CART_ENDPOINTS.ITEMS)
-    await apiService.put(url, data, { headers: tempAuthHeaders() })
+    await apiService.put(url, data)
   }
 }
 
