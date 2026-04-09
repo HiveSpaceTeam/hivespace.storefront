@@ -1,6 +1,5 @@
 import { apiService } from './api'
 import { buildApiUrl } from '@/config'
-import { tempAuthHeaders } from '@/config/temp-auth'
 import type { CheckoutPreview, CheckoutPreviewRequest, CheckoutRequest, CheckoutResult } from '@/types'
 
 const CHECKOUT_ENDPOINTS = {
@@ -11,12 +10,12 @@ const CHECKOUT_ENDPOINTS = {
 class CheckoutService {
   async getPreview(request: CheckoutPreviewRequest = {}): Promise<CheckoutPreview> {
     const url = buildApiUrl(CHECKOUT_ENDPOINTS.PREVIEW)
-    return await apiService.post<CheckoutPreview>(url, request, { headers: tempAuthHeaders() })
+    return await apiService.post<CheckoutPreview>(url, request)
   }
 
   async initiateCheckout(request: CheckoutRequest): Promise<CheckoutResult> {
     const url = buildApiUrl(CHECKOUT_ENDPOINTS.CHECKOUT)
-    return await apiService.post<CheckoutResult>(url, request, { headers: tempAuthHeaders() })
+    return await apiService.post<CheckoutResult>(url, request)
   }
 }
 
