@@ -1,3 +1,27 @@
+// Cart UI types
+
+export interface CartItem {
+  id: string
+  cartItemId: string
+  skuId: number
+  name: string
+  image: string
+  price: number
+  originalPrice?: number
+  quantity: number
+  variant?: string
+  selected: boolean
+  isFreeShipping?: boolean
+  isReturn?: boolean
+}
+
+export interface CartGroup {
+  sellerName: string
+  isMall: boolean
+  selected: boolean
+  items: CartItem[]
+}
+
 // Cart API types
 
 export interface CartItemResponse {

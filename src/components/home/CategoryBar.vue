@@ -23,17 +23,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { HomepageCategory } from '@/types'
-import { categoryService } from '@/services/category.service'
+import { onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useCategoryStore } from '@/stores/category'
 
-const categories = ref<HomepageCategory[]>([])
+const categoryStore = useCategoryStore()
+const { categories } = storeToRefs(categoryStore)
 
-onMounted(async () => {
-  try {
-    categories.value = await categoryService.getHomepageCategories()
-  } catch (err) {
-    console.error('Failed to fetch homepage categories', err)
-  }
-})
+onMounted(() => categoryStore.fetchCategories())
 </script>

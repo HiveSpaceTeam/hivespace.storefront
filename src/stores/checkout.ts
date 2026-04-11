@@ -1,19 +1,18 @@
+import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { checkoutService } from '@/services/checkout.service'
 import type { CheckoutPreview, CheckoutRequest, CheckoutResult } from '@/types'
 
-export function useCheckout() {
+export const useCheckoutStore = defineStore('checkout', () => {
   const preview = ref<CheckoutPreview | null>(null)
   const loading = ref(false)
   const submitting = ref(false)
-  const error = ref<string | null>(null)
 
   const storeCouponMap = ref<Record<string, string>>({})
   const platformCouponCode = ref('')
 
-  async function fetchPreview() {
+  const fetchPreview = async () => {
     loading.value = true
-    error.value = null
     try {
       const storeCoupons = Object.entries(storeCouponMap.value)
         .filter(([, code]) => !!code)
@@ -23,24 +22,22 @@ export function useCheckout() {
         storeCoupons: storeCoupons.length ? storeCoupons : undefined,
         platformCouponCodes: platformCouponCode.value ? [platformCouponCode.value] : undefined,
       })
-    } catch (e: any) {
-      error.value = e?.message ?? 'Failed to load checkout'
     } finally {
       loading.value = false
     }
   }
 
-  function applyStoreCoupon(storeId: string, code: string) {
+  const applyStoreCoupon = (storeId: string, code: string) => {
     storeCouponMap.value = { ...storeCouponMap.value, [storeId]: code }
     fetchPreview()
   }
 
-  function applyPlatformCoupon(code: string) {
+  const applyPlatformCoupon = (code: string) => {
     platformCouponCode.value = code
     fetchPreview()
   }
 
-  async function submitCheckout(request: Omit<CheckoutRequest, 'couponCodes'>): Promise<CheckoutResult> {
+  const submitCheckout = async (request: Omit<CheckoutRequest, 'couponCodes'>): Promise<CheckoutResult> => {
     submitting.value = true
     try {
       const couponCodes = platformCouponCode.value ? [platformCouponCode.value] : undefined
@@ -62,14 +59,12 @@ export function useCheckout() {
       0,
     ),
   )
-  const totalSaved = computed(
-    () => originalSubtotal.value - subtotal.value + shippingDiscount.value,
-  )
+  const totalSaved = computed(() => originalSubtotal.value - subtotal.value + shippingDiscount.value)
 
   return {
+    preview,
     loading,
     submitting,
-    error,
     storeCouponMap,
     platformCouponCode,
     fetchPreview,
@@ -85,4 +80,4 @@ export function useCheckout() {
     shippingDiscount,
     totalSaved,
   }
-}
+})

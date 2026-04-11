@@ -286,109 +286,25 @@ import StorefrontFooter from "@/components/layout/StorefrontFooter.vue";
 import ShopCouponModal from "@/components/common/ShopCouponModal.vue";
 import type { ShopCoupon } from "@/components/common/ShopCouponModal.vue";
 import { useI18n } from "vue-i18n";
-import { cartService } from "@/services/cart.service";
-import type { CartItemResponse } from "@/types";
+import { storeToRefs } from "pinia";
+import { useCartStore } from "@/stores/cart";
+import type { CartItem } from "@/types";
 
 const { t } = useI18n();
 
-// Types
-interface CartItem {
-  id: string;
-  cartItemId: string;
-  skuId: number;
-  name: string;
-  image: string;
-  price: number;
-  originalPrice?: number;
-  quantity: number;
-  variant?: string;
-  selected: boolean;
-  isFreeShipping?: boolean;
-  isReturn?: boolean;
-}
+const cartStore = useCartStore();
+const { cartGroups, isLoading } = storeToRefs(cartStore);
 
-interface CartGroup {
-  sellerName: string;
-  isMall: boolean;
-  selected: boolean;
-  items: CartItem[];
-}
-
-// State
-const isLoading = ref(false);
-const cartGroups = ref<CartGroup[]>([]);
+// Page-local state
 const couponCode = ref("");
 const selectAll = ref(false);
-
-// Shop coupon dropdown state (per-group)
 const shopCouponOpenMap = ref<Record<number, boolean>>({});
 const appliedShopCoupons = ref<Record<number, string>>({});
 
-// Helpers
-const parseSkuAttributes = (raw: string): string => {
-  try {
-    const attrs = JSON.parse(raw) as Record<string, string>;
-    return Object.entries(attrs)
-      .map(([k, v]) => `${k}: ${v}`)
-      .join(", ");
-  } catch {
-    return raw;
-  }
-};
-
-const mapApiItemsToGroups = (items: CartItemResponse[]): CartGroup[] => {
-  const groupMap = new Map<string, CartGroup>();
-
-  for (const item of items) {
-    if (!groupMap.has(item.storeName)) {
-      groupMap.set(item.storeName, {
-        sellerName: item.storeName,
-        isMall: false,
-        selected: false,
-        items: [],
-      });
-    }
-
-    const group = groupMap.get(item.storeName)!;
-    group.items.push({
-      id: item.cartItemId,
-      cartItemId: item.cartItemId,
-      skuId: item.skuId,
-      name: item.productName,
-      image: item.skuImageUrl || item.productThumbnailUrl,
-      price: item.price,
-      quantity: item.quantity,
-      variant: item.skuAttributes
-        ? parseSkuAttributes(item.skuAttributes)
-        : undefined,
-      selected: item.isSelected,
-    });
-  }
-
-  // Sync group.selected based on items
-  for (const group of groupMap.values()) {
-    group.selected =
-      group.items.length > 0 && group.items.every((i) => i.selected);
-  }
-
-  return Array.from(groupMap.values());
-};
-
-// Load cart from API
-const loadCart = async () => {
-  isLoading.value = true;
-  try {
-    const response = await cartService.getCartItems();
-    cartGroups.value = mapApiItemsToGroups(response.items);
-    updateSelectAll();
-  } catch (err) {
-    console.error("Failed to load cart", err);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-onMounted(loadCart);
+onMounted(async () => {
+  await cartStore.loadCart();
+  updateSelectAll();
+});
 
 // Mock shop coupons per seller (including expired ones)
 const shopCouponsMap: Record<string, ShopCoupon[]> = {
@@ -491,38 +407,18 @@ const updateGroupSelect = (groupIndex: number) => {
   updateSelectAll();
 };
 
-// API: update a single item's quantity or selection (not a selectAll action → null)
 const syncItemUpdate = async (item: CartItem) => {
   try {
-    await cartService.updateCartItems({
-      selectAll: null,
-      items: [
-        {
-          cartItemId: item.cartItemId,
-          skuId: item.skuId,
-          quantity: item.quantity,
-          isSelected: item.selected,
-        },
-      ],
-    });
+    await cartStore.syncItem(item);
   } catch (err) {
     console.error("Failed to update cart item", err);
   }
 };
 
-// API: update multiple items at once (not a selectAll action → null)
 const syncItemsUpdate = async (items: CartItem[]) => {
   if (items.length === 0) return;
   try {
-    await cartService.updateCartItems({
-      selectAll: null,
-      items: items.map((i) => ({
-        cartItemId: i.cartItemId,
-        skuId: i.skuId,
-        quantity: i.quantity,
-        isSelected: i.selected,
-      })),
-    });
+    await cartStore.syncItems(items);
   } catch (err) {
     console.error("Failed to update cart items", err);
   }
@@ -553,15 +449,7 @@ const handleSelectAllChange = async () => {
   });
   const allItems = cartGroups.value.flatMap((g) => g.items);
   try {
-    await cartService.updateCartItems({
-      selectAll: selectAll.value,
-      items: allItems.map((i) => ({
-        cartItemId: i.cartItemId,
-        skuId: i.skuId,
-        quantity: i.quantity,
-        isSelected: i.selected,
-      })),
-    });
+    await cartStore.syncItems(allItems, selectAll.value);
   } catch (err) {
     console.error("Failed to update cart items", err);
   }
@@ -570,16 +458,10 @@ const handleSelectAllChange = async () => {
 const removeItem = async (gIdx: number, iIdx: number) => {
   const group = cartGroups.value[gIdx];
   if (!group || !group.items) return;
-
   const item = group.items[iIdx];
   if (!item) return;
-
   try {
-    await cartService.removeCartItem(item.cartItemId);
-    group.items.splice(iIdx, 1);
-    if (group.items.length === 0) {
-      cartGroups.value.splice(gIdx, 1);
-    }
+    await cartStore.removeItem(item.cartItemId);
     updateSelectAll();
   } catch (err) {
     console.error("Failed to remove cart item", err);
@@ -587,20 +469,10 @@ const removeItem = async (gIdx: number, iIdx: number) => {
 };
 
 const removeSelected = async () => {
-  const selectedItems = cartGroups.value
-    .flatMap((g) => g.items)
-    .filter((i) => i.selected);
-
-  if (selectedItems.length === 0) return;
-
+  const selectedIds = cartGroups.value.flatMap((g) => g.items).filter((i) => i.selected).map((i) => i.cartItemId);
+  if (selectedIds.length === 0) return;
   try {
-    await Promise.all(
-      selectedItems.map((i) => cartService.removeCartItem(i.cartItemId)),
-    );
-    cartGroups.value.forEach((g) => {
-      g.items = g.items.filter((i) => !i.selected);
-    });
-    cartGroups.value = cartGroups.value.filter((g) => g.items.length > 0);
+    await cartStore.removeItems(selectedIds);
     updateSelectAll();
   } catch (err) {
     console.error("Failed to remove selected items", err);

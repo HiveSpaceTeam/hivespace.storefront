@@ -1,3 +1,6 @@
 export * from './product.types'
 export * from './cart.types'
 export * from './checkout.types'
+export * from './profile.types'
+export * from './address.types'
+export * from './category.types'
