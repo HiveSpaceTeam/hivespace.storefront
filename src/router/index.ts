@@ -48,6 +48,18 @@ const routes = [
         meta: { titleKey: 'storefront.pageTitle.product', allowAnonymous: true },
     },
     {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import('@/views/Profile/ProfilePage.vue'),
+        meta: { titleKey: 'storefront.pageTitle.profile' },
+    },
+    {
+        path: '/profile/address',
+        name: 'ProfileAddress',
+        component: () => import('@/views/Profile/AddressPage.vue'),
+        meta: { titleKey: 'storefront.pageTitle.address' },
+    },
+    {
         path: '/server-error',
         name: 'ServerError',
         component: ServerError,

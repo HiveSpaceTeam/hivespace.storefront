@@ -53,7 +53,7 @@
                   </div>
                   <div class="flex-grow min-w-0">
                     <p class="text-base text-gray-800 dark:text-gray-200 line-clamp-1">{{ item.productName }}</p>
-                    <div v-if="item.skuAttributes" class="mt-1">
+                    <div v-if="item.skuAttributes && Object.keys(JSON.parse(item.skuAttributes || '{}')).length > 0" class="mt-1">
                       <span
                         class="text-sm text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 px-2 py-0.5 rounded">
                         {{ parseSkuAttributes(item.skuAttributes) }}
@@ -244,7 +244,8 @@ import StorefrontFooter from '@/components/layout/StorefrontFooter.vue'
 import ShopCouponModal from '@/components/common/ShopCouponModal.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { useCheckout } from '@/composables/useCheckout'
+import { storeToRefs } from 'pinia'
+import { useCheckoutStore } from '@/stores/checkout'
 import { RadioGroup, useAppStore, FullscreenLoader, Button, Badge } from '@hivespace/shared'
 import { PaymentMethod } from '@/types'
 
@@ -252,6 +253,7 @@ const { t } = useI18n()
 const router = useRouter()
 const appStore = useAppStore()
 
+const checkoutStore = useCheckoutStore()
 const {
   packages,
   totalItems,
@@ -263,11 +265,8 @@ const {
   storeCouponMap,
   platformCouponCode,
   submitting,
-  fetchPreview,
-  applyStoreCoupon,
-  applyPlatformCoupon,
-  submitCheckout,
-} = useCheckout()
+} = storeToRefs(checkoutStore)
+const { fetchPreview, applyStoreCoupon, applyPlatformCoupon, submitCheckout } = checkoutStore
 
 // ============ Modal open state ============
 const shopCouponOpenMap = ref<Record<string, boolean>>({})

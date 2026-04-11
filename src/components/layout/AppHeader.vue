@@ -37,7 +37,7 @@
           <LanguageSwitcher @language-changed="handleCultureChange" />
           <NotificationMenu v-if="user" />
         </div>
-        <UserMenu v-if="user" :user="user" :menu-items="menuItems" :show-sign-out="true" @sign-out="logout" />
+        <UserMenu v-if="user" :user="user" :menu-items="menuItems" :show-sign-out="true" @sign-out="logout" @navigate="handleNavigate" />
         <div v-else class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 ml-4 h-10">
           <button @click="register()" class="px-2 py-1 hover:text-primary transition-colors cursor-pointer">{{
             $t('common.auth.signUp') }}</button>
@@ -53,6 +53,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   useAuth,
   type MenuItem,
@@ -64,7 +65,7 @@ import {
   NotificationMenu,
   UserMenu
 } from '@hivespace/shared'
-import { X, Menu, MoreVertical, UserCircle, Settings as SettingsIcon, LifeBuoy as SupportIcon } from 'lucide-vue-next'
+import { X, Menu, MoreVertical, UserCircle, ShoppingBag } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/user'
 
 interface Props {
@@ -87,11 +88,15 @@ const emit = defineEmits<{
 
 const { currentUser: user, getCurrentUser, logout, login, register } = useAuth()
 const userStore = useUserStore()
+const router = useRouter()
+
+const handleNavigate = (path: string) => {
+  router.push(path)
+}
 
 const menuItems: MenuItem[] = [
-  { href: '/profile', icon: UserCircle, textKey: 'common.profile.editProfile' },
-  { href: '/chat', icon: SettingsIcon, textKey: 'common.profile.accountSettings' },
-  { href: '/profile', icon: SupportIcon, textKey: 'common.profile.support' },
+  { href: '/profile', icon: UserCircle, textKey: 'storefront.profile.myAccount' },
+  { href: '/orders', icon: ShoppingBag, textKey: 'storefront.profile.myOrders' },
 ]
 
 const isApplicationMenuOpen = ref(false)
