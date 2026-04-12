@@ -98,6 +98,7 @@
         "maintenance": "Bảo trì",
         "notFound": "Không tìm thấy trang",
         "profile": "Hồ Sơ Của Tôi - HiveSpace",
-        "address": "Địa Chỉ Của Tôi - HiveSpace"
+        "address": "Địa Chỉ Của Tôi - HiveSpace",
+                "paymentResult": "Kết Quả Thanh Toán - HiveSpace"
     }
 }

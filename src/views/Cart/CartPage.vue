@@ -15,7 +15,7 @@
 
         <!-- Loading state -->
         <div v-if="isLoading" class="flex justify-center py-16">
-          <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <Spinner />
         </div>
 
         <div v-else class="flex flex-col lg:flex-row gap-4">
@@ -280,7 +280,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { Truck, Trash2, Store, Ticket, ChevronRight } from "lucide-vue-next";
-import { QuantityControl, Button, Checkbox } from "@hivespace/shared";
+import { QuantityControl, Button, Checkbox, Spinner } from "@hivespace/shared";
 import CartHeader from "@/components/layout/CartHeader.vue";
 import StorefrontFooter from "@/components/layout/StorefrontFooter.vue";
 import ShopCouponModal from "@/components/common/ShopCouponModal.vue";

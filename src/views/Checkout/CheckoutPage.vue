@@ -282,16 +282,12 @@ const address = {
   isDefault: true,
 }
 
-const selectedPaymentMethod = ref('momo')
+const selectedPaymentMethod = ref('cod')
 
 const paymentMethodOptions = computed(() => [
-  { value: 'momo', icon: '💜', label: t('checkout.momo'), tag: t('checkout.momoPromo'), tagClass: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400' },
-  { value: 'credit', icon: '💳', label: t('checkout.creditCard'), subLabel: t('checkout.addNewCard') },
-  { value: 'bank', icon: '🏦', label: t('checkout.bankTransfer') },
-  { value: 'kredivo', icon: '🟢', label: t('checkout.kredivo') },
-  { value: 'zalopay', icon: '💙', label: t('checkout.zaloPay') },
-  { value: 'vnpay', icon: '🔵', label: t('checkout.vnPay'), subLabel: t('checkout.scanToPay') },
   { value: 'cod', icon: '📦', label: t('checkout.cod') },
+  { value: 'vnpay', icon: '🔵', label: t('checkout.vnPay'), subLabel: t('checkout.scanToPay') },
+  { value: 'momo', icon: '💜', label: t('checkout.momo'), tag: t('checkout.momoPromo'), tagClass: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400' },
 ])
 
 // ============ Payment method mapping ============
@@ -314,6 +310,7 @@ async function handlePlaceOrder() {
   try {
     const result = await submitCheckout({ deliveryAddress: deliveryAddressDto, paymentMethod })
     if (result.paymentUrl) {
+      sessionStorage.setItem('hivespace_pending_order', JSON.stringify({ orderId: result.orderId }))
       window.location.href = result.paymentUrl
     } else {
       appStore.notifySuccess(t('checkout.orderSuccessTitle'), t('checkout.orderSuccessMessage'))
