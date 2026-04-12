@@ -56,9 +56,12 @@ export interface DeliveryAddressDto {
 }
 
 export const PaymentMethod = {
-  COD: 0,
-  VNPAY: 1,
-  MOMO: 2,
+  COD: 1,
+  VNPAY: 2,
+  MOMO: 3,
+  BankTransfer: 4,
+  Balance: 5,
+  PayPal: 6
 } as const
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]

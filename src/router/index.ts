@@ -72,6 +72,12 @@ const routes = [
         meta: { titleKey: 'storefront.pageTitle.maintenance', allowAnonymous: true },
     },
     {
+        path: '/payment/result',
+        name: 'PaymentResult',
+        component: () => import('@/views/Payment/PaymentResultPage.vue'),
+        meta: { titleKey: 'storefront.pageTitle.paymentResult', allowAnonymous: true, layout: 'none' },
+    },
+    {
         path: '/:pathMatch(.*)*',
         name: 'NotFound',
         component: NotFound,

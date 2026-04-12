@@ -98,6 +98,7 @@
         "maintenance": "Maintenance",
         "notFound": "Not Found",
         "profile": "My Profile - HiveSpace",
-        "address": "My Addresses - HiveSpace"
+        "address": "My Addresses - HiveSpace",
+                "paymentResult": "Payment Result - HiveSpace"
     }
 }
