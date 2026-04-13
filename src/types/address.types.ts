@@ -4,7 +4,6 @@ export interface UserAddress {
   fullName: string
   phoneNumber: string
   street: string
-  ward: string
   district: string
   province: string
   country: string
@@ -18,7 +17,6 @@ export interface AddressFormData {
   phoneNumber: string
   province: string
   district: string
-  ward: string
   street: string
   isDefault: boolean
 }
@@ -27,7 +25,6 @@ export interface AddressApiPayload {
   fullName: string
   phoneNumber: string
   street: string
-  ward: string
   district: string
   province: string
   country: string
@@ -35,16 +32,6 @@ export interface AddressApiPayload {
   isDefault: boolean
 }
 
-/** "Hà Nội, Quận Cầu Giấy, Phường Mai Dịch" → { province, district, ward } */
-export const parseLocation = (location: string) => {
-  const parts = location.split(',').map(p => p.trim())
-  return {
-    province: parts[0] ?? '',
-    district: parts[1] ?? '',
-    ward: parts[2] ?? '',
-  }
-}
-
-/** { province, district, ward } → "Hà Nội, Quận Cầu Giấy, Phường Mai Dịch" */
-export const formatLocation = (addr: Pick<UserAddress, 'province' | 'district' | 'ward'>) =>
-  [addr.province, addr.district, addr.ward].filter(Boolean).join(', ')
+/** { province, district } → "Hà Nội, Quận Cầu Giấy" */
+export const formatLocation = (addr: Pick<UserAddress, 'province' | 'district'>) =>
+  [addr.province, addr.district].filter(Boolean).join(', ')
