@@ -58,7 +58,6 @@ export const useAddressStore = defineStore('address', () => {
         street: data.street,
         province: data.province,
         district: data.district,
-        ward: data.ward,
         country: 'Việt Nam',
         zipCode: '',
         isDefault: data.isDefault,
