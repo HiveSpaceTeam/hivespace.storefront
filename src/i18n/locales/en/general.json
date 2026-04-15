@@ -88,6 +88,35 @@
         "navMyOrders": "My Orders",
         "saveSuccess": "Profile updated successfully"
     },
+    "ordersPage": {
+        "title": "My Orders",
+        "searchPlaceholder": "Search by Shop name, Order ID, or Product name",
+        "tabAll": "All",
+        "tabPendingPayment": "Pending Payment",
+        "tabShipping": "Shipping",
+        "tabPendingDelivery": "Pending Delivery",
+        "tabCompleted": "Completed",
+        "tabCancelled": "Cancelled",
+        "tabReturnRefund": "Return/Refund",
+        "viewShop": "View Shop",
+        "chat": "Chat",
+        "deliverySuccess": "Delivered successfully",
+        "statusCompleted": "COMPLETED",
+        "statusCancelled": "CANCELLED",
+        "statusShipping": "SHIPPING",
+        "statusPendingPayment": "PENDING PAYMENT",
+        "statusPendingDelivery": "PENDING DELIVERY",
+        "statusReturnRefund": "RETURN/REFUND",
+        "total": "Total:",
+        "btnReview": "Review",
+        "btnRequestReturn": "Request Return/Refund",
+        "btnMore": "More",
+        "btnBuyAgain": "Buy Again",
+        "btnViewRefundInfo": "View Refund Info",
+        "btnContactSeller": "Contact Seller",
+        "emptyOrders": "No orders found",
+        "qty": "x{qty}"
+    },
     "mockProductName": "[OFFICIAL] Sample Demo Product {index} - Latest design, high quality, 12-month warranty",
     "pageTitle": {
         "home": "HiveSpace - Online Shopping",
@@ -99,6 +128,7 @@
         "notFound": "Not Found",
         "profile": "My Profile - HiveSpace",
         "address": "My Addresses - HiveSpace",
-                "paymentResult": "Payment Result - HiveSpace"
+                "paymentResult": "Payment Result - HiveSpace",
+        "orders": "My Orders - HiveSpace"
     }
 }

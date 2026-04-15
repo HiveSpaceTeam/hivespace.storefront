@@ -88,6 +88,35 @@
         "navMyOrders": "Đơn Mua",
         "saveSuccess": "Cập nhật hồ sơ thành công"
     },
+    "ordersPage": {
+        "title": "Đơn Mua",
+        "searchPlaceholder": "Bạn có thể tìm kiếm theo tên Shop, ID đơn hàng hoặc Tên sản phẩm",
+        "tabAll": "Tất cả",
+        "tabPendingPayment": "Chờ thanh toán",
+        "tabShipping": "Vận chuyển",
+        "tabPendingDelivery": "Chờ giao hàng",
+        "tabCompleted": "Hoàn thành",
+        "tabCancelled": "Đã hủy",
+        "tabReturnRefund": "Trả hàng/Hoàn tiền",
+        "viewShop": "Xem Shop",
+        "chat": "Chat",
+        "deliverySuccess": "Giao hàng thành công",
+        "statusCompleted": "HOÀN THÀNH",
+        "statusCancelled": "ĐÃ HỦY",
+        "statusShipping": "ĐANG VẬN CHUYỂN",
+        "statusPendingPayment": "CHỜ THANH TOÁN",
+        "statusPendingDelivery": "CHỜ GIAO HÀNG",
+        "statusReturnRefund": "TRẢ HÀNG/HOÀN TIỀN",
+        "total": "Thành tiền:",
+        "btnReview": "Đánh Giá",
+        "btnRequestReturn": "Yêu Cầu Trả hàng/Hoàn Tiền",
+        "btnMore": "Thêm",
+        "btnBuyAgain": "Mua Lại",
+        "btnViewRefundInfo": "Xem Thông Tin Hoàn Tiền",
+        "btnContactSeller": "Liên hệ Người Bán",
+        "emptyOrders": "Không có đơn hàng nào",
+        "qty": "x{qty}"
+    },
     "mockProductName": "[CHÍNH HÃNG] Mẫu Sản phẩm Demo {index} - Thiết kế mới nhất năm nay, chất lượng cao, bảo hành 12 tháng",
     "pageTitle": {
         "home": "HiveSpace - Mua sắm trực tuyến",
@@ -99,6 +128,7 @@
         "notFound": "Không tìm thấy trang",
         "profile": "Hồ Sơ Của Tôi - HiveSpace",
         "address": "Địa Chỉ Của Tôi - HiveSpace",
-                "paymentResult": "Kết Quả Thanh Toán - HiveSpace"
+                "paymentResult": "Kết Quả Thanh Toán - HiveSpace",
+        "orders": "Đơn Mua - HiveSpace"
     }
 }

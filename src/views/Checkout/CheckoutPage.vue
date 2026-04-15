@@ -139,16 +139,24 @@
                     {{ t('checkout.changeAddress') }}
                   </button>
                 </div>
-                <p class="text-base font-semibold text-gray-800 dark:text-gray-200">
-                  {{ address.name }}
-                  <span class="text-gray-400 font-normal mx-1">|</span>
-                  {{ address.phone }}
-                </p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{{ address.detail }}</p>
-                <div v-if="address.isDefault" class="mt-2">
-                  <Badge class="rounded-sm" variant="light" size="sm" color="success">
-                    {{ t('checkout.defaultAddress') }}
-                  </Badge>
+                <div v-if="defaultAddress" class="mt-1">
+                  <p class="text-base font-semibold text-gray-800 dark:text-gray-200">
+                    {{ defaultAddress.fullName }}
+                    <span class="text-gray-400 font-normal mx-1">|</span>
+                    {{ defaultAddress.phoneNumber }}
+                  </p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                    {{ [defaultAddress.street, defaultAddress.ward, defaultAddress.district, defaultAddress.province].filter(Boolean).join(', ') }}
+                  </p>
+                  <div v-if="defaultAddress.isDefault" class="mt-2">
+                    <Badge class="rounded-sm" variant="light" size="sm" color="success">
+                      {{ t('checkout.defaultAddress') }}
+                    </Badge>
+                  </div>
+                </div>
+                <div v-else class="flex items-center gap-2 mt-1">
+                  <Spinner size="sm" />
+                  <span class="text-sm text-gray-400">{{ t('checkout.loadingAddress') }}</span>
                 </div>
               </div>
 
@@ -246,7 +254,8 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCheckoutStore } from '@/stores/checkout'
-import { RadioGroup, useAppStore, FullscreenLoader, Button, Badge } from '@hivespace/shared'
+import { useAddressStore } from '@/stores/address'
+import { RadioGroup, useAppStore, FullscreenLoader, Button, Badge, Spinner } from '@hivespace/shared'
 import { PaymentMethod } from '@/types'
 
 const { t } = useI18n()
@@ -272,15 +281,9 @@ const { fetchPreview, applyStoreCoupon, applyPlatformCoupon, submitCheckout } = 
 const shopCouponOpenMap = ref<Record<string, boolean>>({})
 const platformCouponModalOpen = ref(false)
 
-// ============ Other page state ============
-const address = {
-  name: 'Lê Quang Vũ',
-  phone: '0349836895',
-  detail: 'Số 16 Trần Nhật Duật, Phường Tân Định, Quận 1, TP. Hồ Chí Minh',
-  consume: "Cổ Nhuế",
-  province: "Hà Nội",
-  isDefault: true,
-}
+// ============ Address ============
+const addressStore = useAddressStore()
+const { defaultAddress } = storeToRefs(addressStore)
 
 const selectedPaymentMethod = ref('cod')
 
@@ -298,12 +301,17 @@ const paymentMethodMap: Record<string, PaymentMethod> = {
 }
 
 async function handlePlaceOrder() {
+  if (!defaultAddress.value) {
+    appStore.notifyError(t('checkout.orderFailedTitle'), t('checkout.noAddressMessage'))
+    return
+  }
+  const addr = defaultAddress.value
   const deliveryAddressDto = {
-    recipientName: address.name,
-    phone: address.phone,
-    streetAddress: address.detail,
-    commune: address.consume,
-    province: address.province,
+    recipientName: addr.fullName,
+    phone: addr.phoneNumber,
+    streetAddress: [addr.street, addr.ward, addr.district].filter(Boolean).join(', '),
+    commune: addr.ward ?? addr.district,
+    province: addr.province,
   }
   const paymentMethod = paymentMethodMap[selectedPaymentMethod.value] ?? PaymentMethod.COD
 
@@ -338,5 +346,8 @@ const formatPrice = (price: number) => {
   }).format(price)
 }
 
-onMounted(() => fetchPreview())
+onMounted(() => {
+  fetchPreview()
+  addressStore.fetchDefaultAddress()
+})
 </script>

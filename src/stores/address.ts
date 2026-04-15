@@ -10,6 +10,7 @@ const sortAddresses = (list: UserAddress[]) =>
 
 export const useAddressStore = defineStore('address', () => {
   const addresses = ref<UserAddress[]>([])
+  const defaultAddress = ref<UserAddress | null>(null)
   const isLoading = ref(false)
   const formModal = ref<{ open: boolean; editId: string | null; editData: UserAddress | null }>({
     open: false,
@@ -26,6 +27,14 @@ export const useAddressStore = defineStore('address', () => {
       addresses.value = sortAddresses(await addressService.getAddresses())
     } finally {
       isLoading.value = false
+    }
+  }
+
+  const fetchDefaultAddress = async () => {
+    try {
+      defaultAddress.value = await addressService.getDefaultAddress()
+    } catch {
+      // error toast handled by apiService
     }
   }
 
@@ -116,11 +125,13 @@ export const useAddressStore = defineStore('address', () => {
 
   return {
     addresses,
+    defaultAddress,
     isLoading,
     formModal,
     deleteModal,
     editingAddress,
     fetchAddresses,
+    fetchDefaultAddress,
     openAddModal,
     openEditModal,
     closeFormModal,
