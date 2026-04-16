@@ -19,6 +19,11 @@ class AddressService {
     return await apiService.get<UserAddress>(url)
   }
 
+  async getAddressDefault(): Promise<UserAddress> {
+    const url = buildApiUrl(ADDRESS_ENDPOINTS.BASE + '/default')
+    return await apiService.get<UserAddress>(url)
+  }
+
   async createAddress(data: AddressApiPayload): Promise<UserAddress> {
     const url = buildApiUrl(ADDRESS_ENDPOINTS.BASE)
     return await apiService.post<UserAddress>(url, data)

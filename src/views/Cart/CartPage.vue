@@ -30,13 +30,13 @@
                 <div class="hidden md:flex items-center ml-auto gap-0 text-gray-500 dark:text-gray-400 text-sm">
                   <span class="w-28 text-center">{{
                     t("storefront.cart.unitPrice")
-                    }}</span>
+                  }}</span>
                   <span class="w-32 text-center">{{
                     t("storefront.cart.quantity")
-                    }}</span>
+                  }}</span>
                   <span class="w-28 text-center">{{
                     t("storefront.cart.subTotal")
-                    }}</span>
+                  }}</span>
                   <span class="w-16 text-center">
                     <button @click="removeSelected" class="text-gray-400 hover:text-red-500 transition-colors">
                       <Trash2 class="w-4 h-4" />
@@ -67,7 +67,7 @@
                 <Checkbox v-model="item.selected" @change="handleItemSelectChange(groupIndex, item)"
                   class="mt-4 shrink-0" />
 
-                <!-- Product image -->
+                <!-- Product imageURL -->
                 <div class="w-20 h-20 shrink-0 rounded-sm overflow-hidden border border-gray-100 dark:border-gray-700">
                   <img :src="item.image" :alt="item.name" class="w-full h-full object-cover" />
                 </div>
@@ -115,7 +115,7 @@
                   <div class="w-28 text-center">
                     <span class="text-base font-medium text-primary">{{
                       formatPrice(item.price * item.quantity)
-                      }}</span>
+                    }}</span>
                   </div>
 
                   <!-- Remove -->
@@ -131,7 +131,7 @@
                 <div class="md:hidden flex flex-col items-end gap-2 shrink-0">
                   <span class="text-base font-medium text-primary">{{
                     formatPrice(item.price)
-                    }}</span>
+                  }}</span>
                   <QuantityControl :model-value="item.quantity" @update:model-value="
                     (val: number) => handleQuantityChange(item, val)
                   " :min="1" size="sm" />
@@ -192,21 +192,21 @@
                 <div class="flex items-center justify-between text-base">
                   <span class="text-gray-500 dark:text-gray-400">{{
                     t("storefront.cart.provisional")
-                    }}</span>
+                  }}</span>
                   <span class="text-gray-800 dark:text-gray-200">{{
                     formatPrice(subtotal)
-                    }}</span>
+                  }}</span>
                 </div>
                 <div class="flex items-center justify-between text-base">
                   <span class="text-gray-500 dark:text-gray-400">{{
                     t("storefront.cart.discountAmount")
-                    }}</span>
+                  }}</span>
                   <span class="text-green-600">-{{ formatPrice(discount) }}</span>
                 </div>
                 <div class="flex items-center justify-between text-base">
                   <span class="text-gray-500 dark:text-gray-400">{{
                     t("storefront.cart.shippingFee")
-                    }}</span>
+                  }}</span>
                   <span class="text-gray-800 dark:text-gray-200">{{
                     shippingFee === 0
                       ? t("storefront.cart.free")
@@ -219,11 +219,11 @@
                 <div class="flex items-center justify-between mb-4">
                   <span class="text-base text-gray-600 dark:text-gray-400">{{
                     t("storefront.cart.totalAmount")
-                    }}</span>
+                  }}</span>
                   <div class="text-right">
                     <span class="text-2xl font-bold text-primary">{{
                       formatPrice(total)
-                      }}</span>
+                    }}</span>
                     <div class="text-sm text-gray-400">
                       {{ t("storefront.cart.vatIncluded") }}
                     </div>
@@ -248,7 +248,7 @@
               <div v-for="product in recommendedProducts" :key="product.id"
                 class="shrink-0 w-[160px] border border-gray-100 dark:border-gray-700 rounded-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div class="w-full h-[160px] overflow-hidden">
-                  <img :src="product.image" :alt="product.name"
+                  <img :src="product.imageURL" :alt="product.name"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <div class="p-2">
@@ -258,13 +258,13 @@
                   <div class="flex items-center gap-1">
                     <span class="text-base font-medium text-primary">{{
                       formatPrice(product.price)
-                      }}</span>
-                    <span v-if="product.discount" class="text-xs text-white bg-primary px-1 rounded">-{{
-                      product.discount }}%</span>
+                    }}</span>
+                    <!-- <span v-if="product.discount" class="text-xs text-white bg-primary px-1 rounded">-{{
+                      product.discount }}%</span> -->
                   </div>
-                  <div class="text-xs text-gray-400 mt-0.5">
+                  <!-- <div class="text-xs text-gray-400 mt-0.5">
                     {{ t("storefront.soldCount", { count: product.sold }) }}
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -289,6 +289,8 @@ import { useI18n } from "vue-i18n";
 import { storeToRefs } from "pinia";
 import { useCartStore } from "@/stores/cart";
 import type { CartItem } from "@/types";
+import { productService } from "@/services/product.service";
+import type { PagedResponse, ProductSummary } from "@/types";
 
 const { t } = useI18n();
 
@@ -304,6 +306,7 @@ const appliedShopCoupons = ref<Record<number, string>>({});
 onMounted(async () => {
   await cartStore.loadCart();
   updateSelectAll();
+  fetchRecommendedProducts()
 });
 
 // Mock shop coupons per seller (including expired ones)
@@ -479,16 +482,21 @@ const removeSelected = async () => {
   }
 };
 
+const recommendedProducts = ref<ProductSummary[]>([]);
+
+const fetchRecommendedProducts = async () => {
+  const result: PagedResponse<ProductSummary> =
+    await productService.getProducts({
+      pageIndex: 1,
+      pageSize: 20,
+    });
+  recommendedProducts.value = result.items;
+  // totalCount.value = result.pagination.totalItems
+}
+
+
 // Recommended products (mock)
-const recommendedProducts = Array.from({ length: 10 }).map((_, i) => ({
-  id: `rec-${i}`,
-  name: `Sản phẩm gợi ý ${i + 1} - Chất lượng cao, giá tốt nhất thị trường`,
-  image: `https://picsum.photos/200?random=${i + 50}`,
-  price: Math.floor(Math.random() * 500000) + 50000,
-  discount:
-    Math.random() > 0.5 ? Math.floor(Math.random() * 40) + 10 : undefined,
-  sold: Math.floor(Math.random() * 5000),
-}));
+
 </script>
 
 <style scoped>
