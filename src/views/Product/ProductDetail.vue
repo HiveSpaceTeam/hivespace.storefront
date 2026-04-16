@@ -6,52 +6,32 @@
         <div class="main-image">
           <div class="image-frame">
             <div class="image-container">
-              <img
-                :src="currentImage?.fileId"
-                width="368"
-                height="368"
-                loading="eager"
-                alt="product"
-              />
+              <img :src="currentImage?.fileId" width="368" height="368" loading="eager" alt="product" />
             </div>
           </div>
           <div class="thumbnail-list">
             <div class="thumbnail-slider">
-              <button class="nav-btn prev disabled">
+              <button @click="setPrevActiveImage" class="nav-btn prev" :class="{ disabled: activeImageIndex === 0 }">
                 <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
+                  <path fill-rule="evenodd" clip-rule="evenodd"
                     d="M12.0899 14.5899C11.7645 14.9153 11.2368 14.9153 10.9114 14.5899L5.91139 9.58991C5.58596 9.26447 5.58596 8.73683 5.91139 8.4114L10.9114 3.41139C11.2368 3.08596 11.7645 3.08596 12.0899 3.41139C12.4153 3.73683 12.4153 4.26447 12.0899 4.58991L7.67916 9.00065L12.0899 13.4114C12.4153 13.7368 12.4153 14.2645 12.0899 14.5899Z"
-                    fill="#0A68FF"
-                  ></path>
+                    fill="#0A68FF"></path>
                 </svg>
               </button>
               <div class="thumbnails">
                 <div class="thumbnail-track">
-                  <a
-                    v-for="(image, index) in displayedProductImages"
-                    :key="index"
-                    :class="{ active: index === activeImageIndex }"
-                    @click="setActiveImage(index)"
-                  >
-                    <img
-                      width="47"
-                      height="47"
-                      :alt="`product-img-${index}`"
-                      :src="image.fileId"
-                    />
+                  <a v-for="(image, index) in displayedProductImages" :key="index"
+                    :class="{ active: index === activeImageIndex }" @click="setActiveImage(index)">
+                    <img width="47" height="47" :alt="`product-img-${index}`" :src="image.fileId" />
                   </a>
                 </div>
               </div>
-              <button class="nav-btn next">
+              <button @click="setNextActiveImage" class="nav-btn next"
+                :class="{ disabled: activeImageIndex === displayedProductImages.length - 1 }">
                 <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M5.91107 3.41107C6.23651 3.08563 6.76414 3.08563 7.08958 3.41107L12.0896 8.41107C12.415 8.73651 12.415 9.26415 12.0896 9.58958L7.08958 14.5896C6.76414 14.915 6.23651 14.915 5.91107 14.5896C5.58563 14.2641 5.58563 13.7365 5.91107 13.4111L10.3218 9.00033L5.91107 4.58958C5.58563 4.26414 5.58563 3.73651 5.91107 3.41107Z"
-                    fill="#0A68FF"
-                  ></path>
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M5.91107 3.41107C6.23651 3.08563 6.76414 3.08563 7.08958 3.41107L12.0896 8.41107C12.415 8.73651 12.415 9.26415 12.0896 9.58958L7.08958 14.5896C6.76414 14.915 6.23651 14.915 5.91107 14.5896C5.58563 14.2641 5.58563 13.7365 5.91107 13.4111L10.3218 9.00033L5.91107 4.58958C5.58563 4.26414 5.58563 3.73651 5.91107 3.41₁₀₇Z"
+                    fill="#0A68FF"></path>
                 </svg>
               </button>
             </div>
@@ -65,25 +45,15 @@
         <div class="product-details">
           <div class="badges">
             <picture>
-              <img
-                src="https://salt.tikicdn.com/ts/upload/be/67/48/04a82ab8df178e1a13bde38316081865.png"
-                width="91"
-                height="20"
-                alt="freeship_xtra"
-              />
+              <img src="https://salt.tikicdn.com/ts/upload/be/67/48/04a82ab8df178e1a13bde38316081865.png" width="91"
+                height="20" alt="freeship_xtra" />
             </picture>
             <picture>
-              <img
-                src="https://salt.tikicdn.com/ts/ta/b1/3f/4e/cc3d0a2dd751a7b06dd97d868d6afa56.png"
-                width="114"
-                height="20"
-                alt="return_policy"
-              />
+              <img src="https://salt.tikicdn.com/ts/ta/b1/3f/4e/cc3d0a2dd751a7b06dd97d868d6afa56.png" width="114"
+                height="20" alt="return_policy" />
             </picture>
-            <span class="brand"
-              >Thương hiệu:
-              <a href="#">{{ store.name || "HiveSpace" }}</a></span
-            >
+            <span class="brand">{{ $t('storefront.productDetail.brand') }}:
+              <a href="#">{{ store.name || "HiveSpace" }}</a></span>
           </div>
           <h1 class="product-title">{{ productDetail.name }}</h1>
           <div class="price-section">
@@ -95,50 +65,27 @@
             <div class="variant-group">
               <p class="variant-label">{{ productDetail.variants[0]?.name }}</p>
               <div class="variant-options">
-                <div
-                  v-for="(option, index) in productDetail.variants[0]?.options"
-                  :key="index"
-                  :class="{ active: selectedOptions.option1 === option.value }"
-                  @click="selectOption1(option)"
-                >
+                <div v-for="(option, index) in productDetail.variants[0]?.options" :key="index"
+                  :class="{ active: selectedOptions.option1 === option.value }" @click="selectOption1(option)">
                   <div class="color-option">
-                    <img
-                      :src="getOptionImage(option)"
-                      width="42"
-                      height="42"
-                      alt="option"
-                    />
+                    <img :src="getOptionImage(option)" width="42" height="42" alt="option" />
                     <span>{{ option.value }}</span>
                   </div>
-                  <img
-                    v-if="selectedOptions.option1 === option.value"
-                    class="selected-indicator"
+                  <img v-if="selectedOptions.option1 === option.value" class="selected-indicator"
                     src="https://salt.tikicdn.com/ts/upload/6d/62/b9/ac9f3bebb724a308d710c0a605fe057d.png"
-                    alt="Selected"
-                    width="13"
-                    height="13"
-                  />
+                    alt="Selected" width="13" height="13" />
                 </div>
               </div>
             </div>
             <div v-if="productDetail.variants[1]" class="variant-group">
               <p class="variant-label">{{ productDetail.variants[1]?.name }}</p>
               <div class="variant-options">
-                <div
-                  v-for="(option, index) in productDetail.variants[1]?.options"
-                  :key="index"
-                  :class="{ active: selectedOptions.option2 === option.value }"
-                  @click="selectSize(option)"
-                >
+                <div v-for="(option, index) in productDetail.variants[1]?.options" :key="index"
+                  :class="{ active: selectedOptions.option2 === option.value }" @click="selectSize(option)">
                   <span>{{ option.value }}</span>
-                  <img
-                    v-if="selectedOptions.option2 === option.value"
-                    class="selected-indicator"
+                  <img v-if="selectedOptions.option2 === option.value" class="selected-indicator"
                     src="https://salt.tikicdn.com/ts/upload/6d/62/b9/ac9f3bebb724a308d710c0a605fe057d.png"
-                    alt="Selected"
-                    width="13"
-                    height="13"
-                  />
+                    alt="Selected" width="13" height="13" />
                 </div>
               </div>
             </div>
@@ -147,115 +94,86 @@
 
         <!-- Shipping Info -->
         <div class="section">
-          <h3>Thông tin vận chuyển</h3>
+          <h3>{{ $t('storefront.productDetail.shippingInfo') }}</h3>
           <div class="shipping-address">
-            <span>Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội</span>
-            <span class="change-link">Đổi</span>
+            <span>{{ $t('storefront.productDetail.defaultAddress') }}: {{ defaultAddress }}</span>
+            <span class="change-link">{{ $t('storefront.productDetail.change') }}</span>
           </div>
           <div class="shipping-details">
             <div class="shipping-item">
               <div class="shipping-header">
-                <img
-                  src="https://salt.tikicdn.com/ts/upload/14/11/46/13b71dceb805fb57ce37d57585bc3762.png"
-                  alt=""
-                  height="16"
-                  width="32"
-                />
+                <img src="https://salt.tikicdn.com/ts/upload/14/11/46/13b71dceb805fb57ce37d57585bc3762.png" alt=""
+                  height="16" width="32" />
                 <span class="highlight">Giao Thứ Sáu</span>
               </div>
               <div class="shipping-fee">
-                <span
-                  >Ngày 20/03: <span class="free">Miễn phí</span
-                  ><del>38.000₫</del></span
-                >
+                <span>{{ $t('storefront.productDetail.date') }} 20/03: <span class="free">{{
+                  $t('storefront.productDetail.free') }}</span><del>38.000₫</del></span>
               </div>
             </div>
           </div>
           <div class="freeship-info">
-            <img
-              src="https://salt.tikicdn.com/ts/upload/f7/85/80/51da5722c3cfa1d6d93644188d07c51a.png"
-              width="79"
-              height="16"
-              alt="freeship-icon"
-            />
+            <img src="https://salt.tikicdn.com/ts/upload/f7/85/80/51da5722c3cfa1d6d93644188d07c51a.png" width="79"
+              height="16" alt="freeship-icon" />
             <span>Freeship 15k đơn từ 45k, Freeship 30k đơn từ 100k</span>
           </div>
         </div>
 
         <!-- Discounts -->
         <div class="section">
-          <h3>Ưu đãi khác</h3>
+          <h3>{{ $t('storefront.productDetail.discounts') }}</h3>
           <div class="discounts">
             <div class="discount-header">
-              <span>3 Mã Giảm Giá</span>
+              <span>3 {{ $t('storefront.productDetail.discountCodes') }}</span>
               <div class="discount-codes">
-                <span class="code">Giảm 20%</span>
-                <span class="code">Giảm 8K</span>
+                <span class="code">{{ $t('storefront.productDetail.decrease') }} 20%</span>
+                <span class="code">{{ $t('storefront.productDetail.decrease') }} 8K</span>
               </div>
             </div>
-            <img
-              src="https://salt.tikicdn.com/ts/upload/16/42/c1/23a144e53aadf0357f6cd2c98b525902.png"
-              width="24"
-              height="24"
-              alt="right-icon"
-            />
+            <img src="https://salt.tikicdn.com/ts/upload/16/42/c1/23a144e53aadf0357f6cd2c98b525902.png" width="24"
+              height="24" alt="right-icon" />
           </div>
         </div>
 
         <!-- Additional Services -->
-        <div class="section">
+        <!-- <div class="section">
           <h3>Dịch vụ bổ sung</h3>
           <div class="service-item">
-            <img
-              src="https://salt.tikicdn.com/ts/upload/73/4d/f7/f86e767bffc14aa3d6abed348630100b.png"
-              alt="tikicard-icon"
-              height="40"
-              width="40"
-            />
+            <img src="https://salt.tikicdn.com/ts/upload/73/4d/f7/f86e767bffc14aa3d6abed348630100b.png"
+              alt="tikicard-icon" height="40" width="40" />
             <div class="service-content">
               <div>Ưu đãi đến 600k với thẻ TikiCard</div>
               <div class="link">Đăng ký</div>
             </div>
           </div>
           <div class="service-item">
-            <img
-              src="https://salt.tikicdn.com/ts/upload/2a/27/6a/7bbba1f6c93a1a42a3c314e7b5825f4c.png"
-              alt="installment-icon"
-              height="40"
-              width="40"
-            />
+            <img src="https://salt.tikicdn.com/ts/upload/2a/27/6a/7bbba1f6c93a1a42a3c314e7b5825f4c.png"
+              alt="installment-icon" height="40" width="40" />
             <div class="service-content">
               <div>Mua trước trả sau</div>
               <div class="link">Đăng ký</div>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Similar Products -->
         <div class="section">
-          <h3>Sản phẩm tương tự</h3>
+          <h3>{{ $t('storefront.productDetail.similarProducts') }}</h3>
           <div class="similar-products">
-            <button class="nav-btn prev disabled">
+            <button @click="handlePrevSimilarProducts" class="nav-btn prev " :class="{ disabled: pageIndex === 1 }">
               <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                <path fill-rule="evenodd" clip-rule="evenodd"
                   d="M12.0899 14.5899C11.7645 14.9153 11.2368 14.9153 10.9114 14.5899L5.91139 9.58991C5.58596 9.26447 5.58596 8.73683 5.91139 8.4114L10.9114 3.41139C11.2368 3.08596 11.7645 3.08596 12.0899 3.41139C12.4153 3.73683 12.4153 4.26447 12.0899 4.58991L7.67916 9.00065L12.0899 13.4114C12.4153 13.7368 12.4153 14.2645 12.0899 14.5899Z"
-                  fill="#0A68FF"
-                ></path>
+                  fill="#0A68FF"></path>
               </svg>
             </button>
             <div class="products-grid">
               <div class="products-container">
                 <div class="product-grid">
-                  <div
-                    v-for="(sp, index) in similarProducts"
-                    :key="index"
-                    class="product-card"
-                  >
-                    <a :href="`/product/detail?pid=${sp.id}`">
+                  <div v-for="(sp, index) in similarProducts" :key="index" class="product-card">
+                    <a :href="`/product?pid=${sp.id}`">
                       <div class="product-image">
-                        <img :src="sp.thumbnailUrl" :alt="sp.name" />
+                        <img :src="sp.imageURL" :alt="sp.name" />
                       </div>
                       <div class="product-card-info">
                         <h4>{{ sp.name }}</h4>
@@ -267,19 +185,18 @@
                   </div>
                 </div>
                 <div class="pagination">
-                  <div class="dot active"></div>
-                  <div class="dot"></div>
+                  <div v-for="(item, index) in 4" :key="index" class="dot "
+                    :class="{ active: index === pageIndex - 1 }"></div>
+
                 </div>
               </div>
             </div>
-            <button class="nav-btn next">
+            <button @click="handleNextSimilarProducts" class="nav-btn next"
+              :class="{ disabled: pageIndex * pageSize >= totalCount || pageIndex === 4 }">
               <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                <path fill-rule="evenodd" clip-rule="evenodd"
                   d="M5.91107 3.41107C6.23651 3.08563 6.76414 3.08563 7.08958 3.41107L12.0896 8.41107C12.415 8.73651 12.415 9.26415 12.0896 9.58958L7.08958 14.5896C6.76414 14.915 6.23651 14.915 5.91107 14.5896C5.58563 14.2641 5.58563 13.7365 5.91107 13.4111L10.3218 9.00033L5.91107 4.58958C5.58563 4.26414 5.58563 3.73651 5.91107 3.41107Z"
-                  fill="#0A68FF"
-                ></path>
+                  fill="#0A68FF"></path>
               </svg>
             </button>
           </div>
@@ -287,13 +204,9 @@
 
         <!-- Warranty Info (dynamic from attributes grouped by groupName="Bảo hành") -->
         <div v-if="warrantyAttributes.length > 0" class="section">
-          <h3>Thông tin bảo hành</h3>
+          <h3>{{ $t('storefront.productDetail.warrantyInfo') }}</h3>
           <div class="product-specs">
-            <div
-              class="spec-row"
-              v-for="(item, index) in warrantyAttributes"
-              :key="index"
-            >
+            <div class="spec-row" v-for="(item, index) in warrantyAttributes" :key="index">
               <span class="spec-label">{{ item.attributeName }}</span>
               <span class="spec-value">{{
                 item.freeTextValue || item.nameValue.join(", ")
@@ -304,48 +217,35 @@
 
         <!-- Benefits -->
         <div class="section">
-          <h3>An tâm mua sắm</h3>
+          <h3>{{ $t('storefront.productDetail.benefits') }}</h3>
           <div class="benefits-list">
             <div class="benefit-item">
-              <img
-                alt="check-icon"
-                src="https://salt.tikicdn.com/ts/upload/c5/37/ee/76c708d43e377343e82baee8a0340297.png"
-                height="20"
-                width="20"
-              />
-              <span>Được đồng kiểm khi nhận hàng</span>
+              <img alt="check-icon"
+                src="https://salt.tikicdn.com/ts/upload/c5/37/ee/76c708d43e377343e82baee8a0340297.png" height="20"
+                width="20" />
+              <span>{{ $t('storefront.productDetail.inspectionAllowed') }}</span>
             </div>
             <div class="benefit-item">
-              <img
-                alt="refund-icon"
-                src="https://salt.tikicdn.com/ts/upload/ea/02/b4/b024e431ec433e6c85d4734aaf35bd65.png"
-                height="20"
-                width="20"
-              />
-              <span><strong>Được hoàn tiền 200%</strong> nếu là hàng giả.</span>
+              <img alt="refund-icon"
+                src="https://salt.tikicdn.com/ts/upload/ea/02/b4/b024e431ec433e6c85d4734aaf35bd65.png" height="20"
+                width="20" />
+              <span v-html="$t('storefront.productDetail.refundPolicy')"></span>
             </div>
             <div class="benefit-item">
-              <img
-                alt="return-icon"
-                src="https://salt.tikicdn.com/ts/upload/d8/c7/a5/1cd5bd2f27f9bd74b2c340b8e27c4d82.png"
-                height="20"
-                width="20"
-              />
-              <span>Đổi trả miễn phí trong 30 ngày. Được đổi ý.</span>
-              <span class="link">Chi tiết</span>
+              <img alt="return-icon"
+                src="https://salt.tikicdn.com/ts/upload/d8/c7/a5/1cd5bd2f27f9bd74b2c340b8e27c4d82.png" height="20"
+                width="20" />
+              <span>{{ $t('storefront.productDetail.freeReturn') }}</span>
+              <!-- <span class="link">{{ $t('storefront.productDetail.details') }}</span> -->
             </div>
           </div>
         </div>
 
         <!-- Product Specs (dynamic from attributes grouped by groupName="Thông tin chi tiết") -->
         <div v-if="specAttributes.length > 0" class="section">
-          <h3>Thông tin chi tiết</h3>
+          <h3>{{ $t('storefront.productDetail.specifications') }}</h3>
           <div class="product-specs">
-            <div
-              class="spec-row"
-              v-for="(item, index) in specAttributes"
-              :key="index"
-            >
+            <div class="spec-row" v-for="(item, index) in specAttributes" :key="index">
               <span class="spec-label">{{ item.attributeName }}</span>
               <span class="spec-value">{{
                 item.freeTextValue || item.nameValue.join(", ")
@@ -356,14 +256,11 @@
 
         <!-- Description -->
         <div class="section">
-          <h3>Mô tả sản phẩm</h3>
-          <div
-            class="description"
-            :class="{ collapsed: !descriptionExpanded }"
-            v-html="productDetail.description"
-          ></div>
+          <h3>{{ $t('storefront.productDetail.description') }}</h3>
+          <div class="description" :class="{ collapsed: !descriptionExpanded }" v-html="productDetail.description">
+          </div>
           <button class="toggle-btn" @click="toggleDescription">
-            {{ descriptionExpanded ? "Rút gọn" : "Xem thêm" }}
+            {{ descriptionExpanded ? $t('storefront.productDetail.collapse') : $t('storefront.productDetail.expand') }}
           </button>
         </div>
       </div>
@@ -374,20 +271,12 @@
           <!-- Store Header -->
           <div class="store-header">
             <a href="#" @click.prevent>
-              <img
-                v-if="store.logo"
-                :src="store.logo"
-                class="store-logo"
-                width="40"
-                height="40"
-                :alt="store.name"
-              />
+              <img v-if="store.logo" :src="store.logo" class="store-logo" width="40" height="40" :alt="store.name" />
               <div v-else class="store-logo-placeholder">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
-                    fill="#ccc"
-                  />
+                    fill="#ccc" />
                 </svg>
               </div>
             </a>
@@ -397,39 +286,25 @@
               }}</a>
               <div class="store-rating">
                 <span>{{ store.rating }}</span>
-                <img
-                  alt="star-icon"
-                  src="https://salt.tikicdn.com/ts/upload/e3/f0/86/efd76e1d41c00ad8ebb7287c66b559fd.png"
-                  width="16"
-                  height="16"
-                />
-                <span>({{ store.reviewCount }} đánh giá)</span>
+                <img alt="star-icon"
+                  src="https://salt.tikicdn.com/ts/upload/e3/f0/86/efd76e1d41c00ad8ebb7287c66b559fd.png" width="16"
+                  height="16" />
+                <span>({{ store.reviewCount }} {{ $t('storefront.productDetail.reviews') }})</span>
               </div>
             </div>
             <button class="chat-btn">
-              <img
-                alt="chat-icon"
-                src="https://salt.tikicdn.com/ts/upload/8b/82/74/cf2c041938ace329ab11fbc38da3275b.png"
-                height="20"
-                width="20"
-              />
+              <img alt="chat-icon"
+                src="https://salt.tikicdn.com/ts/upload/8b/82/74/cf2c041938ace329ab11fbc38da3275b.png" height="20"
+                width="20" />
             </button>
           </div>
 
           <!-- Selected Variant / Current Image -->
           <div class="selected-variant">
-            <img
-              class="variant-image"
-              :src="currentImage?.fileId"
-              width="40"
-              height="40"
-              alt="variant"
-            />
+            <img class="variant-image" :src="currentImage?.fileId" width="40" height="40" alt="variant" />
             <span v-if="hasVariants">
               {{ getSelectedOption1Value()
-              }}<span v-if="getSelectedOption2Value()"
-                >, {{ getSelectedOption2Value() }}</span
-              >
+              }}<span v-if="getSelectedOption2Value()">, {{ getSelectedOption2Value() }}</span>
             </span>
             <span v-else class="variant-name-short">{{
               productDetail.name
@@ -439,7 +314,7 @@
           <!-- Quantity and Price -->
           <div class="quantity-price">
             <div class="quantity-selector">
-              <label>Số Lượng</label>
+              <label>{{ $t('storefront.productDetail.quantity') }}</label>
               <div class="quantity-controls">
                 <button @click="decreaseQuantity" :disabled="quantity <= 1">
                   -
@@ -449,7 +324,7 @@
               </div>
             </div>
             <div class="total-price">
-              <span>Tạm tính</span>
+              <span>{{ $t('storefront.productDetail.subtotal') }}</span>
               <span class="total-amount">{{
                 formatPrice(getCurrentPrice() * quantity)
               }}</span>
@@ -458,9 +333,8 @@
 
           <!-- Action Buttons -->
           <div class="action-buttons">
-            <button class="buy-now">Mua ngay</button>
-            <button class="add-cart" @click="addToCart">Thêm vào giỏ</button>
-            <button class="installment">Mua trước trả sau</button>
+            <button class="buy-now">{{ $t('storefront.productDetail.buyNow') }}</button>
+            <button class="add-cart" @click="addToCart">{{ $t('storefront.productDetail.addCart') }}</button>
           </div>
         </div>
       </div>
@@ -471,8 +345,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { productService } from "@/services/product.service";
+import { cartService } from "@/services/cart.service";
+import { useAppStore } from '@hivespace/shared'
 import { useRoute } from "vue-router";
-import type { PagedResponse, ProductDetail, ProductSummary } from "@/types";
+import type { AddCartItemRequest, PagedResponse, ProductDetail, ProductSummary } from "@/types";
+import { useI18n } from 'vue-i18n'
+import { addressService } from "@/services/address.service";
 
 const activeImageIndex = ref(0);
 const selectedOptions = ref<Record<string, any>>({
@@ -490,10 +368,12 @@ const store = ref({
   reviewCount: 165,
 });
 
+const defaultAddress = ref("")
+
 const similarProducts = ref<ProductSummary[]>([]);
 
 const productDetail = ref<ProductDetail>({
-  id: "",
+  id: 0,
   name: "",
   category: "",
   description: "",
@@ -502,7 +382,11 @@ const productDetail = ref<ProductDetail>({
   attributes: [],
   currentSeller: null,
 });
-
+const pageIndex = ref(1)
+const pageSize = ref(8)
+const totalCount = ref(0)
+const appStore = useAppStore()
+const { t } = useI18n()
 const hasVariants = computed(() => productDetail.value.variants.length > 0);
 
 const displayedProductImages = computed(() => {
@@ -542,6 +426,32 @@ const currentImage = computed(
 
 const setActiveImage = (index: number) => {
   activeImageIndex.value = index;
+};
+const setNextActiveImage = () => {
+  if (activeImageIndex.value < displayedProductImages.value.length - 1) {
+    activeImageIndex.value++;
+  }
+};
+const setPrevActiveImage = () => {
+  if (activeImageIndex.value > 0) {
+    activeImageIndex.value--;
+  }
+};
+
+const handlePrevSimilarProducts = () => {
+
+  if (pageIndex.value > 1) {
+    pageIndex.value -= 1
+    fetchSimilarProducts()
+  }
+};
+
+const handleNextSimilarProducts = () => {
+  // Placeholder for pagination logic
+  if (pageIndex.value * pageSize.value < totalCount.value) {
+    pageIndex.value += 1
+    fetchSimilarProducts()
+  }
 };
 
 const selectOption1 = (option: any) => {
@@ -584,7 +494,24 @@ const increaseQuantity = () => {
 const decreaseQuantity = () => {
   if (quantity.value > 1) quantity.value--;
 };
-const addToCart = () => {};
+const addToCart = async () => {
+  await cartService.addCartItem({
+    productId: productDetail.value.id,
+    skuId: productDetail.value.skus[0]?.id,
+    quantity: quantity.value,
+  } as AddCartItemRequest);
+  appStore.notifySuccess(t("storefront.cart.addToCartSuccess"));
+};
+const fetchSimilarProducts = async () => {
+  const result: PagedResponse<ProductSummary> =
+    await productService.getProducts({
+      pageIndex: pageIndex.value,
+      pageSize: pageSize.value,
+    });
+  similarProducts.value = result.items;
+  totalCount.value = result.pagination.totalItems
+}
+
 const toggleDescription = () => {
   descriptionExpanded.value = !descriptionExpanded.value;
 };
@@ -606,10 +533,34 @@ onMounted(async () => {
     store.value.logo = productDetail.value.currentSeller.logoUrl;
   }
 
-  const result: PagedResponse<ProductSummary> =
-    await productService.getProducts({ pageIndex: 1, pageSize: 8 });
-  similarProducts.value = result.items;
+  await fetchSimilarProducts();
+  await fetchDefaultAddress();
 });
+const fetchDefaultAddress = async () => {
+  const address = await addressService.getAddressDefault();
+
+  if (!address) {
+    defaultAddress.value = "Chưa có địa chỉ";
+    return;
+  }
+
+  const {
+    street,
+    district,
+    province,
+    country
+  } = address;
+
+  defaultAddress.value = [
+    street,
+    district,
+    province,
+    country
+  ]
+    .filter(Boolean) // loại bỏ null/undefined
+    .join(", ");
+};
+
 </script>
 
 <style scoped>
@@ -636,7 +587,7 @@ onMounted(async () => {
   border-radius: 8px;
   padding: 16px;
   position: sticky;
-  top: 12px;
+  top: 158px;
 }
 
 .main-image {
@@ -809,7 +760,7 @@ onMounted(async () => {
   gap: 8px;
 }
 
-.variant-options > div {
+.variant-options>div {
   padding: 8px 12px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
@@ -822,7 +773,7 @@ onMounted(async () => {
   position: relative;
 }
 
-.variant-options > div.active {
+.variant-options>div.active {
   border-color: #0a68ff;
   background: #f0f8ff;
 }
@@ -903,7 +854,6 @@ onMounted(async () => {
 }
 
 .shipping-fee {
-  margin-left: auto;
   font-size: 14px;
   color: #27272a;
 }
@@ -1164,14 +1114,14 @@ onMounted(async () => {
 .sidebar {
   width: 320px;
   flex-shrink: 0;
+  position: sticky;
+  top: 158px;
 }
 
 .store-info {
   background: white;
   border-radius: 8px;
   padding: 16px;
-  position: sticky;
-  top: 12px;
 }
 
 .store-header {
@@ -1474,13 +1424,13 @@ onMounted(async () => {
   color: #e5e7eb;
 }
 
-.dark .variant-options > div {
+.dark .variant-options>div {
   background: #1e293b;
   border-color: #334155;
   color: #d1d5db;
 }
 
-.dark .variant-options > div.active {
+.dark .variant-options>div.active {
   border-color: #0a68ff;
   background: #1e3a5f;
 }

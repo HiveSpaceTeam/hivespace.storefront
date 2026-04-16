@@ -31,5 +31,6 @@
     "expires": "Exp: {date}",
     "limitedQuantity": "Limited quantity",
     "expired": "Expired",
-    "notEligible": "NOT\nELIGIBLE"
+    "notEligible": "NOT\nELIGIBLE",
+    "addToCartSuccess": "Product has been added to cart"
 }

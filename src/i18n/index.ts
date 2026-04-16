@@ -7,6 +7,8 @@ import enCart from './locales/en/cart.json'
 import enCheckout from './locales/en/checkout.json'
 import enFooter from './locales/en/footer.json'
 import enCategories from './locales/en/categories.json'
+import enProductDetail from './locales/en/productDetail.json'
+
 import enPayment from './locales/en/payment.json'
 
 // Import Vietnamese storefront files
@@ -16,6 +18,8 @@ import viCheckout from './locales/vi/checkout.json'
 import viFooter from './locales/vi/footer.json'
 import viCategories from './locales/vi/categories.json'
 import viPayment from './locales/vi/payment.json'
+import viProductDetail from './locales/vi/productDetail.json'
+
 
 const en = {
     ...enShared,
@@ -25,7 +29,8 @@ const en = {
         ...enGeneral,
         cart: enCart,
         footer: enFooter,
-        categoriesList: enCategories
+        categoriesList: enCategories,
+        productDetail: enProductDetail
     }
 }
 
@@ -37,7 +42,8 @@ const vi = {
         ...viGeneral,
         cart: viCart,
         footer: viFooter,
-        categoriesList: viCategories
+        categoriesList: viCategories,
+        productDetail: viProductDetail
     }
 }
 

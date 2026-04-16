@@ -31,5 +31,6 @@
     "expires": "HSD: {date}",
     "limitedQuantity": "Số lượng có hạn",
     "expired": "Hết hạn",
-    "notEligible": "CHƯ A THỎA\nĐIỀU KIỆN"
+    "notEligible": "CHƯ A THỎA\nĐIỀU KIỆN",
+    "addToCartSuccess": "Thêm vào giỏ hàng thành công"
 }

@@ -20,7 +20,7 @@ export interface ProductImage {
 }
 
 export interface ProductSku {
-  id?: string
+  id?: Number
   key?: string
   skuVariants: {
     variantName: string
@@ -88,7 +88,7 @@ export interface ProductAttribute {
 }
 
 export interface ProductDetail {
-  id?: string
+  id?: Number
   name: string
   category: string
   description?: string
@@ -120,6 +120,7 @@ export interface ProductSummary {
   isPreferred?: boolean
   isFreeShipping?: boolean
   isVoucher?: boolean
+  imageURL?: string
 }
 
 export interface PagingRequest {
