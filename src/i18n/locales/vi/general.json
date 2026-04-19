@@ -129,6 +129,7 @@
         "profile": "Hồ Sơ Của Tôi - HiveSpace",
         "address": "Địa Chỉ Của Tôi - HiveSpace",
                 "paymentResult": "Kết Quả Thanh Toán - HiveSpace",
-        "orders": "Đơn Mua - HiveSpace"
+        "orders": "Đơn Mua - HiveSpace",
+        "notifications": "Thông Báo - HiveSpace"
     }
 }

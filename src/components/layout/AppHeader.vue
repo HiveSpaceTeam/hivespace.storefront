@@ -35,7 +35,17 @@
         <div class="flex items-center gap-2 2xsm:gap-3">
           <ThemeToggler @theme-changed="handleThemeChange" />
           <LanguageSwitcher @language-changed="handleCultureChange" />
-          <NotificationMenu v-if="user" />
+          <NotificationMenu
+            v-if="user"
+            :notifications="notifications"
+            :unread-count="unreadCount"
+            :is-loading="notificationLoading"
+            view-all-to="/notifications"
+            @notification-read="notificationStore.markAsRead"
+            @notification-clicked="notificationStore.markAsRead"
+            @open="notificationStore.fetchNotifications"
+            @view-all="() => router.push('/notifications')"
+          />
         </div>
         <UserMenu v-if="user" :user="user" :menu-items="menuItems" :show-sign-out="true" @sign-out="logout" @navigate="handleNavigate" />
         <div v-else class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 ml-4 h-10">
@@ -53,6 +63,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import {
   useAuth,
@@ -67,6 +78,7 @@ import {
 } from '@hivespace/shared'
 import { X, Menu, MoreVertical, UserCircle, ShoppingBag } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/user'
+import { useNotificationStore } from '@/stores/notification'
 
 interface Props {
   showSidebarToggle?: boolean
@@ -89,6 +101,8 @@ const emit = defineEmits<{
 const { currentUser: user, getCurrentUser, logout, login, register } = useAuth()
 const userStore = useUserStore()
 const router = useRouter()
+const notificationStore = useNotificationStore()
+const { notifications, unreadCount, isLoading: notificationLoading } = storeToRefs(notificationStore)
 
 const handleNavigate = (path: string) => {
   router.push(path)

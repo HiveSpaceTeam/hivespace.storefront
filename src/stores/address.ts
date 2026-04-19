@@ -75,8 +75,9 @@ export const useAddressStore = defineStore('address', () => {
       if (formModal.value.editId) {
         await addressService.updateAddress(formModal.value.editId, payload)
         const idx = addresses.value.findIndex(a => a.id === formModal.value.editId)
-        if (idx !== -1) {
-          addresses.value[idx] = { ...addresses.value[idx], ...payload }
+        const existing = addresses.value[idx]
+        if (idx !== -1 && existing) {
+          addresses.value[idx] = { ...existing, ...payload, id: existing.id }
         }
       } else {
         const created = await addressService.createAddress(payload)
