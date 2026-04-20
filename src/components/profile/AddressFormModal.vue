@@ -55,6 +55,18 @@
             :rows="2"
             required
           />
+
+          <!-- Default checkbox -->
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              v-model="formData.isDefault"
+              class="w-4 h-4 accent-primary rounded"
+            />
+            <span class="text-sm text-gray-700 dark:text-gray-300">
+              {{ $t('storefront.address.setDefault') }}
+            </span>
+          </label>
         </form>
 
         <!-- Footer -->
