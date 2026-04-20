@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   ToastContainer,
@@ -33,6 +33,7 @@ const route = useRoute()
 const notificationStore = useNotificationStore()
 const toastQueue = computed(() => notificationStore.toastQueue)
 const { currentUser, getCurrentUser } = useAuth()
+const isHubConnected = ref(false)
 
 const showDefaultLayout = computed(() => route.meta?.layout !== 'none')
 
@@ -45,32 +46,45 @@ const { connect, disconnect } = useNotificationHub(
   (event) => notificationStore.prependFromHub(event),
 )
 
+const connectHub = async () => {
+  if (isHubConnected.value) return
+  await connect()
+  isHubConnected.value = true
+}
+
+const disconnectHub = async () => {
+  if (!isHubConnected.value) return
+  await disconnect()
+  isHubConnected.value = false
+}
+
 const handleToastClick = (id: string) => {
   const notification = toastQueue.value.find((n) => n.id === id)
-  notificationStore.markAsRead(id)
+  void notificationStore.markAsRead(id).catch((error) => {
+    console.error('Failed to mark notification as read:', error)
+  })
   notificationStore.dismissToast(id)
   router.push(notification?.link ?? '/')
 }
 
-onMounted(async () => {
-  const user = await getCurrentUser()
-  if (user) {
-    await connect()
-    await notificationStore.fetchUnreadCount()
-  }
+onMounted(() => {
+  // Hydrate auth state once; watcher below handles connection lifecycle.
+  void getCurrentUser()
 })
 
-watch(() => currentUser.value, async (user, prevUser) => {
-  const tokenChanged = user?.access_token !== prevUser?.access_token
-  if (user && tokenChanged) {
-    await connect()
+watch(() => currentUser.value?.access_token, async (token, prevToken) => {
+  if (token) {
+    if (prevToken && prevToken !== token) {
+      await disconnectHub()
+    }
+    await connectHub()
     await notificationStore.fetchUnreadCount()
-  } else if (!user && prevUser) {
-    await disconnect()
+  } else if (prevToken) {
+    await disconnectHub()
   }
-})
+}, { immediate: true })
 
 onUnmounted(async () => {
-  await disconnect()
+  await disconnectHub()
 })
 </script>

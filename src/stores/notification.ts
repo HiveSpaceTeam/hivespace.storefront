@@ -16,9 +16,9 @@ const resolveMessage = (eventType: string, payload: Record<string, unknown>): st
   const t = i18n.global.t
   switch (eventType) {
     case 'order.confirmed':
-      return t('notification.events.orderConfirmed', { storeName: payload.storeName ?? '', orderCode: payload.orderCode ?? '' })
+      return t('notification.events.orderConfirmed', { storeName: String(payload.storeName ?? ''), orderCode: String(payload.orderCode ?? '') })
     case 'order.cancelled':
-      return t('notification.events.orderCancelled', { orderCode: payload.orderCode ?? '' })
+      return t('notification.events.orderCancelled', { orderCode: String(payload.orderCode ?? '') })
     default:
       return t('notification.events.generic', { eventType })
   }
