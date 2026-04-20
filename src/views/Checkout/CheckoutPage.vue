@@ -135,20 +135,21 @@
                   <span class="text-base font-medium text-gray-700 dark:text-gray-300">
                     {{ t('checkout.deliveryAddress') }}
                   </span>
-                  <button class="text-base text-primary hover:text-primary-dark transition-colors">
+                  <button @click="changeAddressModalOpen = true"
+                    class="text-base text-primary hover:text-primary-dark transition-colors">
                     {{ t('checkout.changeAddress') }}
                   </button>
                 </div>
-                <div v-if="defaultAddress" class="mt-1">
+                <div v-if="selectedAddress" class="mt-1">
                   <p class="text-base font-semibold text-gray-800 dark:text-gray-200">
-                    {{ defaultAddress.fullName }}
+                    {{ selectedAddress.fullName }}
                     <span class="text-gray-400 font-normal mx-1">|</span>
-                    {{ defaultAddress.phoneNumber }}
+                    {{ selectedAddress.phoneNumber }}
                   </p>
                   <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-                    {{ [defaultAddress.street, defaultAddress.ward, defaultAddress.district, defaultAddress.province].filter(Boolean).join(', ') }}
+                    {{ [selectedAddress.street, selectedAddress.ward, selectedAddress.district, selectedAddress.province].filter(Boolean).join(', ') }}
                   </p>
-                  <div v-if="defaultAddress.isDefault" class="mt-2">
+                  <div v-if="selectedAddress.isDefault" class="mt-2">
                     <Badge class="rounded-sm" variant="light" size="sm" color="success">
                       {{ t('checkout.defaultAddress') }}
                     </Badge>
@@ -159,6 +160,13 @@
                   <span class="text-sm text-gray-400">{{ t('checkout.loadingAddress') }}</span>
                 </div>
               </div>
+
+              <ChangeAddressModal
+                v-if="changeAddressModalOpen"
+                v-model="changeAddressModalOpen"
+                :current-address-id="selectedAddress?.id"
+                @select="selectedAddress = $event"
+              />
 
               <!-- Promotions -->
               <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm p-4">
@@ -245,11 +253,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { Ticket, ChevronRight, ChevronDown } from 'lucide-vue-next'
 import CheckoutHeader from '@/components/layout/CheckoutHeader.vue'
 import StorefrontFooter from '@/components/layout/StorefrontFooter.vue'
 import ShopCouponModal from '@/components/common/ShopCouponModal.vue'
+import ChangeAddressModal from '@/components/checkout/ChangeAddressModal.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
@@ -257,6 +266,7 @@ import { useCheckoutStore } from '@/stores/checkout'
 import { useAddressStore } from '@/stores/address'
 import { RadioGroup, useAppStore, FullscreenLoader, Button, Badge, Spinner } from '@hivespace/shared'
 import { PaymentMethod } from '@/types'
+import type { UserAddress } from '@/types'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -280,10 +290,18 @@ const { fetchPreview, applyStoreCoupon, applyPlatformCoupon, submitCheckout } = 
 // ============ Modal open state ============
 const shopCouponOpenMap = ref<Record<string, boolean>>({})
 const platformCouponModalOpen = ref(false)
+const changeAddressModalOpen = ref(false)
 
 // ============ Address ============
 const addressStore = useAddressStore()
 const { defaultAddress } = storeToRefs(addressStore)
+const selectedAddress = ref<UserAddress | null>(null)
+
+watch(defaultAddress, (addr) => {
+  if (addr && !selectedAddress.value) {
+    selectedAddress.value = addr
+  }
+}, { immediate: true })
 
 const selectedPaymentMethod = ref('cod')
 
@@ -301,11 +319,11 @@ const paymentMethodMap: Record<string, PaymentMethod> = {
 }
 
 async function handlePlaceOrder() {
-  if (!defaultAddress.value) {
+  if (!selectedAddress.value) {
     appStore.notifyError(t('checkout.orderFailedTitle'), t('checkout.noAddressMessage'))
     return
   }
-  const addr = defaultAddress.value
+  const addr = selectedAddress.value
   const deliveryAddressDto = {
     recipientName: addr.fullName,
     phone: addr.phoneNumber,
