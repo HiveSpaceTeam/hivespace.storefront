@@ -2,7 +2,6 @@ import type {
   ProductSummary,
   PagingRequest,
   PagedResponse,
-  Product,
   ProductDetail
 } from '@/types/index.ts'
 import { apiService } from './api.ts'

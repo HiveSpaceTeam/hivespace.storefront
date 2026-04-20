@@ -20,11 +20,17 @@
         <!-- Spacer when toggle button is hidden to maintain layout -->
         <div v-else class="w-10 h-10 lg:w-11 lg:h-11"></div>
         <button @click="toggleApplicationMenu"
+          :aria-label="isApplicationMenuOpen ? $t('storefront.header.closeApplicationMenu') : $t('storefront.header.openApplicationMenu')"
+          :aria-expanded="isApplicationMenuOpen"
+          aria-controls="application-menu"
           class="flex items-center justify-center w-10 h-10 text-gray-700 rounded-lg z-999 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:hidden">
           <MoreVertical class="w-6 h-6" />
         </button>
         <HeaderLogo />
         <button @click="toggleApplicationMenu"
+          :aria-label="isApplicationMenuOpen ? $t('storefront.header.closeApplicationMenu') : $t('storefront.header.openApplicationMenu')"
+          :aria-expanded="isApplicationMenuOpen"
+          aria-controls="application-menu"
           class="flex items-center justify-center w-10 h-10 text-gray-700 rounded-lg z-999 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:hidden">
           <MoreVertical class="w-6 h-6" />
         </button>
@@ -35,7 +41,17 @@
         <div class="flex items-center gap-2 2xsm:gap-3">
           <ThemeToggler @theme-changed="handleThemeChange" />
           <LanguageSwitcher @language-changed="handleCultureChange" />
-          <NotificationMenu v-if="user" />
+          <NotificationMenu
+            v-if="user"
+            :notifications="notifications"
+            :unread-count="unreadCount"
+            :is-loading="notificationLoading"
+            view-all-to="/notifications"
+            @notification-read="notificationStore.markAsRead"
+            @notification-clicked="notificationStore.markAsRead"
+            @open="notificationStore.fetchNotifications"
+            @view-all="() => router.push('/notifications')"
+          />
         </div>
         <UserMenu v-if="user" :user="user" :menu-items="menuItems" :show-sign-out="true" @sign-out="logout" @navigate="handleNavigate" />
         <div v-else class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 ml-4 h-10">
@@ -53,6 +69,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import {
   useAuth,
@@ -67,6 +84,7 @@ import {
 } from '@hivespace/shared'
 import { X, Menu, MoreVertical, UserCircle, ShoppingBag } from 'lucide-vue-next'
 import { useUserStore } from '@/stores/user'
+import { useNotificationStore } from '@/stores/notification'
 
 interface Props {
   showSidebarToggle?: boolean
@@ -89,6 +107,8 @@ const emit = defineEmits<{
 const { currentUser: user, getCurrentUser, logout, login, register } = useAuth()
 const userStore = useUserStore()
 const router = useRouter()
+const notificationStore = useNotificationStore()
+const { notifications, unreadCount, isLoading: notificationLoading } = storeToRefs(notificationStore)
 
 const handleNavigate = (path: string) => {
   router.push(path)

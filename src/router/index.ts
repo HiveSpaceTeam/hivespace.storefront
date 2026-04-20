@@ -84,6 +84,12 @@ const routes = [
         meta: { titleKey: 'storefront.pageTitle.paymentResult', allowAnonymous: true, layout: 'none' },
     },
     {
+        path: '/notifications',
+        name: 'Notifications',
+        component: () => import('@/views/Notifications/NotificationsView.vue'),
+        meta: { titleKey: 'storefront.pageTitle.notifications' },
+    },
+    {
         path: '/:pathMatch(.*)*',
         name: 'NotFound',
         component: NotFound,

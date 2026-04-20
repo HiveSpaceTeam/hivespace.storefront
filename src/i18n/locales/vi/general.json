@@ -126,6 +126,10 @@
         "qty": "x{qty}"
     },
     "mockProductName": "[CHÍNH HÃNG] Mẫu Sản phẩm Demo {index} - Thiết kế mới nhất năm nay, chất lượng cao, bảo hành 12 tháng",
+    "header": {
+        "openApplicationMenu": "Mở menu ứng dụng",
+        "closeApplicationMenu": "Đóng menu ứng dụng"
+    },
     "pageTitle": {
         "home": "HiveSpace - Mua sắm trực tuyến",
         "cart": "Giỏ Hàng - HiveSpace",
@@ -137,6 +141,7 @@
         "profile": "Hồ Sơ Của Tôi - HiveSpace",
         "address": "Địa Chỉ Của Tôi - HiveSpace",
                 "paymentResult": "Kết Quả Thanh Toán - HiveSpace",
-        "orders": "Đơn Mua - HiveSpace"
+        "orders": "Đơn Mua - HiveSpace",
+        "notifications": "Thông Báo - HiveSpace"
     }
 }

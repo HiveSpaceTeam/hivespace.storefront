@@ -168,7 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from "vue";
+import { ref } from "vue";
 import { X, Ticket, Store } from "lucide-vue-next";
 import { useI18n } from "vue-i18n";
 import emptyStateImage from "@/assets/images/coupon-empty.webp";
@@ -198,7 +198,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const inputCode = ref("");
-const dropdownRef = ref<HTMLElement | null>(null);
 
 const close = () => {
   emit("update:modelValue", false);

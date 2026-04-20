@@ -126,6 +126,10 @@
         "qty": "x{qty}"
     },
     "mockProductName": "[OFFICIAL] Sample Demo Product {index} - Latest design, high quality, 12-month warranty",
+    "header": {
+        "openApplicationMenu": "Open application menu",
+        "closeApplicationMenu": "Close application menu"
+    },
     "pageTitle": {
         "home": "HiveSpace - Online Shopping",
         "cart": "Cart - HiveSpace",
@@ -137,6 +141,7 @@
         "profile": "My Profile - HiveSpace",
         "address": "My Addresses - HiveSpace",
                 "paymentResult": "Payment Result - HiveSpace",
-        "orders": "My Orders - HiveSpace"
+        "orders": "My Orders - HiveSpace",
+        "notifications": "Notifications - HiveSpace"
     }
 }
