@@ -73,15 +73,23 @@ export const useAddressStore = defineStore('address', () => {
       }
 
       if (formModal.value.editId) {
-        await addressService.updateAddress(formModal.value.editId, payload)
-        const idx = addresses.value.findIndex(a => a.id === formModal.value.editId)
-        const existing = addresses.value[idx]
-        if (idx !== -1 && existing) {
-          addresses.value[idx] = { ...existing, ...payload, id: existing.id }
+        const savedId = formModal.value.editId
+        await addressService.updateAddress(savedId, payload)
+        if (payload.isDefault) {
+          addresses.value = sortAddresses(addresses.value.map(a =>
+            a.id === savedId ? { ...a, ...payload } : { ...a, isDefault: false }
+          ))
+        } else {
+          const idx = addresses.value.findIndex(a => a.id === savedId)
+          if (idx !== -1) addresses.value[idx] = { ...addresses.value[idx], ...payload }
         }
       } else {
         const created = await addressService.createAddress(payload)
-        addresses.value.push(created)
+        if (created.isDefault) {
+          addresses.value = sortAddresses([...addresses.value.map(a => ({ ...a, isDefault: false })), created])
+        } else {
+          addresses.value.push(created)
+        }
       }
 
       closeFormModal()
