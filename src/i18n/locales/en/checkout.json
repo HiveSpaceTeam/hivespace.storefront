@@ -57,5 +57,8 @@
     "placingOrder": "Placing order...",
     "defaultAddress": "Default",
     "loadingAddress": "Loading address...",
-    "noAddressMessage": "Please add a delivery address before placing your order."
+    "noAddressMessage": "Please add a delivery address before placing your order.",
+    "changeAddressTitle": "Select Delivery Address",
+    "confirmAddress": "Confirm",
+    "noAddresses": "No addresses found"
 }

@@ -57,5 +57,8 @@
     "placingOrder": "Đang đặt hàng...",
     "defaultAddress": "Mặc định",
     "loadingAddress": "Đang tải địa chỉ...",
-    "noAddressMessage": "Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng."
+    "noAddressMessage": "Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng.",
+    "changeAddressTitle": "Chọn địa chỉ giao hàng",
+    "confirmAddress": "Xác nhận",
+    "noAddresses": "Bạn chưa có địa chỉ nào"
 }
