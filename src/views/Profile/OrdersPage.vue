@@ -6,7 +6,6 @@
         <!-- Sidebar -->
         <aside class="w-52 shrink-0">
           <div class="bg-white dark:bg-card-dark rounded shadow-sm overflow-hidden">
-            <!-- User info -->
             <div class="flex items-center gap-3 px-4 py-5 border-b border-gray-100 dark:border-gray-700">
               <Avatar size="medium" />
               <div class="min-w-0">
@@ -21,7 +20,6 @@
               </div>
             </div>
 
-            <!-- Nav -->
             <nav class="py-2">
               <RouterLink to="/notifications"
                 class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
@@ -94,14 +92,14 @@
             </div>
           </div>
 
-          <!-- Loading -->
+          <!-- Loading (initial) -->
           <div v-if="isLoading" class="flex justify-center py-16">
             <Spinner />
           </div>
 
           <!-- Empty state -->
           <div
-            v-else-if="filteredOrders.length === 0"
+            v-else-if="orders.length === 0"
             class="bg-white dark:bg-card-dark rounded shadow-sm py-16 flex flex-col items-center text-gray-400 gap-3"
           >
             <ShoppingBag class="w-16 h-16 opacity-30" />
@@ -111,66 +109,31 @@
           <!-- Order cards -->
           <div v-else class="flex flex-col gap-3">
             <div
-              v-for="order in filteredOrders"
+              v-for="order in orders"
               :key="order.id"
               class="bg-white dark:bg-card-dark rounded shadow-sm overflow-hidden"
             >
-              <!-- Shop header -->
-              <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 dark:border-gray-700">
-                <component
-                  v-if="order.shopBadge"
-                  :is="'span'"
-                  class="text-[10px] font-semibold px-1.5 py-0.5 rounded border border-primary text-primary"
-                >
-                  {{ order.shopBadge }}
-                </component>
-                <span class="text-sm font-medium text-gray-800 dark:text-gray-100">{{ order.shopName }}</span>
-                <button class="flex items-center gap-1 text-xs border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded hover:border-primary hover:text-primary transition-colors">
-                  <Store class="w-3 h-3" />
-                  {{ $t('storefront.ordersPage.viewShop') }}
-                </button>
-                <button class="flex items-center gap-1 text-xs border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded hover:border-primary hover:text-primary transition-colors">
-                  <MessageCircle class="w-3 h-3" />
-                  {{ $t('storefront.ordersPage.chat') }}
-                </button>
+              <!-- Order header -->
+              <div class="flex items-center gap-3 px-5 py-3 border-b border-gray-100 dark:border-gray-700">
+                <ShoppingBag class="w-4 h-4 shrink-0 text-gray-400" />
+                <span class="text-sm font-medium text-gray-800 dark:text-gray-100">{{ order.shortId }}</span>
+                <span class="text-xs text-gray-400">·</span>
+                <span class="text-xs text-gray-400">
+                  {{ $t('storefront.ordersPage.itemCount', { count: order.itemCount }) }}
+                </span>
 
-                <!-- Status (right side) -->
-                <div class="ml-auto flex items-center gap-2 text-xs text-gray-400">
-                  <template v-if="order.status === 'completed'">
-                    <span class="flex items-center gap-1">
-                      <Truck class="w-3.5 h-3.5" />
-                      {{ $t('storefront.ordersPage.deliverySuccess') }}
-                    </span>
-                    <span class="text-gray-300">|</span>
-                    <span class="text-primary font-semibold uppercase tracking-wide">
-                      {{ $t('storefront.ordersPage.statusCompleted') }}
-                    </span>
-                  </template>
-                  <template v-else-if="order.status === 'cancelled'">
-                    <span class="text-gray-400 font-semibold uppercase tracking-wide">
-                      {{ $t('storefront.ordersPage.statusCancelled') }}
-                    </span>
-                  </template>
-                  <template v-else-if="order.status === 'shipping'">
-                    <span class="text-blue-500 font-semibold uppercase tracking-wide">
-                      {{ $t('storefront.ordersPage.statusShipping') }}
-                    </span>
-                  </template>
-                  <template v-else-if="order.status === 'pending_payment'">
-                    <span class="text-orange-500 font-semibold uppercase tracking-wide">
-                      {{ $t('storefront.ordersPage.statusPendingPayment') }}
-                    </span>
-                  </template>
-                  <template v-else-if="order.status === 'pending_delivery'">
-                    <span class="text-yellow-500 font-semibold uppercase tracking-wide">
-                      {{ $t('storefront.ordersPage.statusPendingDelivery') }}
-                    </span>
-                  </template>
-                  <template v-else-if="order.status === 'return_refund'">
-                    <span class="text-red-500 font-semibold uppercase tracking-wide">
-                      {{ $t('storefront.ordersPage.statusReturnRefund') }}
-                    </span>
-                  </template>
+                <!-- Status badge -->
+                <div class="ml-auto">
+                  <span
+                    v-if="statusConfig[order.status]"
+                    class="text-xs font-semibold uppercase tracking-wide"
+                    :class="statusConfig[order.status].color"
+                  >
+                    {{ $t(`storefront.ordersPage.${statusConfig[order.status].key}`) }}
+                  </span>
+                  <span v-else class="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    {{ order.status }}
+                  </span>
                 </div>
               </div>
 
@@ -182,21 +145,21 @@
                   class="flex items-start gap-3"
                 >
                   <img
-                    :src="item.imageUrl"
+                    :src="item.productImage"
                     :alt="item.productName"
                     class="w-20 h-20 object-cover rounded border border-gray-100 dark:border-gray-700 shrink-0"
                   />
                   <div class="flex-1 min-w-0">
                     <p class="text-sm text-gray-800 dark:text-gray-100 line-clamp-2">{{ item.productName }}</p>
-                    <p class="text-xs text-gray-400 mt-1">{{ item.variantLabel }}</p>
+                    <p v-if="item.variation" class="text-xs text-gray-400 mt-1">{{ item.variation }}</p>
                     <p class="text-xs text-gray-400 mt-0.5">{{ $t('storefront.ordersPage.qty', { qty: item.quantity }) }}</p>
                   </div>
                   <div class="text-right shrink-0">
-                    <p v-if="item.originalPrice && item.originalPrice !== item.finalPrice"
+                    <p v-if="item.originalPrice && item.originalPrice !== item.unitPrice"
                       class="text-xs text-gray-400 line-through">
                       {{ formatPrice(item.originalPrice) }}
                     </p>
-                    <p class="text-sm text-gray-800 dark:text-gray-100">{{ formatPrice(item.finalPrice) }}</p>
+                    <p class="text-sm text-gray-800 dark:text-gray-100">{{ formatPrice(item.unitPrice) }}</p>
                   </div>
                 </div>
               </div>
@@ -204,20 +167,13 @@
               <!-- Total row -->
               <div class="px-5 py-3 border-t border-gray-100 dark:border-gray-700 flex justify-end items-center gap-2">
                 <span class="text-sm text-gray-500 dark:text-gray-400">{{ $t('storefront.ordersPage.total') }}</span>
-                <span class="text-base font-semibold text-primary">{{ formatPrice(order.totalPrice) }}</span>
+                <span class="text-base font-semibold text-primary">{{ formatPrice(order.totalAmount) }}</span>
               </div>
 
-              <!-- Footer info + action buttons -->
-              <div class="px-5 pb-4 flex items-center justify-between">
-                <div class="text-xs text-gray-400">
-                  <span v-if="order.status === 'completed'" class="text-primary cursor-pointer hover:underline">
-                    {{ $t('storefront.ordersPage.btnReview') }}
-                  </span>
-                </div>
-
-                <!-- Action buttons -->
+              <!-- Action buttons -->
+              <div class="px-5 pb-4 flex items-center justify-end">
                 <div class="flex items-center gap-2">
-                  <template v-if="order.status === 'completed'">
+                  <template v-if="deliveredStatuses.includes(order.status)">
                     <Button variant="primary" size="sm" @click="() => {}">
                       {{ $t('storefront.ordersPage.btnReview') }}
                     </Button>
@@ -228,10 +184,15 @@
                       {{ $t('storefront.ordersPage.btnMore') }}
                     </Button>
                   </template>
-                  <template v-else-if="order.status === 'cancelled'">
+                  <template v-else-if="cancelledStatuses.includes(order.status)">
                     <Button variant="primary" size="sm" @click="() => {}">
                       {{ $t('storefront.ordersPage.btnBuyAgain') }}
                     </Button>
+                    <Button variant="outline" size="sm" @click="() => {}">
+                      {{ $t('storefront.ordersPage.btnContactSeller') }}
+                    </Button>
+                  </template>
+                  <template v-else-if="refundStatuses.includes(order.status)">
                     <Button variant="outline" size="sm" @click="() => {}">
                       {{ $t('storefront.ordersPage.btnViewRefundInfo') }}
                     </Button>
@@ -250,6 +211,14 @@
                 </div>
               </div>
             </div>
+
+            <!-- Infinite scroll sentinel -->
+            <div ref="sentinel" class="h-1" />
+
+            <!-- Load more spinner -->
+            <div v-if="isLoadingMore" class="flex justify-center py-4">
+              <Spinner size="sm" />
+            </div>
           </div>
 
         </div>
@@ -259,21 +228,22 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref, computed, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAuth, Avatar, Button, Spinner } from '@hivespace/shared'
 import { storeToRefs } from 'pinia'
-import { Bell, User, ShoppingBag, ChevronDown, Pencil, Search, Store, MessageCircle, Truck } from 'lucide-vue-next'
+import { Bell, User, ShoppingBag, ChevronDown, Pencil, Search } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useOrdersStore } from '@/stores/orders'
-import type { OrderStatus } from '@/types'
+import type { CustomerOrderProcessStatus, OrderStatus } from '@/types'
 
 const { currentUser } = useAuth()
 const { t } = useI18n()
 const ordersStore = useOrdersStore()
-const { filteredOrders, activeTab, searchQuery, isLoading } = storeToRefs(ordersStore)
+const { orders, activeTab, searchQuery, isLoading, isLoadingMore, hasNextPage } = storeToRefs(ordersStore)
 
 const accountOpen = ref(false)
+const sentinel = ref<HTMLDivElement | null>(null)
 
 const displayUsername = computed(() =>
   currentUser.value?.profile?.preferred_username
@@ -282,18 +252,61 @@ const displayUsername = computed(() =>
   ?? ''
 )
 
-const tabs: { value: OrderStatus | 'all'; label: string }[] = [
-  { value: 'all', label: t('storefront.ordersPage.tabAll') },
-  { value: 'pending_payment', label: t('storefront.ordersPage.tabPendingPayment') },
-  { value: 'shipping', label: t('storefront.ordersPage.tabShipping') },
-  { value: 'pending_delivery', label: t('storefront.ordersPage.tabPendingDelivery') },
-  { value: 'completed', label: t('storefront.ordersPage.tabCompleted') },
-  { value: 'cancelled', label: t('storefront.ordersPage.tabCancelled') },
-  { value: 'return_refund', label: t('storefront.ordersPage.tabReturnRefund') },
+const tabs: { value: CustomerOrderProcessStatus | 'all'; label: string }[] = [
+  { value: 'all',            label: t('storefront.ordersPage.tabAll') },
+  { value: 'WaitingPayment', label: t('storefront.ordersPage.tabWaitingPayment') },
+  { value: 'Processing',     label: t('storefront.ordersPage.tabProcessing') },
+  { value: 'Shipping',       label: t('storefront.ordersPage.tabShipping') },
+  { value: 'Delivered',      label: t('storefront.ordersPage.tabDelivered') },
+  { value: 'Cancelled',      label: t('storefront.ordersPage.tabCancelled') },
+  { value: 'ReturnRefund',   label: t('storefront.ordersPage.tabReturnRefund') },
 ]
+
+const statusConfig: Record<OrderStatus, { color: string; key: string }> = {
+  Created:     { color: 'text-orange-500', key: 'statusCreated' },
+  Paid:        { color: 'text-green-500',  key: 'statusPaid' },
+  COD:         { color: 'text-green-500',  key: 'statusCOD' },
+  Confirmed:   { color: 'text-green-600',  key: 'statusConfirmed' },
+  ReadyToShip: { color: 'text-blue-400',   key: 'statusReadyToShip' },
+  Shipped:     { color: 'text-blue-500',   key: 'statusShipped' },
+  Delivered:   { color: 'text-primary',    key: 'statusDelivered' },
+  Completed:   { color: 'text-primary',    key: 'statusCompleted' },
+  Cancelled:   { color: 'text-gray-400',   key: 'statusCancelled' },
+  Rejected:    { color: 'text-red-500',    key: 'statusRejected' },
+  Expired:     { color: 'text-gray-400',   key: 'statusExpired' },
+  Refunding:   { color: 'text-red-400',    key: 'statusRefunding' },
+  Refunded:    { color: 'text-red-500',    key: 'statusRefunded' },
+  Solved:      { color: 'text-gray-500',   key: 'statusSolved' },
+  Claimed:     { color: 'text-yellow-600', key: 'statusClaimed' },
+}
+
+const deliveredStatuses: OrderStatus[] = ['Delivered', 'Completed']
+const cancelledStatuses: OrderStatus[] = ['Cancelled', 'Rejected', 'Expired']
+const refundStatuses: OrderStatus[] = ['Refunding', 'Refunded', 'Solved', 'Claimed']
 
 const formatPrice = (price: number) =>
   price.toLocaleString('vi-VN') + 'đ'
 
-onMounted(() => ordersStore.fetchOrders())
+let observer: IntersectionObserver | null = null
+
+onMounted(() => {
+  ordersStore.fetchOrders()
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting && hasNextPage.value) {
+        ordersStore.loadMore()
+      }
+    },
+    { threshold: 0.1 },
+  )
+})
+
+watch(sentinel, (el) => {
+  if (el && observer) observer.observe(el)
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
 </script>

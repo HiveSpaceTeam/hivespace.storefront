@@ -1,8 +1,9 @@
-import type { Order, OrderStatus } from '@/types/api/order.types'
+import type { CustomerOrderProcessStatus } from '@/types/api/order.types'
 
 export interface OrdersState {
-  orders: Order[]
-  activeTab: OrderStatus | 'all'
+  activeTab: CustomerOrderProcessStatus | 'all'
   searchQuery: string
   isLoading: boolean
+  isLoadingMore: boolean
+  hasNextPage: boolean
 }
