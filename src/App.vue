@@ -6,7 +6,7 @@
   <!-- Global modal outlet -->
   <ModalManager />
   <!-- Global toast notifications -->
-  <ToastContainer :toasts="appStore.notifications" @removeToast="appStore.removeNotification" />
+  <ToastContainer :toasts="appToasts" @removeToast="appStore.removeNotification" />
   <!-- In-app notification preview toasts -->
   <NotificationPreviewToast :toasts="toastQueue" @dismiss="notificationStore.dismissToast" @click="handleToastClick" />
 </template>
@@ -21,9 +21,10 @@ import {
   useAuth,
   useNotificationHub,
   NotificationPreviewToast,
+  type InAppNotification,
 } from '@hivespace/shared'
 import StorefrontLayout from '@/components/layout/StorefrontLayout.vue'
-import { useNotificationStore } from '@/stores/notification'
+import { useNotificationStore } from '@/stores'
 import { config } from '@/config'
 
 const appStore = useAppStore()
@@ -31,7 +32,8 @@ const router = useRouter()
 const route = useRoute()
 
 const notificationStore = useNotificationStore()
-const toastQueue = computed(() => notificationStore.toastQueue)
+const appToasts = computed(() => appStore.notifications.value)
+const toastQueue = computed<InAppNotification[]>(() => notificationStore.toastQueue)
 const { currentUser, getCurrentUser } = useAuth()
 const isHubConnected = ref(false)
 

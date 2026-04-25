@@ -28,4 +28,5 @@ export const useNotificationStore = createNotificationStore({
   service: notificationService,
   resolveLink,
   resolveMessage,
+  pageSize: 1,
 })
