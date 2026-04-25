@@ -20,7 +20,7 @@ export interface ProductImage {
 }
 
 export interface ProductSku {
-  id?: Number
+  id?: number
   key?: string
   skuVariants: {
     variantName: string
@@ -88,7 +88,7 @@ export interface ProductAttribute {
 }
 
 export interface ProductDetail {
-  id?: Number
+  id?: number
   name: string
   category: string
   description?: string

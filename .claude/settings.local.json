@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm link:*)"
+      "Bash(npm link:*)",
+      "Bash(npm run *)",
+      "Bash(git stash *)",
+      "Bash(npx vite *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const s = require\\('./node_modules/@hivespace/shared/dist/index.cjs'\\); const store = s.createNotificationStore\\({service:{getNotifications:\\(\\)=>{},getUnreadCount:\\(\\)=>{},markAsRead:\\(\\)=>{}},resolveLink:\\(\\)=>'',resolveMessage:\\(\\)=>''}\\); const p = store\\(\\); console.log\\(Object.keys\\(p\\).filter\\(k => !k.startsWith\\('_'\\) && !k.startsWith\\('\\\\$'\\)\\)\\)\")"
     ]
   }
 }
