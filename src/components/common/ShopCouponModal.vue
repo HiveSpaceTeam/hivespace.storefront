@@ -73,7 +73,7 @@
                 <Store class="w-5 h-5 text-gray-400" />
               </div>
               <span
-                class="text-[9px] text-gray-500 dark:text-gray-400 text-center leading-tight mt-1 truncate w-full px-1"
+                class="text-[10px] text-gray-500 dark:text-gray-400 text-center leading-tight mt-1 truncate w-full px-1"
                 >{{ shopName }}</span
               >
             </div>
@@ -112,7 +112,7 @@
                   class="border-2 border-gray-400 dark:border-gray-500 rounded px-2 py-0.5 rotate-[-15deg]"
                 >
                   <span
-                    class="text-[9px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest"
+                    class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest"
                   >
                     {{ t("storefront.cart.notEligible") }}
                   </span>

@@ -35,7 +35,7 @@
         <!-- Tags -->
         <div class="flex flex-wrap gap-1 mb-1" v-if="product.isFreeShipping || product.isVoucher">
           <span v-if="product.isFreeShipping"
-            class="border border-[#00bfa5] text-[#00bfa5] text-[9px] px-1 py-0.5 leading-none">Miễn phí trả hàng</span>
+            class="border border-[#00bfa5] text-[#00bfa5] text-[10px] px-1 py-0.5 leading-none">Miễn phí trả hàng</span>
         </div>
 
         <div class="flex items-center justify-between">
