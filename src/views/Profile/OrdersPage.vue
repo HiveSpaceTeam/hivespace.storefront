@@ -111,7 +111,8 @@
             <div
               v-for="order in orders"
               :key="order.id"
-              class="bg-white dark:bg-card-dark rounded shadow-sm overflow-hidden"
+              class="bg-white dark:bg-card-dark rounded shadow-sm overflow-hidden cursor-pointer"
+              @click="router.push(`/account/orders/${order.id}`)"
             >
               <!-- Order header -->
               <div class="flex items-center gap-3 px-5 py-3 border-b border-gray-100 dark:border-gray-700">
@@ -171,7 +172,7 @@
               </div>
 
               <!-- Action buttons -->
-              <div class="px-5 pb-4 flex items-center justify-end">
+              <div class="px-5 pb-4 flex items-center justify-end" @click.stop>
                 <div class="flex items-center gap-2">
                   <template v-if="deliveredStatuses.includes(order.status)">
                     <Button variant="primary" size="sm" @click="() => {}">
@@ -229,7 +230,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, computed, watch } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useAuth, Avatar, Button, Spinner } from '@hivespace/shared'
 import { storeToRefs } from 'pinia'
 import { Bell, User, ShoppingBag, ChevronDown, Pencil, Search } from 'lucide-vue-next'
@@ -237,6 +238,7 @@ import { useI18n } from 'vue-i18n'
 import { useOrdersStore } from '@/stores/orders'
 import type { CustomerOrderProcessStatus, OrderStatus } from '@/types'
 
+const router = useRouter()
 const { currentUser } = useAuth()
 const { t } = useI18n()
 const ordersStore = useOrdersStore()
@@ -252,7 +254,7 @@ const displayUsername = computed(() =>
   ?? ''
 )
 
-const tabs: { value: CustomerOrderProcessStatus | 'all'; label: string }[] = [
+const tabs = computed<{ value: CustomerOrderProcessStatus | 'all'; label: string }[]>(() => [
   { value: 'all',            label: t('storefront.ordersPage.tabAll') },
   { value: 'WaitingPayment', label: t('storefront.ordersPage.tabWaitingPayment') },
   { value: 'Processing',     label: t('storefront.ordersPage.tabProcessing') },
@@ -260,7 +262,7 @@ const tabs: { value: CustomerOrderProcessStatus | 'all'; label: string }[] = [
   { value: 'Delivered',      label: t('storefront.ordersPage.tabDelivered') },
   { value: 'Cancelled',      label: t('storefront.ordersPage.tabCancelled') },
   { value: 'ReturnRefund',   label: t('storefront.ordersPage.tabReturnRefund') },
-]
+])
 
 const statusConfig: Record<OrderStatus, { color: string; key: string }> = {
   Created:     { color: 'text-orange-500', key: 'statusCreated' },

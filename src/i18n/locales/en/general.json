@@ -142,6 +142,7 @@
         "address": "My Addresses - HiveSpace",
                 "paymentResult": "Payment Result - HiveSpace",
         "orders": "My Orders - HiveSpace",
+        "orderDetail": "Order Detail - HiveSpace",
         "notifications": "Notifications - HiveSpace"
     }
 }

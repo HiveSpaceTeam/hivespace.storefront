@@ -44,7 +44,7 @@
                 class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#ffb000] to-[#ee4d2d] rounded-full z-0"
                 :style="`width: ${product.soldPercentage}%`"
               ></div>
-              <span class="relative z-10 text-[9px] text-white font-bold uppercase drop-shadow-md shadow-black">
+              <span class="relative z-10 text-[10px] text-white font-bold uppercase drop-shadow-md shadow-black">
                 {{ product.soldPercentage >= 100 ? $t('storefront.soldOut') : $t('storefront.soldCount', { count: product.soldCount }) }}
               </span>
             </div>
