@@ -142,6 +142,7 @@
         "address": "Địa Chỉ Của Tôi - HiveSpace",
                 "paymentResult": "Kết Quả Thanh Toán - HiveSpace",
         "orders": "Đơn Mua - HiveSpace",
+        "orderDetail": "Chi Tiết Đơn Hàng - HiveSpace",
         "notifications": "Thông Báo - HiveSpace"
     }
 }

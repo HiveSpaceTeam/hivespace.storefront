@@ -66,6 +66,12 @@ const routes = [
         meta: { titleKey: 'storefront.pageTitle.orders' },
     },
     {
+        path: '/account/orders/:id',
+        name: 'OrderDetail',
+        component: () => import('@/views/Account/OrderDetailPage.vue'),
+        meta: { titleKey: 'storefront.pageTitle.orderDetail' },
+    },
+    {
         path: '/server-error',
         name: 'ServerError',
         component: ServerError,

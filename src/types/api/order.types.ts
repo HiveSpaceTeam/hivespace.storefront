@@ -70,3 +70,41 @@ export interface GetOrdersParams {
   page: number
   pageSize: number
 }
+
+export interface OrderDetailItem {
+  id: string
+  productId: number
+  skuId: number
+  productName: string
+  skuName: string
+  imageUrl: string
+  quantity: number
+  unitPrice: number
+  lineTotal: number
+  currency: string
+  isCOD: boolean
+}
+
+export interface OrderDetail {
+  id: string
+  shortId: string
+  userId: string
+  storeId: string
+  status: OrderStatus
+  subTotal: number
+  shippingFee: number
+  totalAmount: number
+  currency: string
+  recipientName: string
+  phone: string
+  streetAddress: string
+  commune: string
+  province: string
+  country: string
+  notes?: string
+  paymentMethod?: string
+  createdAt: string
+  paidAt?: string
+  confirmedAt?: string
+  items: OrderDetailItem[]
+}
