@@ -60,5 +60,6 @@
     "noAddressMessage": "Please add a delivery address before placing your order.",
     "changeAddressTitle": "Select Delivery Address",
     "confirmAddress": "Confirm",
-    "noAddresses": "No addresses found"
+    "noAddresses": "No addresses found",
+    "addNewAddress": "Add New Address"
 }

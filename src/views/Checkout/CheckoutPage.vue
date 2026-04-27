@@ -135,7 +135,7 @@
                   <span class="text-base font-medium text-gray-700 dark:text-gray-300">
                     {{ t('checkout.deliveryAddress') }}
                   </span>
-                  <button @click="changeAddressModalOpen = true"
+                  <button @click="handleChangeAddress"
                     class="text-base text-primary hover:text-primary-dark transition-colors">
                     {{ t('checkout.changeAddress') }}
                   </button>
@@ -160,13 +160,6 @@
                   <span class="text-sm text-gray-400">{{ t('checkout.loadingAddress') }}</span>
                 </div>
               </div>
-
-              <ChangeAddressModal
-                v-if="changeAddressModalOpen"
-                v-model="changeAddressModalOpen"
-                :current-address-id="selectedAddress?.id"
-                @select="selectedAddress = $event"
-              />
 
               <!-- Promotions -->
               <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm p-4">
@@ -264,7 +257,7 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCheckoutStore } from '@/stores/checkout'
 import { useAddressStore } from '@/stores/address'
-import { RadioGroup, useAppStore, FullscreenLoader, Button, Badge, Spinner } from '@hivespace/shared'
+import { RadioGroup, useAppStore, FullscreenLoader, Button, Badge, Spinner, useModal } from '@hivespace/shared'
 import { PaymentMethod } from '@/types'
 import type { UserAddress } from '@/types'
 
@@ -290,7 +283,7 @@ const { fetchPreview, applyStoreCoupon, applyPlatformCoupon, submitCheckout } = 
 // ============ Modal open state ============
 const shopCouponOpenMap = ref<Record<string, boolean>>({})
 const platformCouponModalOpen = ref(false)
-const changeAddressModalOpen = ref(false)
+const { openModal } = useModal()
 
 // ============ Address ============
 const addressStore = useAddressStore()
@@ -302,6 +295,14 @@ watch(defaultAddress, (addr) => {
     selectedAddress.value = addr
   }
 }, { immediate: true })
+
+const handleChangeAddress = async () => {
+  const result = await openModal(ChangeAddressModal, {
+    raw: true,
+    currentAddressId: selectedAddress.value?.id,
+  })
+  if (result) selectedAddress.value = result as UserAddress
+}
 
 const selectedPaymentMethod = ref('cod')
 

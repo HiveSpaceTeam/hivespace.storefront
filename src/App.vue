@@ -32,7 +32,7 @@ const router = useRouter()
 const route = useRoute()
 
 const notificationStore = useNotificationStore()
-const appToasts = computed(() => appStore.notifications.value)
+const appToasts = computed(() => appStore.notifications)
 const toastQueue = computed<InAppNotification[]>(() => notificationStore.toastQueue)
 const { currentUser, getCurrentUser } = useAuth()
 const isHubConnected = ref(false)

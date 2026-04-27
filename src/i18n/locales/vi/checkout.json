@@ -60,5 +60,6 @@
     "noAddressMessage": "Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng.",
     "changeAddressTitle": "Chọn địa chỉ giao hàng",
     "confirmAddress": "Xác nhận",
-    "noAddresses": "Bạn chưa có địa chỉ nào"
+    "noAddresses": "Bạn chưa có địa chỉ nào",
+    "addNewAddress": "Thêm Địa Chỉ Mới"
 }
