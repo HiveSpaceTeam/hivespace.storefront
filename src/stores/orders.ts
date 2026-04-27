@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Order, CustomerOrderProcessStatus } from '@/types'
+import { useAppStore } from '@hivespace/shared'
+import type { Order, OrderDetail, CustomerOrderProcessStatus } from '@/types'
 import { orderService } from '@/services/order.service'
 
 const PAGE_SIZE = 5
@@ -13,6 +14,9 @@ export const useOrdersStore = defineStore('orders', () => {
   const isLoadingMore = ref(false)
   const hasNextPage = ref(false)
   const currentPage = ref(1)
+
+  const currentOrder = ref<OrderDetail | null>(null)
+  const isLoadingDetail = ref(false)
 
   let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -66,6 +70,21 @@ export const useOrdersStore = defineStore('orders', () => {
     searchDebounceTimer = setTimeout(() => fetchOrders(), 400)
   }
 
+  const fetchOrderById = async (orderId: string) => {
+    isLoadingDetail.value = true
+    try {
+      currentOrder.value = await orderService.getOrderById(orderId)
+    } catch {
+      useAppStore().notifyError('orders.errors.notFound')
+    } finally {
+      isLoadingDetail.value = false
+    }
+  }
+
+  const clearCurrentOrder = () => {
+    currentOrder.value = null
+  }
+
   return {
     orders,
     activeTab,
@@ -77,5 +96,9 @@ export const useOrdersStore = defineStore('orders', () => {
     loadMore,
     setTab,
     setSearchQuery,
+    currentOrder,
+    isLoadingDetail,
+    fetchOrderById,
+    clearCurrentOrder,
   }
 })
