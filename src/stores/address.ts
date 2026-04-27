@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useAppStore } from '@hivespace/shared'
 import i18n from '@/i18n'
 import { addressService } from '@/services/address.service'
@@ -12,14 +12,7 @@ export const useAddressStore = defineStore('address', () => {
   const addresses = ref<UserAddress[]>([])
   const defaultAddress = ref<UserAddress | null>(null)
   const isLoading = ref(false)
-  const formModal = ref<{ open: boolean; editId: string | null; editData: UserAddress | null }>({
-    open: false,
-    editId: null,
-    editData: null,
-  })
   const deleteModal = ref<{ open: boolean; deleteId: string | null }>({ open: false, deleteId: null })
-
-  const editingAddress = computed(() => formModal.value.editData)
 
   const fetchAddresses = async () => {
     isLoading.value = true
@@ -38,26 +31,7 @@ export const useAddressStore = defineStore('address', () => {
     }
   }
 
-  const openAddModal = () => {
-    formModal.value = { open: true, editId: null, editData: null }
-  }
-
-  const openEditModal = async (id: string) => {
-    formModal.value = { open: true, editId: id, editData: null }
-    try {
-      const addr = await addressService.getAddressById(id)
-      formModal.value.editData = addr
-    } catch {
-      // fallback to local data nếu API lỗi
-      formModal.value.editData = addresses.value.find(a => a.id === id) ?? null
-    }
-  }
-
-  const closeFormModal = () => {
-    formModal.value = { open: false, editId: null, editData: null }
-  }
-
-  const saveAddress = async (data: AddressFormData) => {
+  const saveAddress = async (data: AddressFormData, editId?: string | null) => {
     const appStore = useAppStore()
     isLoading.value = true
     try {
@@ -72,15 +46,14 @@ export const useAddressStore = defineStore('address', () => {
         isDefault: data.isDefault,
       }
 
-      if (formModal.value.editId) {
-        const savedId = formModal.value.editId
-        await addressService.updateAddress(savedId, payload)
+      if (editId) {
+        await addressService.updateAddress(editId, payload)
         if (payload.isDefault) {
           addresses.value = sortAddresses(addresses.value.map(a =>
-            a.id === savedId ? { ...a, ...payload } : { ...a, isDefault: false }
+            a.id === editId ? { ...a, ...payload } : { ...a, isDefault: false }
           ))
         } else {
-          const idx = addresses.value.findIndex(a => a.id === savedId)
+          const idx = addresses.value.findIndex(a => a.id === editId)
           if (idx !== -1) addresses.value[idx] = { ...addresses.value[idx], ...payload }
         }
       } else {
@@ -92,7 +65,6 @@ export const useAddressStore = defineStore('address', () => {
         }
       }
 
-      closeFormModal()
       appStore.notifySuccess(i18n.global.t('storefront.address.saveSuccess'))
     } finally {
       isLoading.value = false
@@ -136,14 +108,9 @@ export const useAddressStore = defineStore('address', () => {
     addresses,
     defaultAddress,
     isLoading,
-    formModal,
     deleteModal,
-    editingAddress,
     fetchAddresses,
     fetchDefaultAddress,
-    openAddModal,
-    openEditModal,
-    closeFormModal,
     saveAddress,
     openDeleteModal,
     closeDeleteModal,
