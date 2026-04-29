@@ -40,7 +40,7 @@ export const useAddressStore = defineStore('address', () => {
         phoneNumber: data.phoneNumber,
         street: data.street,
         province: data.province,
-        district: data.district,
+        commune: data.commune,
         country: 'Việt Nam',
         zipCode: '',
         isDefault: data.isDefault,

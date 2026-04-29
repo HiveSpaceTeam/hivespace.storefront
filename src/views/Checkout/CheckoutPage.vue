@@ -3,11 +3,11 @@
     <FullscreenLoader :visible="submitting" :message="t('checkout.placingOrder')" />
     <CheckoutHeader />
 
-    <main class="flex-grow py-6">
+    <main class="grow py-6">
       <div class="container mx-auto px-4">
         <div class="flex flex-col lg:flex-row gap-4">
           <!-- LEFT: Main Content -->
-          <div class="flex-grow min-w-0">
+          <div class="grow min-w-0">
 
             <!-- ==================== CARD 1: SHIPPING METHOD ==================== -->
             <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm mb-4 p-4">
@@ -35,7 +35,7 @@
                       {{ pkg.shippingFee === 0 ? t('checkout.shippingFree') : formatPrice(pkg.shippingFee) }}
                     </span>
                   </div>
-                  <div class="flex-grow"></div>
+                  <div class="grow"></div>
                   <div class="shrink-0 w-28 text-right text-sm text-gray-400 dark:text-gray-500">{{
                     t('checkout.colUnitPrice') }}</div>
                   <div class="shrink-0 w-16 text-center text-sm text-gray-400 dark:text-gray-500">{{
@@ -51,7 +51,7 @@
                   <div class="w-12 h-12 shrink-0 rounded overflow-hidden border border-gray-100 dark:border-gray-700">
                     <img :src="item.imageUrl" :alt="item.productName" class="w-full h-full object-cover" />
                   </div>
-                  <div class="flex-grow min-w-0">
+                  <div class="grow min-w-0">
                     <p class="text-base text-gray-800 dark:text-gray-200 line-clamp-1">{{ item.productName }}</p>
                     <div v-if="item.skuAttributes && Object.keys(JSON.parse(item.skuAttributes || '{}')).length > 0" class="mt-1">
                       <span
@@ -111,7 +111,7 @@
                 <template #option="{ option }">
                   <div class="flex items-center gap-3 w-full flex-1 min-w-0">
                     <span class="text-2xl shrink-0" v-if="option.icon">{{ option.icon }}</span>
-                    <div class="flex-grow min-w-0 truncate">
+                    <div class="grow min-w-0 truncate">
                       <span class="text-base text-gray-800 dark:text-gray-200">{{ option.label }}</span>
                       <span v-if="option.subLabel" class="block text-sm text-gray-400 dark:text-gray-500 truncate">{{
                         option.subLabel }}</span>
@@ -126,7 +126,7 @@
           </div>
 
           <!-- RIGHT: Sidebar -->
-          <div class="lg:w-[340px] shrink-0">
+          <div class="lg:w-85 shrink-0">
             <div class="sticky top-4 space-y-3">
 
               <!-- Delivery Address -->
@@ -147,7 +147,7 @@
                     {{ selectedAddress.phoneNumber }}
                   </p>
                   <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-                    {{ [selectedAddress.street, selectedAddress.ward, selectedAddress.district, selectedAddress.province].filter(Boolean).join(', ') }}
+                    {{ [selectedAddress.street, selectedAddress.commune, selectedAddress.province].filter(Boolean).join(', ') }}
                   </p>
                   <div v-if="selectedAddress.isDefault" class="mt-2">
                     <Badge class="rounded-sm" variant="light" size="sm" color="success">
@@ -328,8 +328,8 @@ async function handlePlaceOrder() {
   const deliveryAddressDto = {
     recipientName: addr.fullName,
     phone: addr.phoneNumber,
-    streetAddress: [addr.street, addr.ward, addr.district].filter(Boolean).join(', '),
-    commune: addr.ward ?? addr.district,
+    streetAddress: [addr.street, addr.commune, addr.province].filter(Boolean).join(', '),
+    commune: addr.commune,
     province: addr.province,
   }
   const paymentMethod = paymentMethodMap[selectedPaymentMethod.value] ?? PaymentMethod.COD

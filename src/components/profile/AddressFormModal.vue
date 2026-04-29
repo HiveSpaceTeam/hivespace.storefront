@@ -29,7 +29,7 @@
         />
       </div>
 
-      <!-- Province / District -->
+      <!-- Province / Commune -->
       <div class="grid grid-cols-2 gap-3">
         <Input
           v-model="formData.province"
@@ -38,9 +38,9 @@
           required
         />
         <Input
-          v-model="formData.district"
-          :placeholder="$t('storefront.address.ward')"
-          :label="$t('storefront.address.ward')"
+          v-model="formData.commune"
+          :placeholder="$t('storefront.address.commune')"
+          :label="$t('storefront.address.commune')"
           required
         />
       </div>
@@ -99,7 +99,7 @@ const formData = reactive<AddressFormData>({
   fullName: '',
   phoneNumber: '',
   province: '',
-  district: '',
+  commune: '',
   street: '',
   isDefault: false,
 })
@@ -108,7 +108,7 @@ watch(() => props.address, (addr) => {
   formData.fullName    = addr?.fullName    ?? ''
   formData.phoneNumber = addr?.phoneNumber ?? ''
   formData.province    = addr?.province    ?? ''
-  formData.district    = addr?.district    ?? ''
+  formData.commune     = addr?.commune     ?? ''
   formData.street      = addr?.street      ?? ''
   formData.isDefault   = addr?.isDefault   ?? false
 }, { immediate: true })
@@ -116,7 +116,7 @@ watch(() => props.address, (addr) => {
 const handleClose = () => closeModal(false)
 
 const handleSubmit = async () => {
-  if (!formData.fullName || !formData.phoneNumber || !formData.province || !formData.district || !formData.street) return
+  if (!formData.fullName || !formData.phoneNumber || !formData.province || !formData.commune || !formData.street) return
   await addressStore.saveAddress({ ...formData }, props.address?.id)
   closeModal(true)
 }

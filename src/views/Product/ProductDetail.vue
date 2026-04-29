@@ -210,7 +210,7 @@
               <span class="spec-label">{{ item.attributeName }}</span>
               <span class="spec-value">{{
                 item.freeTextValue || item.nameValue.join(", ")
-              }}</span>
+                }}</span>
             </div>
           </div>
         </div>
@@ -249,7 +249,7 @@
               <span class="spec-label">{{ item.attributeName }}</span>
               <span class="spec-value">{{
                 item.freeTextValue || item.nameValue.join(", ")
-              }}</span>
+                }}</span>
             </div>
           </div>
         </div>
@@ -283,7 +283,7 @@
             <div class="store-details">
               <a href="#" @click.prevent class="store-name">{{
                 store.name || "HiveSpace Store"
-              }}</a>
+                }}</a>
               <div class="store-rating">
                 <span>{{ store.rating }}</span>
                 <img alt="star-icon"
@@ -308,7 +308,7 @@
             </span>
             <span v-else class="variant-name-short">{{
               productDetail.name
-            }}</span>
+              }}</span>
           </div>
 
           <!-- Quantity and Price -->
@@ -327,7 +327,7 @@
               <span>{{ $t('storefront.productDetail.subtotal') }}</span>
               <span class="total-amount">{{
                 formatPrice(getCurrentPrice() * quantity)
-              }}</span>
+                }}</span>
             </div>
           </div>
 
@@ -546,14 +546,14 @@ const fetchDefaultAddress = async () => {
 
   const {
     street,
-    district,
+    commune,
     province,
     country
   } = address;
 
   defaultAddress.value = [
     street,
-    district,
+    commune,
     province,
     country
   ]
