@@ -126,7 +126,7 @@
           </div>
 
           <!-- RIGHT: Sidebar -->
-          <div class="lg:w-85 shrink-0">
+          <div class="lg:w-[340px] shrink-0">
             <div class="sticky top-4 space-y-3">
 
               <!-- Delivery Address -->
@@ -328,7 +328,7 @@ async function handlePlaceOrder() {
   const deliveryAddressDto = {
     recipientName: addr.fullName,
     phone: addr.phoneNumber,
-    streetAddress: [addr.street, addr.commune, addr.province].filter(Boolean).join(', '),
+    streetAddress: [addr.street, addr.commune].filter(Boolean).join(', '),
     commune: addr.commune,
     province: addr.province,
   }

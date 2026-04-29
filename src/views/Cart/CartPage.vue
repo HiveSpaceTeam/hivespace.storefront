@@ -244,7 +244,7 @@
         <!-- Recommendations -->
         <div class="mt-8">
           <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm p-4">
-            <h2 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
+            <h2 class="text-xl font-medium text-gray-800 dark:text-gray-200 mb-4">
               {{ t("storefront.cart.recommended") }}
             </h2>
             <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
