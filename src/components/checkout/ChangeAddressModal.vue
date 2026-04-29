@@ -49,7 +49,7 @@
               <span class="text-sm text-gray-500 dark:text-gray-400">{{ addr.phoneNumber }}</span>
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-              {{ [addr.street, addr.ward, addr.district, addr.province].filter(Boolean).join(', ') }}
+              {{ [addr.street, addr.commune, addr.province].filter(Boolean).join(', ') }}
             </p>
             <div class="flex items-center gap-2 mt-1 flex-wrap">
               <Badge v-if="addr.isDefault" variant="light" size="sm" color="error">
