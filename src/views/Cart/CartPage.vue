@@ -180,9 +180,9 @@
                 </div>
                 <div class="flex gap-2">
                   <input type="text" v-model="couponCode" :placeholder="t('storefront.cart.enterCoupon')"
-                    class="flex-grow px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-sm bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-400" />
+                    class="flex-grow min-w-0 px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-sm bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-400" />
                   <button
-                    class="bg-primary hover:bg-primary-dark text-white px-4 py-2 text-base rounded-sm transition-colors whitespace-nowrap">
+                    class="shrink-0 bg-primary hover:bg-primary-dark text-white px-4 py-2 text-base rounded-sm transition-colors whitespace-nowrap">
                     {{ t("storefront.cart.applyCoupon") }}
                   </button>
                 </div>
