@@ -93,7 +93,7 @@
                   </div>
                   <ShopCouponModal :model-value="!!shopCouponOpenMap[pkg.storeId]"
                     @update:model-value="shopCouponOpenMap[pkg.storeId] = false" :shop-name="pkg.storeName ?? ''"
-                    :coupons="[]" @apply-coupon="(code: string) => applyStoreCoupon(pkg.storeId, code)" />
+                    :coupons="availableCouponsByStore[pkg.storeId] ?? []" @apply-coupon="(code: string) => applyStoreCoupon(pkg.storeId, code)" />
                 </div>
               </div>
 
@@ -175,7 +175,8 @@
                       <ChevronRight class="w-4 h-4" />
                     </button>
                     <ShopCouponModal :model-value="platformCouponModalOpen"
-                      @update:model-value="platformCouponModalOpen = false" shop-name="Platform" :coupons="[]"
+                      @update:model-value="platformCouponModalOpen = false" shop-name="Platform"
+                      :coupons="platformCoupons"
                       @apply-coupon="applyPlatformCoupon" />
                   </div>
                 </div>
@@ -251,11 +252,13 @@ import { Ticket, ChevronRight, ChevronDown } from 'lucide-vue-next'
 import CheckoutHeader from '@/components/layout/CheckoutHeader.vue'
 import StorefrontFooter from '@/components/layout/StorefrontFooter.vue'
 import ShopCouponModal from '@/components/common/ShopCouponModal.vue'
+import type { ShopCoupon } from '@/components/common/ShopCouponModal.vue'
 import ChangeAddressModal from '@/components/checkout/ChangeAddressModal.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCheckoutStore } from '@/stores/checkout'
+import { checkoutService } from '@/services/checkout.service'
 import { useAddressStore } from '@/stores/address'
 import { RadioGroup, useAppStore, FullscreenLoader, Button, Badge, Spinner, useModal } from '@hivespace/shared'
 import { PaymentMethod } from '@/types'
@@ -283,6 +286,8 @@ const { fetchPreview, applyStoreCoupon, applyPlatformCoupon, submitCheckout } = 
 // ============ Modal open state ============
 const shopCouponOpenMap = ref<Record<string, boolean>>({})
 const platformCouponModalOpen = ref(false)
+const availableCouponsByStore = ref<Record<string, ShopCoupon[]>>({})
+const platformCoupons = ref<ShopCoupon[]>([])
 const { openModal } = useModal()
 
 // ============ Address ============
@@ -364,9 +369,38 @@ const formatPrice = (price: number) => {
     currency: 'VND',
   }).format(price)
 }
+const shopCouponsMap = ref<Record<string, ShopCoupon[]>>({});
 
-onMounted(() => {
+const getShopCoupons = (sellerName: string): ShopCoupon[] => {
+  return shopCouponsMap.value[sellerName] || [];
+};
+
+
+onMounted(async () => {
   fetchPreview()
   addressStore.fetchDefaultAddress()
+  const raw = await checkoutService.getPlatformCoupons()
+  await loadStoreCoupons();
 })
+
+watch(
+  () => packages.value.map((pkg) => pkg.storeId),
+  async (storeIds) => {
+    const next: Record<string, ShopCoupon[]> = {}
+    for (const storeId of storeIds) {
+      const coupons = await checkoutService.getStoreCoupons(storeId)
+      next[storeId] = coupons.map((coupon) => ({
+        code: coupon.code,
+        name: coupon.name,
+        discountPercent: coupon.discountPercentage ?? undefined,
+        discountAmount: coupon.discountAmount ?? undefined,
+        minOrder: coupon.minOrderAmount,
+        expiresAt: new Date(coupon.endDateTime).toLocaleDateString('vi-VN'),
+      }))
+    }
+    availableCouponsByStore.value = next
+    shopCouponsMap.value = next
+  },
+  { immediate: true },
+)
 </script>

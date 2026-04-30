@@ -26,11 +26,13 @@
     "noCoupons": "No coupons available",
     "noCouponsHint": "If you have a shop coupon, enter it above",
     "couponApplied": "Applied: {code}",
-    "discountLabel": "{percent}% off",
+    "discountLabel": "{value} off",
     "minOrder": "Min. order {amount}",
     "expires": "Exp: {date}",
     "limitedQuantity": "Limited quantity",
     "expired": "Expired",
     "notEligible": "NOT\nELIGIBLE",
-    "addToCartSuccess": "Product has been added to cart"
+    "addToCartSuccess": "Product has been added to cart",
+    "removeCoupon": "Remove coupon",
+    "changeCoupon": "Change"
 }

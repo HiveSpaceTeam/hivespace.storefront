@@ -9,6 +9,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
   const submitting = ref(false)
 
   const storeCouponMap = ref<Record<string, string>>({})
+  const storeCouponPercentMap = ref<Record<string, number>>({})
   const platformCouponCode = ref('')
 
   const fetchPreview = async () => {
@@ -27,20 +28,39 @@ export const useCheckoutStore = defineStore('checkout', () => {
     }
   }
 
-  const applyStoreCoupon = (storeId: string, code: string) => {
+  const applyStoreCoupon = async (storeId: string, code: string) => {
+    const result = await checkoutService.applyCoupon({ couponCode: code, storeId })
+    if (!result.isValid) return false
     storeCouponMap.value = { ...storeCouponMap.value, [storeId]: code }
-    fetchPreview()
+    storeCouponPercentMap.value = { ...storeCouponPercentMap.value, [storeId]: Number(result.equivalentPercent) }
+    await fetchPreview()
+    return true
   }
 
-  const applyPlatformCoupon = (code: string) => {
+  const removeStoreCoupon = async (storeId: string) => {
+    const { [storeId]: _code, ...restCodes } = storeCouponMap.value
+    const { [storeId]: _pct, ...restPcts } = storeCouponPercentMap.value
+    storeCouponMap.value = restCodes
+    storeCouponPercentMap.value = restPcts
+    await fetchPreview()
+  }
+
+  const applyPlatformCoupon = async (code: string) => {
+    const result = await checkoutService.applyCoupon({ couponCode: code })
+    if (!result.isValid) return false
     platformCouponCode.value = code
-    fetchPreview()
+    await fetchPreview()
+    return true
   }
 
   const submitCheckout = async (request: Omit<CheckoutRequest, 'couponCodes'>): Promise<CheckoutResult> => {
     submitting.value = true
     try {
-      const couponCodes = platformCouponCode.value ? [platformCouponCode.value] : undefined
+      const storeCouponCodes = Object.values(storeCouponMap.value).filter(Boolean)
+      const couponCodes = [
+        ...storeCouponCodes,
+        ...(platformCouponCode.value ? [platformCouponCode.value] : []),
+      ]
       return await checkoutService.initiateCheckout({ ...request, couponCodes })
     } finally {
       submitting.value = false
@@ -66,9 +86,11 @@ export const useCheckoutStore = defineStore('checkout', () => {
     loading,
     submitting,
     storeCouponMap,
+    storeCouponPercentMap,
     platformCouponCode,
     fetchPreview,
     applyStoreCoupon,
+    removeStoreCoupon,
     applyPlatformCoupon,
     submitCheckout,
     packages,

@@ -32,5 +32,7 @@
     "limitedQuantity": "Số lượng có hạn",
     "expired": "Hết hạn",
     "notEligible": "CHƯ A THỎA\nĐIỀU KIỆN",
-    "addToCartSuccess": "Thêm vào giỏ hàng thành công"
+    "addToCartSuccess": "Thêm vào giỏ hàng thành công",
+    "removeCoupon": "Xóa mã",
+    "changeCoupon": "Đổi mã"
 }

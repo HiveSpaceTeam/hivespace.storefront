@@ -88,7 +88,7 @@
                 >
                   {{
                     t("storefront.cart.discountLabel", {
-                      percent: coupon.discountPercent,
+                      value: coupon.discountType == 1 ? coupon.discountAmount : coupon.discountPercentage + "%",
                     })
                   }}
                 </div>
@@ -175,7 +175,10 @@ import emptyStateImage from "@/assets/images/coupon-empty.webp";
 
 export interface ShopCoupon {
   code: string;
-  discountPercent: number;
+  discountPercentage?: number;
+  discountAmount?: number;
+  discountType: number;
+  name?: string;
   minOrder: number;
   expiresAt?: string;
   isExpired?: boolean;

@@ -96,11 +96,21 @@
                 <div class="hidden md:flex items-center gap-0 shrink-0">
                   <!-- Price -->
                   <div class="w-28 text-center">
-                    <div v-if="item.originalPrice" class="text-sm text-gray-400 line-through">
+                    <div v-if="item.originalPrice" class="text-xs text-gray-400 line-through">
                       {{ formatPrice(item.originalPrice) }}
                     </div>
-                    <div class="text-base font-medium text-gray-800 dark:text-gray-200">
+                    <div
+                      class="text-sm text-gray-400 line-through"
+                      v-if="getStoreCouponPercent(group.sellerName) > 0">
                       {{ formatPrice(item.price) }}
+                    </div>
+                    <div v-else class="text-base font-medium text-gray-800 dark:text-gray-200">
+                      {{ formatPrice(item.price) }}
+                    </div>
+                    <div
+                      v-if="getStoreCouponPercent(group.sellerName) > 0"
+                      class="text-base font-medium text-primary">
+                      {{ formatPrice(getEffectiveItemPrice(item, group.sellerName)) }}
                     </div>
                   </div>
 
@@ -114,7 +124,7 @@
                   <!-- Subtotal -->
                   <div class="w-28 text-center">
                     <span class="text-base font-medium text-primary">{{
-                      formatPrice(item.price * item.quantity)
+                      formatPrice(getEffectiveItemPrice(item, group.sellerName) * item.quantity)
                     }}</span>
                   </div>
 
@@ -129,9 +139,16 @@
 
                 <!-- Mobile: Price + Quantity -->
                 <div class="md:hidden flex flex-col items-end gap-2 shrink-0">
-                  <span class="text-base font-medium text-primary">{{
-                    formatPrice(item.price)
-                  }}</span>
+                  <div class="text-right">
+                    <span
+                      v-if="getStoreCouponPercent(group.sellerName) > 0"
+                      class="text-xs text-gray-400 line-through block">
+                      {{ formatPrice(item.price) }}
+                    </span>
+                    <span class="text-base font-medium text-primary">{{
+                      formatPrice(getEffectiveItemPrice(item, group.sellerName))
+                    }}</span>
+                  </div>
                   <QuantityControl :model-value="item.quantity" @update:model-value="
                     (val: number) => handleQuantityChange(item, val)
                   " :min="1" size="sm" />
@@ -140,22 +157,18 @@
 
               <!-- Shop Coupon Section -->
               <div class="relative border-t border-gray-100 dark:border-gray-800">
-                <!-- Shop Coupon Link -->
                 <div class="flex items-center gap-2 px-4 py-3">
-                  <Ticket class="w-4 h-4 text-primary" />
+                  <Ticket class="w-4 h-4 text-primary shrink-0" />
                   <button @click="toggleShopCouponDropdown(groupIndex)"
                     class="flex items-center gap-1 text-base text-primary hover:text-primary-dark transition-colors">
                     <span>{{ t("storefront.cart.addShopCoupon") }}</span>
                     <ChevronRight class="w-4 h-4 transition-transform"
                       :class="{ 'rotate-90': shopCouponOpenMap[groupIndex] }" />
                   </button>
-                  <span v-if="appliedShopCoupons[groupIndex]"
+                  <span v-if="getStoreCouponCode(group.sellerName)"
                     class="ml-auto text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded">
-                    {{
-                      t("storefront.cart.couponApplied", {
-                        code: appliedShopCoupons[groupIndex],
-                      })
-                    }}
+                    {{ getStoreCouponCode(group.sellerName) }}
+                    <span class="font-semibold">-{{ getStoreCouponPercent(group.sellerName) }}%</span>
                   </span>
                 </div>
 
@@ -294,6 +307,7 @@ import { useCartStore } from "@/stores/cart";
 import { useCheckoutStore } from "@/stores/checkout";
 import type { CartItem } from "@/types";
 import { productService } from "@/services/product.service";
+import { checkoutService } from "@/services/checkout.service";
 import type { PagedResponse, ProductSummary } from "@/types";
 
 const { t } = useI18n();
@@ -302,77 +316,52 @@ const cartStore = useCartStore();
 const { cartGroups, isLoading } = storeToRefs(cartStore);
 
 const checkoutStore = useCheckoutStore();
-const { totalShippingFee, loading: previewLoading } = storeToRefs(checkoutStore);
+const {
+  totalShippingFee,
+  loading: previewLoading,
+  preview,
+  storeCouponMap,
+  storeCouponPercentMap,
+} = storeToRefs(checkoutStore);
 
 // Page-local state
 const couponCode = ref("");
 const selectAll = ref(false);
 const shopCouponOpenMap = ref<Record<number, boolean>>({});
-const appliedShopCoupons = ref<Record<number, string>>({});
+const shopCouponsMap = ref<Record<string, ShopCoupon[]>>({});
 
 onMounted(async () => {
   await cartStore.loadCart();
   updateSelectAll();
   fetchRecommendedProducts();
-  checkoutStore.fetchPreview();
+  await checkoutStore.fetchPreview();
+  await loadStoreCoupons();
 });
 
 watch(
   () => cartGroups.value,
-  () => { checkoutStore.fetchPreview(); },
+  async () => {
+    await checkoutStore.fetchPreview();
+    await loadStoreCoupons();
+  },
   { deep: true },
 );
 
-// Mock shop coupons per seller (including expired ones)
-const shopCouponsMap: Record<string, ShopCoupon[]> = {
-  "HiveSpace Official Store": [
-    {
-      code: "HIVE10",
-      discountPercent: 10,
-      minOrder: 200000,
-      expiresAt: "31/03/2026",
-    },
-    {
-      code: "HIVE20",
-      discountPercent: 20,
-      minOrder: 500000,
-      expiresAt: "15/04/2026",
-    },
-    {
-      code: "FREESHIP",
-      discountPercent: 5,
-      minOrder: 100000,
-      expiresAt: "01/01/2026",
-      isExpired: true,
-    },
-  ],
-  "TechWorld Việt Nam": [
-    {
-      code: "TECH15",
-      discountPercent: 15,
-      minOrder: 300000,
-      expiresAt: "20/03/2026",
-    },
-    {
-      code: "TECH30",
-      discountPercent: 30,
-      minOrder: 1000000,
-      expiresAt: "01/02/2026",
-      isExpired: true,
-    },
-  ],
-};
-
 const getShopCoupons = (sellerName: string): ShopCoupon[] => {
-  return shopCouponsMap[sellerName] || [];
+  return shopCouponsMap.value[sellerName] || [];
 };
 
 const toggleShopCouponDropdown = (groupIndex: number) => {
   shopCouponOpenMap.value[groupIndex] = !shopCouponOpenMap.value[groupIndex];
 };
 
-const handleApplyShopCoupon = (groupIndex: number, code: string) => {
-  appliedShopCoupons.value[groupIndex] = code;
+const handleApplyShopCoupon = async (groupIndex: number, code: string) => {
+  const group = cartGroups.value[groupIndex];
+  if (!group) return;
+  const storeId = getStoreIdBySellerName(group.sellerName);
+  if (!storeId) return;
+  const ok = await checkoutStore.applyStoreCoupon(storeId, code);
+  if (ok) shopCouponOpenMap.value[groupIndex] = false;
 };
 
 // Computed
@@ -398,10 +387,52 @@ const subtotal = computed(() =>
   ),
 );
 
-const discount = computed(() => Math.floor(subtotal.value * 0.05));
+const discount = computed(() => {
+  const previewSubtotal = preview.value?.subtotal ?? 0;
+  return Math.max(0, subtotal.value - previewSubtotal);
+});
 const total = computed(
   () => subtotal.value - discount.value + totalShippingFee.value,
 );
+
+const getStoreIdBySellerName = (sellerName: string): string | undefined =>
+  preview.value?.packages.find((pkg) => pkg.storeName === sellerName)?.storeId;
+
+const getStoreCouponCode = (sellerName: string): string | undefined => {
+  const storeId = getStoreIdBySellerName(sellerName);
+  return storeId ? storeCouponMap.value[storeId] : undefined;
+};
+
+const getStoreCouponPercent = (sellerName: string): number => {
+  const storeId = getStoreIdBySellerName(sellerName);
+  return storeId ? (storeCouponPercentMap.value[storeId] ?? 0) : 0;
+};
+
+const getEffectiveItemPrice = (item: CartItem, sellerName: string): number => {
+  const pct = getStoreCouponPercent(sellerName);
+  if (!pct) return item.price;
+  return Math.round(item.price * (1 - pct / 100));
+};
+
+
+const loadStoreCoupons = async () => {
+  const nextMap: Record<string, ShopCoupon[]> = {};
+  const packages = preview.value?.packages ?? [];
+  for (const pkg of packages) {
+    if (!pkg.storeId || !pkg.storeName) continue;
+    const coupons = await checkoutService.getStoreCoupons(pkg.storeId);
+    nextMap[pkg.storeName] = coupons.map((coupon) => ({
+      code: coupon.code,
+      name: coupon.name,
+      discountPercentage: coupon.discountPercentage ?? undefined,
+      discountAmount: coupon.discountAmount ?? undefined,
+      minOrder: coupon.minOrderAmount,
+      expiresAt: new Date(coupon.endDateTime).toLocaleDateString("vi-VN"),
+      discountType: coupon.discountType,
+    }));
+  }
+  shopCouponsMap.value = nextMap;
+};
 
 // Methods
 const formatPrice = (price: number) => {
