@@ -5,7 +5,8 @@ import type { UserAddress, AddressApiPayload } from '@/types'
 const ADDRESS_ENDPOINTS = {
   BASE: '/users/address',
   BY_ID: (id: string) => `/users/address/${id}`,
-  DEFAULT: (id: string) => `/users/address/${id}/default`,
+  DEFAULT_ADDR: '/users/address/default',
+  SET_DEFAULT: (id: string) => `/users/address/${id}/default`,
 } as const
 
 class AddressService {
@@ -39,8 +40,13 @@ class AddressService {
     await apiService.delete(url)
   }
 
+  async getDefaultAddress(): Promise<UserAddress> {
+    const url = buildApiUrl(ADDRESS_ENDPOINTS.DEFAULT_ADDR)
+    return await apiService.get<UserAddress>(url)
+  }
+
   async setDefaultAddress(id: string): Promise<void> {
-    const url = buildApiUrl(ADDRESS_ENDPOINTS.DEFAULT(id))
+    const url = buildApiUrl(ADDRESS_ENDPOINTS.SET_DEFAULT(id))
     await apiService.put(url, {})
   }
 }

@@ -73,7 +73,7 @@
                 <Store class="w-5 h-5 text-gray-400" />
               </div>
               <span
-                class="text-[9px] text-gray-500 dark:text-gray-400 text-center leading-tight mt-1 truncate w-full px-1"
+                class="text-[10px] text-gray-500 dark:text-gray-400 text-center leading-tight mt-1 truncate w-full px-1"
                 >{{ shopName }}</span
               >
             </div>
@@ -112,7 +112,7 @@
                   class="border-2 border-gray-400 dark:border-gray-500 rounded px-2 py-0.5 rotate-[-15deg]"
                 >
                   <span
-                    class="text-[9px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest"
+                    class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest"
                   >
                     {{ t("storefront.cart.notEligible") }}
                   </span>
@@ -168,7 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from "vue";
+import { ref } from "vue";
 import { X, Ticket, Store } from "lucide-vue-next";
 import { useI18n } from "vue-i18n";
 import emptyStateImage from "@/assets/images/coupon-empty.webp";
@@ -198,7 +198,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const inputCode = ref("");
-const dropdownRef = ref<HTMLElement | null>(null);
 
 const close = () => {
   emit("update:modelValue", false);

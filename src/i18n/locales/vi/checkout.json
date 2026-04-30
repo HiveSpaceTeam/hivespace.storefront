@@ -55,5 +55,11 @@
     "orderFailedTitle": "Đặt hàng thất bại",
     "orderFailedMessage": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "placingOrder": "Đang đặt hàng...",
-    "defaultAddress": "Mặc định"
+    "defaultAddress": "Mặc định",
+    "loadingAddress": "Đang tải địa chỉ...",
+    "noAddressMessage": "Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng.",
+    "changeAddressTitle": "Chọn địa chỉ giao hàng",
+    "confirmAddress": "Xác nhận",
+    "noAddresses": "Bạn chưa có địa chỉ nào",
+    "addNewAddress": "Thêm Địa Chỉ Mới"
 }

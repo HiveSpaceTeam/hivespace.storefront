@@ -61,7 +61,7 @@
             <h1 class="text-lg font-medium text-gray-800 dark:text-gray-100">
               {{ $t('storefront.address.pageTitle') }}
             </h1>
-            <Button variant="outline" size="sm" :startIcon="PlusIcon" :onClick="addressStore.openAddModal">
+            <Button variant="outline" size="sm" :startIcon="PlusIcon" :onClick="handleAdd">
               {{ $t('storefront.address.addAddress') }}
             </Button>
           </div>
@@ -99,7 +99,7 @@
                   <!-- Actions -->
                   <div class="flex flex-col items-end gap-2 shrink-0">
                     <div class="flex items-center gap-3">
-                      <button type="button" @click="addressStore.openEditModal(addr.id)"
+                      <button type="button" @click="handleEdit(addr)"
                         class="text-primary text-xs hover:underline cursor-pointer">
                         {{ $t('storefront.address.update') }}
                       </button>
@@ -127,9 +127,6 @@
     </div>
   </div>
 
-  <!-- Form modal (add / edit) -->
-  <AddressFormModal v-if="formModal.open" />
-
   <!-- Delete confirmation modal -->
   <Modal v-if="deleteModal.open" @close="addressStore.closeDeleteModal">
     <template #body>
@@ -153,16 +150,18 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
-import { useAuth, Avatar, Badge, Button, Modal } from '@hivespace/shared'
+import { useAuth, Avatar, Badge, Button, Modal, useModal } from '@hivespace/shared'
 import { storeToRefs } from 'pinia'
 import { Bell, User, ShoppingBag, ChevronDown, Pencil, Plus as PlusIcon } from 'lucide-vue-next'
 import { useAddressStore } from '@/stores/address'
 import AddressFormModal from '@/components/profile/AddressFormModal.vue'
 import { formatLocation } from '@/types'
+import type { UserAddress } from '@/types'
 
 const { currentUser } = useAuth()
+const { openModal } = useModal()
 const addressStore = useAddressStore()
-const { addresses, isLoading, formModal, deleteModal } = storeToRefs(addressStore)
+const { addresses, isLoading, deleteModal } = storeToRefs(addressStore)
 
 const accountOpen = ref(true)
 
@@ -172,6 +171,16 @@ const displayUsername = computed(() =>
   ?? currentUser.value?.profile?.sub
   ?? ''
 )
+
+const handleAdd = async () => {
+  await openModal(AddressFormModal, { raw: true })
+  await addressStore.fetchAddresses()
+}
+
+const handleEdit = async (addr: UserAddress) => {
+  await openModal(AddressFormModal, { raw: true, address: addr })
+  await addressStore.fetchAddresses()
+}
 
 onMounted(() => addressStore.fetchAddresses())
 </script>

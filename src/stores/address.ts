@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useAppStore } from '@hivespace/shared'
 import i18n from '@/i18n'
 import { addressService } from '@/services/address.service'
@@ -10,15 +10,9 @@ const sortAddresses = (list: UserAddress[]) =>
 
 export const useAddressStore = defineStore('address', () => {
   const addresses = ref<UserAddress[]>([])
+  const defaultAddress = ref<UserAddress | null>(null)
   const isLoading = ref(false)
-  const formModal = ref<{ open: boolean; editId: string | null; editData: UserAddress | null }>({
-    open: false,
-    editId: null,
-    editData: null,
-  })
   const deleteModal = ref<{ open: boolean; deleteId: string | null }>({ open: false, deleteId: null })
-
-  const editingAddress = computed(() => formModal.value.editData)
 
   const fetchAddresses = async () => {
     isLoading.value = true
@@ -29,26 +23,15 @@ export const useAddressStore = defineStore('address', () => {
     }
   }
 
-  const openAddModal = () => {
-    formModal.value = { open: true, editId: null, editData: null }
-  }
-
-  const openEditModal = async (id: string) => {
-    formModal.value = { open: true, editId: id, editData: null }
+  const fetchDefaultAddress = async () => {
     try {
-      const addr = await addressService.getAddressById(id)
-      formModal.value.editData = addr
+      defaultAddress.value = await addressService.getDefaultAddress()
     } catch {
-      // fallback to local data nếu API lỗi
-      formModal.value.editData = addresses.value.find(a => a.id === id) ?? null
+      // error toast handled by apiService
     }
   }
 
-  const closeFormModal = () => {
-    formModal.value = { open: false, editId: null, editData: null }
-  }
-
-  const saveAddress = async (data: AddressFormData) => {
+  const saveAddress = async (data: AddressFormData, editId?: string | null) => {
     const appStore = useAppStore()
     isLoading.value = true
     try {
@@ -57,25 +40,31 @@ export const useAddressStore = defineStore('address', () => {
         phoneNumber: data.phoneNumber,
         street: data.street,
         province: data.province,
-        district: data.district,
-        ward: data.ward,
+        commune: data.commune,
         country: 'Việt Nam',
         zipCode: '',
         isDefault: data.isDefault,
       }
 
-      if (formModal.value.editId) {
-        await addressService.updateAddress(formModal.value.editId, payload)
-        const idx = addresses.value.findIndex(a => a.id === formModal.value.editId)
-        if (idx !== -1) {
-          addresses.value[idx] = { ...addresses.value[idx], ...payload }
+      if (editId) {
+        await addressService.updateAddress(editId, payload)
+        if (payload.isDefault) {
+          addresses.value = sortAddresses(addresses.value.map(a =>
+            a.id === editId ? { ...a, ...payload } : { ...a, isDefault: false }
+          ))
+        } else {
+          const idx = addresses.value.findIndex(a => a.id === editId)
+          if (idx !== -1) addresses.value[idx] = { ...addresses.value[idx], ...payload }
         }
       } else {
         const created = await addressService.createAddress(payload)
-        addresses.value.push(created)
+        if (created.isDefault) {
+          addresses.value = sortAddresses([...addresses.value.map(a => ({ ...a, isDefault: false })), created])
+        } else {
+          addresses.value.push(created)
+        }
       }
 
-      closeFormModal()
       appStore.notifySuccess(i18n.global.t('storefront.address.saveSuccess'))
     } finally {
       isLoading.value = false
@@ -117,14 +106,11 @@ export const useAddressStore = defineStore('address', () => {
 
   return {
     addresses,
+    defaultAddress,
     isLoading,
-    formModal,
     deleteModal,
-    editingAddress,
     fetchAddresses,
-    openAddModal,
-    openEditModal,
-    closeFormModal,
+    fetchDefaultAddress,
     saveAddress,
     openDeleteModal,
     closeDeleteModal,

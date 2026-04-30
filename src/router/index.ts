@@ -60,6 +60,18 @@ const routes = [
         meta: { titleKey: 'storefront.pageTitle.address' },
     },
     {
+        path: '/orders',
+        name: 'Orders',
+        component: () => import('@/views/Profile/OrdersPage.vue'),
+        meta: { titleKey: 'storefront.pageTitle.orders' },
+    },
+    {
+        path: '/account/orders/:id',
+        name: 'OrderDetail',
+        component: () => import('@/views/Account/OrderDetailPage.vue'),
+        meta: { titleKey: 'storefront.pageTitle.orderDetail' },
+    },
+    {
         path: '/server-error',
         name: 'ServerError',
         component: ServerError,
@@ -76,6 +88,12 @@ const routes = [
         name: 'PaymentResult',
         component: () => import('@/views/Payment/PaymentResultPage.vue'),
         meta: { titleKey: 'storefront.pageTitle.paymentResult', allowAnonymous: true, layout: 'none' },
+    },
+    {
+        path: '/notifications',
+        name: 'Notifications',
+        component: () => import('@/views/Notifications/NotificationsView.vue'),
+        meta: { titleKey: 'storefront.pageTitle.notifications' },
     },
     {
         path: '/:pathMatch(.*)*',

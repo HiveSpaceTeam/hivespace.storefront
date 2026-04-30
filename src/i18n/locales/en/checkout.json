@@ -55,5 +55,11 @@
     "orderFailedTitle": "Order Failed",
     "orderFailedMessage": "Something went wrong. Please try again.",
     "placingOrder": "Placing order...",
-    "defaultAddress": "Default"
+    "defaultAddress": "Default",
+    "loadingAddress": "Loading address...",
+    "noAddressMessage": "Please add a delivery address before placing your order.",
+    "changeAddressTitle": "Select Delivery Address",
+    "confirmAddress": "Confirm",
+    "noAddresses": "No addresses found",
+    "addNewAddress": "Add New Address"
 }

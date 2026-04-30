@@ -180,9 +180,9 @@
                 </div>
                 <div class="flex gap-2">
                   <input type="text" v-model="couponCode" :placeholder="t('storefront.cart.enterCoupon')"
-                    class="flex-grow px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-sm bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-400" />
+                    class="flex-grow min-w-0 px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-sm bg-transparent text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-400" />
                   <button
-                    class="bg-primary hover:bg-primary-dark text-white px-4 py-2 text-base rounded-sm transition-colors whitespace-nowrap">
+                    class="shrink-0 bg-primary hover:bg-primary-dark text-white px-4 py-2 text-base rounded-sm transition-colors whitespace-nowrap">
                     {{ t("storefront.cart.applyCoupon") }}
                   </button>
                 </div>
@@ -207,11 +207,14 @@
                   <span class="text-gray-500 dark:text-gray-400">{{
                     t("storefront.cart.shippingFee")
                   }}</span>
-                  <span class="text-gray-800 dark:text-gray-200">{{
-                    shippingFee === 0
-                      ? t("storefront.cart.free")
-                      : formatPrice(shippingFee)
-                  }}</span>
+                  <span class="text-gray-800 dark:text-gray-200">
+                    <Spinner v-if="previewLoading" size="sm" />
+                    <template v-else>{{
+                      totalShippingFee === 0
+                        ? t("storefront.cart.free")
+                        : formatPrice(totalShippingFee)
+                    }}</template>
+                  </span>
                 </div>
               </div>
 
@@ -278,7 +281,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { Truck, Trash2, Store, Ticket, ChevronRight } from "lucide-vue-next";
 import { QuantityControl, Button, Checkbox, Spinner } from "@hivespace/shared";
 import CartHeader from "@/components/layout/CartHeader.vue";
@@ -288,6 +291,7 @@ import type { ShopCoupon } from "@/components/common/ShopCouponModal.vue";
 import { useI18n } from "vue-i18n";
 import { storeToRefs } from "pinia";
 import { useCartStore } from "@/stores/cart";
+import { useCheckoutStore } from "@/stores/checkout";
 import type { CartItem } from "@/types";
 import { productService } from "@/services/product.service";
 import type { PagedResponse, ProductSummary } from "@/types";
@@ -296,6 +300,9 @@ const { t } = useI18n();
 
 const cartStore = useCartStore();
 const { cartGroups, isLoading } = storeToRefs(cartStore);
+
+const checkoutStore = useCheckoutStore();
+const { totalShippingFee, loading: previewLoading } = storeToRefs(checkoutStore);
 
 // Page-local state
 const couponCode = ref("");
@@ -306,8 +313,15 @@ const appliedShopCoupons = ref<Record<number, string>>({});
 onMounted(async () => {
   await cartStore.loadCart();
   updateSelectAll();
-  fetchRecommendedProducts()
+  fetchRecommendedProducts();
+  checkoutStore.fetchPreview();
 });
+
+watch(
+  () => cartGroups.value,
+  () => { checkoutStore.fetchPreview(); },
+  { deep: true },
+);
 
 // Mock shop coupons per seller (including expired ones)
 const shopCouponsMap: Record<string, ShopCoupon[]> = {
@@ -385,9 +399,8 @@ const subtotal = computed(() =>
 );
 
 const discount = computed(() => Math.floor(subtotal.value * 0.05));
-const shippingFee = computed(() => (subtotal.value >= 300000 ? 0 : 30000));
 const total = computed(
-  () => subtotal.value - discount.value + shippingFee.value,
+  () => subtotal.value - discount.value + totalShippingFee.value,
 );
 
 // Methods

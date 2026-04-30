@@ -3,11 +3,11 @@
     <FullscreenLoader :visible="submitting" :message="t('checkout.placingOrder')" />
     <CheckoutHeader />
 
-    <main class="flex-grow py-6">
+    <main class="grow py-6">
       <div class="container mx-auto px-4">
         <div class="flex flex-col lg:flex-row gap-4">
           <!-- LEFT: Main Content -->
-          <div class="flex-grow min-w-0">
+          <div class="grow min-w-0">
 
             <!-- ==================== CARD 1: SHIPPING METHOD ==================== -->
             <div class="bg-white dark:bg-card-dark rounded-sm shadow-sm mb-4 p-4">
@@ -35,7 +35,7 @@
                       {{ pkg.shippingFee === 0 ? t('checkout.shippingFree') : formatPrice(pkg.shippingFee) }}
                     </span>
                   </div>
-                  <div class="flex-grow"></div>
+                  <div class="grow"></div>
                   <div class="shrink-0 w-28 text-right text-sm text-gray-400 dark:text-gray-500">{{
                     t('checkout.colUnitPrice') }}</div>
                   <div class="shrink-0 w-16 text-center text-sm text-gray-400 dark:text-gray-500">{{
@@ -51,7 +51,7 @@
                   <div class="w-12 h-12 shrink-0 rounded overflow-hidden border border-gray-100 dark:border-gray-700">
                     <img :src="item.imageUrl" :alt="item.productName" class="w-full h-full object-cover" />
                   </div>
-                  <div class="flex-grow min-w-0">
+                  <div class="grow min-w-0">
                     <p class="text-base text-gray-800 dark:text-gray-200 line-clamp-1">{{ item.productName }}</p>
                     <div v-if="item.skuAttributes && Object.keys(JSON.parse(item.skuAttributes || '{}')).length > 0" class="mt-1">
                       <span
@@ -111,7 +111,7 @@
                 <template #option="{ option }">
                   <div class="flex items-center gap-3 w-full flex-1 min-w-0">
                     <span class="text-2xl shrink-0" v-if="option.icon">{{ option.icon }}</span>
-                    <div class="flex-grow min-w-0 truncate">
+                    <div class="grow min-w-0 truncate">
                       <span class="text-base text-gray-800 dark:text-gray-200">{{ option.label }}</span>
                       <span v-if="option.subLabel" class="block text-sm text-gray-400 dark:text-gray-500 truncate">{{
                         option.subLabel }}</span>
@@ -135,20 +135,29 @@
                   <span class="text-base font-medium text-gray-700 dark:text-gray-300">
                     {{ t('checkout.deliveryAddress') }}
                   </span>
-                  <button class="text-base text-primary hover:text-primary-dark transition-colors">
+                  <button @click="handleChangeAddress"
+                    class="text-base text-primary hover:text-primary-dark transition-colors">
                     {{ t('checkout.changeAddress') }}
                   </button>
                 </div>
-                <p class="text-base font-semibold text-gray-800 dark:text-gray-200">
-                  {{ address.name }}
-                  <span class="text-gray-400 font-normal mx-1">|</span>
-                  {{ address.phone }}
-                </p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{{ address.detail }}</p>
-                <div v-if="address.isDefault" class="mt-2">
-                  <Badge class="rounded-sm" variant="light" size="sm" color="success">
-                    {{ t('checkout.defaultAddress') }}
-                  </Badge>
+                <div v-if="selectedAddress" class="mt-1">
+                  <p class="text-base font-semibold text-gray-800 dark:text-gray-200">
+                    {{ selectedAddress.fullName }}
+                    <span class="text-gray-400 font-normal mx-1">|</span>
+                    {{ selectedAddress.phoneNumber }}
+                  </p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                    {{ [selectedAddress.street, selectedAddress.commune, selectedAddress.province].filter(Boolean).join(', ') }}
+                  </p>
+                  <div v-if="selectedAddress.isDefault" class="mt-2">
+                    <Badge class="rounded-sm" variant="light" size="sm" color="success">
+                      {{ t('checkout.defaultAddress') }}
+                    </Badge>
+                  </div>
+                </div>
+                <div v-else class="flex items-center gap-2 mt-1">
+                  <Spinner size="sm" />
+                  <span class="text-sm text-gray-400">{{ t('checkout.loadingAddress') }}</span>
                 </div>
               </div>
 
@@ -237,17 +246,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { Ticket, ChevronRight, ChevronDown } from 'lucide-vue-next'
 import CheckoutHeader from '@/components/layout/CheckoutHeader.vue'
 import StorefrontFooter from '@/components/layout/StorefrontFooter.vue'
 import ShopCouponModal from '@/components/common/ShopCouponModal.vue'
+import ChangeAddressModal from '@/components/checkout/ChangeAddressModal.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCheckoutStore } from '@/stores/checkout'
-import { RadioGroup, useAppStore, FullscreenLoader, Button, Badge } from '@hivespace/shared'
+import { useAddressStore } from '@/stores/address'
+import { RadioGroup, useAppStore, FullscreenLoader, Button, Badge, Spinner, useModal } from '@hivespace/shared'
 import { PaymentMethod } from '@/types'
+import type { UserAddress } from '@/types'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -271,15 +283,25 @@ const { fetchPreview, applyStoreCoupon, applyPlatformCoupon, submitCheckout } = 
 // ============ Modal open state ============
 const shopCouponOpenMap = ref<Record<string, boolean>>({})
 const platformCouponModalOpen = ref(false)
+const { openModal } = useModal()
 
-// ============ Other page state ============
-const address = {
-  name: 'Lê Quang Vũ',
-  phone: '0349836895',
-  detail: 'Số 16 Trần Nhật Duật, Phường Tân Định, Quận 1, TP. Hồ Chí Minh',
-  consume: "Cổ Nhuế",
-  province: "Hà Nội",
-  isDefault: true,
+// ============ Address ============
+const addressStore = useAddressStore()
+const { defaultAddress } = storeToRefs(addressStore)
+const selectedAddress = ref<UserAddress | null>(null)
+
+watch(defaultAddress, (addr) => {
+  if (addr && !selectedAddress.value) {
+    selectedAddress.value = addr
+  }
+}, { immediate: true })
+
+const handleChangeAddress = async () => {
+  const result = await openModal(ChangeAddressModal, {
+    raw: true,
+    currentAddressId: selectedAddress.value?.id,
+  })
+  if (result) selectedAddress.value = result as UserAddress
 }
 
 const selectedPaymentMethod = ref('cod')
@@ -298,12 +320,17 @@ const paymentMethodMap: Record<string, PaymentMethod> = {
 }
 
 async function handlePlaceOrder() {
+  if (!selectedAddress.value) {
+    appStore.notifyError(t('checkout.orderFailedTitle'), t('checkout.noAddressMessage'))
+    return
+  }
+  const addr = selectedAddress.value
   const deliveryAddressDto = {
-    recipientName: address.name,
-    phone: address.phone,
-    streetAddress: address.detail,
-    commune: address.consume,
-    province: address.province,
+    recipientName: addr.fullName,
+    phone: addr.phoneNumber,
+    streetAddress: [addr.street, addr.commune].filter(Boolean).join(', '),
+    commune: addr.commune,
+    province: addr.province,
   }
   const paymentMethod = paymentMethodMap[selectedPaymentMethod.value] ?? PaymentMethod.COD
 
@@ -338,5 +365,8 @@ const formatPrice = (price: number) => {
   }).format(price)
 }
 
-onMounted(() => fetchPreview())
+onMounted(() => {
+  fetchPreview()
+  addressStore.fetchDefaultAddress()
+})
 </script>
