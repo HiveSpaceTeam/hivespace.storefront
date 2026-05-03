@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useAppStore } from '@hivespace/shared'
-import type { Order, OrderDetail, CustomerOrderProcessStatus } from '@/types'
+import type { Order, OrderDetail, CustomerOrderProcessStatus, GetOrdersParams } from '@/types'
 import { orderService } from '@/services/order.service'
 
 const PAGE_SIZE = 5
@@ -26,12 +26,16 @@ export const useOrdersStore = defineStore('orders', () => {
     orders.value = []
     const trimmed = searchQuery.value.trim()
     try {
-      const result = await orderService.getOrders({
+      const params: Partial<GetOrdersParams> = {
         processStatus: activeTab.value === 'all' ? undefined : activeTab.value,
-        ...(trimmed ? { searchField: 'OrderCode', searchValue: trimmed } : {}),
         page: 1,
         pageSize: PAGE_SIZE,
-      })
+      }
+      if (trimmed) {
+        params.searchField = 'OrderCode'
+        params.searchValue = trimmed
+      }
+      const result = await orderService.getOrders(params)
       orders.value = result.orders
       hasNextPage.value = result.pagination.hasNextPage
     } finally {
