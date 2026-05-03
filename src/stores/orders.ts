@@ -24,11 +24,11 @@ export const useOrdersStore = defineStore('orders', () => {
     isLoading.value = true
     currentPage.value = 1
     orders.value = []
+    const trimmed = searchQuery.value.trim()
     try {
       const result = await orderService.getOrders({
         processStatus: activeTab.value === 'all' ? undefined : activeTab.value,
-        searchField: 'OrderCode',
-        searchValue: searchQuery.value.trim(),
+        ...(trimmed ? { searchField: 'OrderCode', searchValue: trimmed } : {}),
         page: 1,
         pageSize: PAGE_SIZE,
       })
@@ -42,12 +42,12 @@ export const useOrdersStore = defineStore('orders', () => {
   const loadMore = async () => {
     if (isLoadingMore.value || !hasNextPage.value) return
     isLoadingMore.value = true
+    const trimmed = searchQuery.value.trim()
     try {
       const nextPage = currentPage.value + 1
       const result = await orderService.getOrders({
         processStatus: activeTab.value === 'all' ? undefined : activeTab.value,
-        searchField: 'OrderCode',
-        searchValue: searchQuery.value.trim(),
+        ...(trimmed ? { searchField: 'OrderCode', searchValue: trimmed } : {}),
         page: nextPage,
         pageSize: PAGE_SIZE,
       })
