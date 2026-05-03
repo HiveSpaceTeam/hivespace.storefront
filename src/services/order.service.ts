@@ -7,7 +7,7 @@ const ORDER_ENDPOINTS = {
 } as const
 
 class OrderService {
-  async getOrders(params: GetOrdersParams): Promise<OrdersResponse> {
+  async getOrders(params: Partial<GetOrdersParams>): Promise<OrdersResponse> {
     const url = buildApiUrl(ORDER_ENDPOINTS.ORDERS)
     return await apiService.get<OrdersResponse>(url, { params })
   }
